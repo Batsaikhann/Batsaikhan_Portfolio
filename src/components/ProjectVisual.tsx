@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Project } from "@/data/profile";
+import type { Project } from "@/data/projects";
 
 // Animated product motifs used on project cards and case-study pages.
 // Replace with real screenshots later by rendering an <Image> instead.
@@ -46,6 +46,26 @@ export function ProjectVisual({ type }: { type: Project["visual"] }) {
         <div className="hub">
           HUB
           <small>queues · S3</small>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "buddy") {
+    return (
+      <div className="viz viz-buddy">
+        <div className="buddy-orb" aria-hidden="true">
+          <i className="eye" />
+          <i className="eye" />
+          <i className="mouth" />
+        </div>
+        <div className="buddy-wave" aria-hidden="true">
+          {Array.from({ length: 24 }, (_, i) => (
+            <i key={i} style={{ "--i": i } as CSSProperties} />
+          ))}
+        </div>
+        <div className="buddy-chip">
+          REPLY <s>8.6s</s> <b>3.6s</b>
         </div>
       </div>
     );

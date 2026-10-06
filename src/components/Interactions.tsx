@@ -6,7 +6,9 @@ import { useEffect, useRef } from "react";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
-function scramble(el: HTMLElement) {
+function scramble(host: HTMLElement) {
+  const lang = document.documentElement.dataset.lang === "mn" ? "mn" : "en";
+  const el = host.querySelector<HTMLElement>(`.t-${lang}`) ?? host;
   const final = el.textContent ?? "";
   const frames = 16;
   let frame = 0;
@@ -29,7 +31,7 @@ function countUp(el: HTMLElement) {
   const start = performance.now();
   const step = (now: number) => {
     const p = Math.min(1, (now - start) / 1600);
-    el.textContent = String(Math.round(target * (1 - Math.pow(2, -10 * p))));
+    el.textContent = Math.round(target * (1 - Math.pow(2, -10 * p))).toLocaleString("en-US");
     if (p < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);

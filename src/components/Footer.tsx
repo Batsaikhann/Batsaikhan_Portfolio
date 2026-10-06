@@ -1,14 +1,17 @@
 import { profile } from "@/data/profile";
 import { Icon } from "./Icon";
+import { Logo } from "./Logo";
+import { T } from "./T";
 
 export function Footer() {
   return (
     <footer className="footer">
       <span className="logo">
-        B<span>/</span>
+        <Logo variant="wordmark" height={34} />
       </span>
       <p>
-        © {new Date().getFullYear()} {profile.name} · Designed & built in {profile.location.split(",")[0]}
+        © {new Date().getFullYear()} {profile.name} ·{" "}
+        <T en={`Designed & built in ${profile.city.en}`} mn={`${profile.city.mn}-д зохиож бүтээв`} />
       </p>
       <div className="socials">
         <a href={profile.github.href} target="_blank" rel="noreferrer" aria-label="GitHub" data-magnetic>
