@@ -1,195 +1,326 @@
-import { experience, profile, projects, skills } from "@/data/profile";
+import type { CSSProperties } from "react";
+import Image from "next/image";
+import { HeroScene } from "@/components/HeroScene";
+import { Icon } from "@/components/Icon";
+import { ProjectCard } from "@/components/ProjectCard";
+import { StackOrbit } from "@/components/StackOrbit";
+import { profile, projects, stats, teamProjects, ticker } from "@/data/profile";
+import portraitPhoto from "../../public/images/mee1.png";
+import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
 
-const nav = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
+// Showcase order: featured SportHub in the middle, flanked by the others.
+const [featured, ...others] = projects;
+const showcase = [
+  { project: others[0], side: "left" as const, featured: false },
+  { project: featured, side: undefined, featured: true },
+  { project: others[1], side: "right" as const, featured: false },
 ];
 
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="scroll-mt-24 py-20">
-      <h2 className="mb-10 flex items-center gap-4 text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-        {title}
-        <span className="h-px flex-1 bg-border" />
-      </h2>
-      {children}
-    </section>
-  );
-}
+const line = (index: number) => ({ "--l": index }) as CSSProperties;
 
 export default function Home() {
-  const initials = profile.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("");
-
   return (
-    <>
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <a href="#top" className="font-mono text-lg font-bold text-accent">
-            {initials}
-          </a>
-          <ul className="hidden gap-8 text-sm text-muted sm:flex">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className="transition-colors hover:text-foreground">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </header>
-
-      <main id="top" className="mx-auto w-full max-w-5xl flex-1 px-6">
-        <section className="flex min-h-[80vh] flex-col justify-center py-20">
-          <p className="mb-4 font-mono text-accent">Hi, my name is</p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">{profile.name}</h1>
-          <p className="mt-3 text-3xl font-semibold text-muted sm:text-5xl">{profile.role}</p>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">{profile.intro}</p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="#projects"
-              className="rounded-md bg-accent px-6 py-3 font-medium text-background transition-opacity hover:opacity-90"
-            >
-              View my work
+    <main>
+      <section className="hero" id="top">
+        <div className="hero-grid" aria-hidden="true" />
+        <div className="hero-copy">
+          <p className="eyebrow intro-1">
+            <span className="pulse-dot" /> {profile.location} · Available for work
+          </p>
+          <h1 aria-label="I build systems that move.">
+            <span className="reveal-line" style={line(0)}>
+              <span>I build</span>
+            </span>
+            <span className="reveal-line" style={line(1)}>
+              <span>systems</span>
+            </span>
+            <span className="reveal-line" style={line(2)}>
+              <span>
+                that <em>move</em>
+                <i className="caret" />
+              </span>
+            </span>
+          </h1>
+          <p className="hero-description intro-2">
+            Full-stack engineer turning ambitious ideas into products — from backend architecture
+            to web, mobile and deployment.
+          </p>
+          <div className="hero-actions intro-3">
+            <a className="button button-primary" href="#work" data-magnetic data-cursor="Go">
+              Explore my work <Icon name="arrow" />
             </a>
-            <a
-              href="#contact"
-              className="rounded-md border border-accent px-6 py-3 font-medium text-accent transition-colors hover:bg-accent/10"
-            >
-              Get in touch
+            <a className="text-link" href={profile.github.href} target="_blank" rel="noreferrer">
+              <Icon name="github" /> {profile.github.label}
             </a>
           </div>
-        </section>
+        </div>
 
-        <Section id="about" title="About">
-          <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
-            <div className="space-y-4 text-lg leading-relaxed text-muted">
-              {profile.about.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
+        <div className="hero-visual">
+          <div className="hero-glow" data-depth="-14" aria-hidden="true" />
+          <div className="hero-scene-wrap" data-depth="-6">
+            <HeroScene />
+          </div>
+          <div className="hero-portrait" data-depth="6">
+            <Image
+              src={portraitPhoto}
+              alt="Batsaikhan working on a laptop"
+              fill
+              priority
+              placeholder="blur"
+              sizes="(max-width: 760px) 92vw, 460px"
+            />
+          </div>
+          <div className="float-card card-commits" data-depth="18" data-lag>
+            <b>
+              250<span>+</span>
+            </b>
+            <small>commits & PRs</small>
+            <div className="mini-bars" aria-hidden="true">
+              {[30, 52, 40, 70, 58, 92].map((h, i) => (
+                <i key={i} style={{ "--h": `${h}%`, "--i": i } as CSSProperties} />
               ))}
             </div>
-            <dl className="space-y-4 rounded-xl border border-border bg-card p-6 text-sm">
-              <div>
-                <dt className="text-muted">Location</dt>
-                <dd className="mt-1 font-medium">{profile.location}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Email</dt>
-                <dd className="mt-1 break-all font-medium">{profile.email}</dd>
-              </div>
-            </dl>
           </div>
-        </Section>
-
-        <Section id="skills" title="Skills">
-          <div className="grid gap-6 sm:grid-cols-3">
-            {skills.map((group) => (
-              <div key={group.group} className="rounded-xl border border-border bg-card p-6">
-                <h3 className="mb-4 font-semibold">{group.group}</h3>
-                <ul className="flex flex-wrap gap-2">
-                  {group.items.map((skill) => (
-                    <li
-                      key={skill}
-                      className="rounded-full bg-accent/10 px-3 py-1 font-mono text-xs text-accent"
-                    >
-                      {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="float-card card-scope" data-depth="26" data-lag>
+            <span>Full-stack</span>
+            <span>Web / Mobile</span>
+            <span>Cloud · DevOps</span>
+            <i className="card-scope-icon">
+              <Icon name="arrowUpRight" size={14} />
+            </i>
           </div>
-        </Section>
-
-        <Section id="projects" title="Projects">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <a
-                key={project.title}
-                href={project.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col rounded-xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-accent"
-              >
-                <h3 className="text-lg font-semibold transition-colors group-hover:text-accent">
-                  {project.title} <span aria-hidden>↗</span>
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                  {project.description}
-                </p>
-                <ul className="mt-6 flex flex-wrap gap-3 font-mono text-xs text-muted">
-                  {project.tags.map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-              </a>
-            ))}
+          <div className="float-pill" data-depth="12" data-lag>
+            <i /> shipping since 2023
           </div>
-        </Section>
+        </div>
 
-        <Section id="experience" title="Experience">
-          <ol className="space-y-10 border-l border-border pl-8">
-            {experience.map((job) => (
-              <li key={`${job.title}-${job.period}`} className="relative">
-                <span className="absolute -left-[37px] top-1.5 h-2.5 w-2.5 rounded-full bg-accent" />
-                <p className="font-mono text-xs text-muted">{job.period}</p>
-                <h3 className="mt-1 text-lg font-semibold">
-                  {job.title} <span className="text-accent">@ {job.company}</span>
-                </h3>
-                <p className="mt-2 max-w-2xl leading-relaxed text-muted">{job.description}</p>
-              </li>
-            ))}
-          </ol>
-        </Section>
+        <a className="scroll-cue intro-4" href="#work" aria-label="Scroll to work">
+          <span className="scroll-circle">
+            <Icon name="arrowDown" size={16} />
+          </span>
+          Scroll to explore
+        </a>
+      </section>
 
-        <Section id="contact" title="Contact">
-          <div className="mx-auto max-w-xl text-center">
-            <h3 className="text-4xl font-bold">Let&apos;s work together</h3>
-            <p className="mt-4 text-lg text-muted">
-              I&apos;m open to new opportunities and collaborations. Whether you have a question or
-              just want to say hi, my inbox is always open.
+      <div className="ticker" aria-hidden="true">
+        <div className="ticker-track">
+          {[0, 1].map((loop) => (
+            <div className="ticker-group" key={loop}>
+              {ticker.map((word) => [<span key={word}>{word}</span>, <i key={`${word}-sep`}>◆</i>])}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <section className="work section" id="work">
+        <header className="work-heading" data-reveal>
+          <div>
+            <p className="eyebrow-label" data-scramble>
+              01 / Selected work
             </p>
-            <a
-              href={`mailto:${profile.email}`}
-              className="mt-8 inline-block rounded-md bg-accent px-8 py-4 font-medium text-background transition-opacity hover:opacity-90"
-            >
-              Say hello
-            </a>
-            <ul className="mt-10 flex justify-center gap-6 text-sm text-muted">
-              {profile.links.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transition-colors hover:text-accent"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <h2>
+              <span className="reveal-line">
+                <span>Built with purpose.</span>
+              </span>
+              <span className="reveal-line">
+                <em>Engineered to scale.</em>
+              </span>
+            </h2>
           </div>
-        </Section>
-      </main>
+          <div className="work-intro">
+            <p>A collection of products and systems I&apos;ve built — from idea to production.</p>
+            <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
+              More on GitHub <Icon name="arrow" size={16} />
+            </a>
+          </div>
+        </header>
 
-      <footer className="border-t border-border py-8 text-center text-sm text-muted">
-        © {new Date().getFullYear()} {profile.name}
-      </footer>
-    </>
+        <div className="showcase">
+          {showcase.map((item, i) => (
+            <ProjectCard
+              key={item.project.slug}
+              project={item.project}
+              total={projects.length}
+              featured={item.featured}
+              side={item.side}
+              index={i}
+            />
+          ))}
+        </div>
+
+        <article className="team-work" data-reveal>
+          <div>
+            <p className="eyebrow-label">04 / Team projects</p>
+            <p className="team-note">Shipped through a team PR workflow.</p>
+          </div>
+          {teamProjects.map((item) => (
+            <div className="team-item" key={item.title}>
+              <b>{item.title}</b>
+              <span>{item.description}</span>
+              <strong>{item.stats}</strong>
+            </div>
+          ))}
+        </article>
+      </section>
+
+      <section className="about section" id="about">
+        <div className="about-ambient" aria-hidden="true" />
+        <div className="about-image" data-reveal>
+          <div className="about-image-inner" data-parallax="0.06">
+            <Image
+              src={graduationPhoto}
+              alt="Batsaikhan on graduation day"
+              fill
+              placeholder="blur"
+              sizes="(max-width: 760px) 92vw, 42vw"
+            />
+          </div>
+          <span className="curtain" aria-hidden="true" />
+          <div className="image-caption">
+            <span data-scramble>02 / The person</span>
+            <b>
+              Engineer by craft.
+              <br />
+              Builder by nature.
+            </b>
+          </div>
+        </div>
+
+        <div className="about-copy" data-reveal>
+          <p className="eyebrow-label" data-scramble>
+            About me
+          </p>
+          <h2>
+            <span className="reveal-line">
+              <span>More than code.</span>
+            </span>
+            <span className="reveal-line">
+              <em>I own the outcome.</em>
+            </span>
+          </h2>
+          <p className="about-lead">
+            I&apos;m Batsaikhan — a full-stack developer who can take a product from the first
+            database schema all the way to production.
+          </p>
+          <p>
+            I care about clean architecture, thoughtful interfaces and systems that stay reliable as
+            they grow. Whether working independently or through a team PR workflow, I focus on
+            shipping real value.
+          </p>
+          <div className="about-stats">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <strong>
+                  <i data-count={stat.value}>{stat.value}</i>
+                  {stat.suffix && <span>{stat.suffix}</span>}
+                </strong>
+                <p>{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="about-orbit" data-parallax="-0.08" aria-hidden="true">
+          <div className="planet" />
+          <svg viewBox="0 0 400 400">
+            <ellipse cx="200" cy="200" rx="190" ry="120" />
+          </svg>
+          <i className="orbit-dot" />
+          <p>Open to opportunities · Let&apos;s build</p>
+        </div>
+
+        <div className="location-card" data-reveal>
+          <p>
+            <Icon name="pin" size={16} />
+            <span>
+              Based in <b>{profile.location}</b>
+            </span>
+          </p>
+          <p>
+            <i className="status-dot" />
+            <span>
+              Available for work <b>Worldwide</b>
+            </span>
+          </p>
+        </div>
+      </section>
+
+      <section className="stack section" id="stack">
+        <header className="stack-heading" data-reveal>
+          <p className="eyebrow-label" data-scramble>
+            03 / Capabilities
+          </p>
+          <h2>
+            <span className="reveal-line">
+              <span>One developer.</span>
+            </span>
+            <span className="reveal-line">
+              <em>Full product scope.</em>
+            </span>
+          </h2>
+        </header>
+        <StackOrbit />
+      </section>
+
+      <section className="contact section" id="contact">
+        <div className="contact-words" data-parallax="0.1" aria-hidden="true">
+          <span>Build</span>
+          <span>Create</span>
+          <span>Ship</span>
+        </div>
+        <div className="contact-planet" aria-hidden="true" />
+        <div className="contact-rings" aria-hidden="true">
+          <i />
+          <i />
+          <i className="ring-orbit">
+            <b />
+          </i>
+        </div>
+        <ul className="contact-topics" aria-hidden="true">
+          <li>Ideas</li>
+          <li>Products</li>
+          <li>Partnerships</li>
+          <li>Opportunities</li>
+        </ul>
+
+        <div className="contact-content" data-reveal>
+          <p className="eyebrow-label">
+            <span className="pulse-dot" /> Let&apos;s talk
+          </p>
+          <h2>
+            <span className="reveal-line">
+              <span>Let&apos;s build</span>
+            </span>
+            <span className="reveal-line">
+              <em>something real.</em>
+            </span>
+          </h2>
+          <p className="contact-sub">
+            Have an idea, a project or just want to say hi? I&apos;m always open to new
+            opportunities.
+          </p>
+          <a
+            className="button button-primary contact-button"
+            href={`mailto:${profile.email}`}
+            data-magnetic
+            data-cursor="Go"
+          >
+            Start a conversation <Icon name="arrow" />
+          </a>
+        </div>
+
+        <div className="contact-links" data-reveal>
+          <a href={profile.github.href} target="_blank" rel="noreferrer">
+            <Icon name="github" size={18} /> {profile.github.label}
+          </a>
+          <a href={profile.linkedin.href}>
+            <Icon name="linkedin" size={18} /> {profile.linkedin.label}
+          </a>
+          <a href={`mailto:${profile.email}`}>
+            <Icon name="mail" size={18} /> {profile.email}
+          </a>
+        </div>
+      </section>
+    </main>
   );
 }
