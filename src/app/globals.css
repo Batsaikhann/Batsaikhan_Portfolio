@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b1120;
+  --foreground: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #5eead4;
+  --card: #111a2e;
+  --border: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
