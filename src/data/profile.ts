@@ -1,86 +1,68 @@
 // Edit this file to update the content shown on the site.
+// Every visible string has an English (en) and Mongolian (mn) version.
+import type { L } from "@/components/T";
 
 export const profile = {
   name: "Batsaikhan",
-  location: "Ulaanbaatar, Mongolia",
+  location: { en: "Ulaanbaatar, Mongolia", mn: "Улаанбаатар, Монгол" } satisfies L,
+  city: { en: "Ulaanbaatar", mn: "Улаанбаатар" } satisfies L,
   email: "erdenesukh.batsaikhan@gmail.com",
   github: { label: "github.com/Batsaikhann", href: "https://github.com/Batsaikhann" },
   // Replace with your real LinkedIn URL.
   linkedin: { label: "LinkedIn", href: "#contact" },
 };
 
-export type Project = {
-  slug: string;
-  number: string;
-  title: string;
-  category: string;
-  description: string;
-  stack: string[];
-  stats: string;
-  visual: "terminal" | "blueprint" | "map";
-  /** What the system is made of — shown in the case study. */
-  modules: string[];
-  /** Set to the live URL to show a LIVE badge and link. */
-  live?: string;
-};
+// Project case studies live in ./projects.ts.
 
-export const projects: Project[] = [
-  {
-    slug: "sporthub",
-    number: "01",
-    title: "SportHub",
-    category: "Sports ecosystem",
-    description:
-      "A complete sports platform built from the ground up — memberships, wallets, entitlements, payments and club discovery across web and mobile.",
-    stack: ["NestJS", "PostgreSQL", "React", "Flutter"],
-    stats: "≈85 commits",
-    visual: "terminal",
-    modules: ["Auth / RBAC", "Wallet / ledger", "Orders / catalog", "Web / mobile / admin"],
-  },
-  {
-    slug: "barilgahub",
-    number: "02",
-    title: "BarilgaHUB",
-    category: "E-commerce platform",
-    description:
-      "Construction materials marketplace connecting stores, suppliers and customers with optimized media, queues and reliable cloud infrastructure.",
-    stack: ["NestJS", "Prisma", "BullMQ", "S3"],
-    stats: "48 commits",
-    visual: "blueprint",
-    modules: ["Storefront", "Admin", "Supplier portal", "Media + queues"],
-  },
-  {
-    slug: "bikemap",
-    number: "03",
-    title: "BikeMap UB",
-    category: "Urban mobility",
-    description:
-      "A safety-first cycling route system for Ulaanbaatar with GPX editing, road snapping and heatmap visualization.",
-    stack: ["Leaflet", "GPX", "Heatmap", "CI/CD"],
-    stats: "≈12 commits",
-    visual: "map",
-    modules: ["GPX editing", "Road snapping", "Heatmap", "CI/CD"],
-  },
-];
-
-export const teamProjects = [
-  { title: "SparkXP", description: "AI learning platform", stats: "23 merged PRs" },
-  { title: "GymHub", description: "Fitness ecosystem", stats: "≈18 merged PRs" },
-];
-
-export const capabilities = [
-  { label: "Frontend", items: ["React", "Next.js", "Vite", "Tailwind CSS", "React Query", "i18next"] },
-  { label: "Backend", items: ["NestJS", "BullMQ", "S3", "REST APIs", "Claude API"] },
-  { label: "Database", items: ["PostgreSQL", "Prisma", "Kysely", "Redis", "Supabase"] },
-  { label: "Mobile", items: ["Flutter", "React Native", "Expo"] },
-  { label: "DevOps", items: ["Railway", "Vercel", "Docker", "GitHub Actions"] },
-  { label: "Design", items: ["Design systems", "SVG", "Leaflet", "GPX"] },
+export const capabilities: Array<{ label: L; items: string[] }> = [
+  { label: { en: "Frontend", mn: "Frontend" }, items: ["React", "Next.js", "Vite", "Tailwind CSS", "React Query", "i18next"] },
+  { label: { en: "Backend", mn: "Backend" }, items: ["NestJS", "BullMQ", "S3", "REST APIs", "Claude API"] },
+  { label: { en: "Database", mn: "Өгөгдлийн сан" }, items: ["PostgreSQL", "Prisma", "Kysely", "Redis", "Supabase"] },
+  { label: { en: "Mobile", mn: "Мобайл" }, items: ["Flutter", "React Native", "Expo"] },
+  { label: { en: "DevOps", mn: "DevOps" }, items: ["Railway", "Vercel", "Docker", "GitHub Actions"] },
+  { label: { en: "Design", mn: "Дизайн" }, items: ["Design systems", "SVG", "Leaflet", "GPX"] },
 ];
 
 export const stats = [
-  { value: 250, suffix: "+", label: "commits & PRs" },
-  { value: 7, suffix: "+", label: "products shipped" },
-  { value: 4, suffix: "", label: "platforms mastered" },
+  { value: 25, suffix: "+", label: { en: "technologies in my stack", mn: "эзэмшсэн технологи" } },
+  { value: 7, suffix: "+", label: { en: "products shipped", mn: "хүргэсэн бүтээгдэхүүн" } },
+  { value: 4, suffix: "", label: { en: "platforms mastered", mn: "эзэмшсэн платформ" } },
 ];
 
 export const ticker = ["NEXT.JS", "NESTJS", "REACT", "FLUTTER", "POSTGRESQL", "TYPESCRIPT", "DOCKER", "VERCEL"];
+
+export const journey: Array<{ period: L; title: string; role: L; note?: L; current?: boolean; kind: "work" | "education" }> = [
+  {
+    period: { en: "Now", mn: "Одоо" },
+    title: "Aether Tech Core LLC",
+    role: { en: "Full-Stack Developer & Team Lead", mn: "Full-Stack хөгжүүлэгч ба багийн ахлагч" },
+    current: true,
+    kind: "work",
+  },
+  {
+    period: { en: "2025", mn: "2025" },
+    title: "Tapatrip LLC",
+    role: { en: "Software Developer Intern", mn: "Програм хөгжүүлэгч, дадлагажигч" },
+    note: { en: "First professional role", mn: "Анхны мэргэжлийн ажил" },
+    kind: "work",
+  },
+  {
+    period: { en: "2025", mn: "2025" },
+    title: "Skytel",
+    role: { en: "Intern", mn: "Дадлагажигч" },
+    kind: "work",
+  },
+  {
+    period: { en: "2022 – 2026", mn: "2022 – 2026" },
+    title: "MUST · ШУТИС",
+    role: {
+      en: "School of ICT · Computer Science · Software Engineering",
+      mn: "МХТС · Компьютерийн ухаан · Програм хангамжийн инженер",
+    },
+    note: {
+      en: "Mongolian University of Science and Technology",
+      mn: "Шинжлэх Ухаан, Технологийн Их Сургууль",
+    },
+    kind: "education",
+  },
+];

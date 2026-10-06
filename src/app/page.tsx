@@ -1,15 +1,22 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { DevIdCard } from "@/components/DevIdCard";
+import { HeroRain } from "@/components/HeroRain";
 import { HeroScene } from "@/components/HeroScene";
 import { Icon } from "@/components/Icon";
 import { ProjectCard } from "@/components/ProjectCard";
+import { TransitionLink } from "@/components/RouteTransition";
 import { StackOrbit } from "@/components/StackOrbit";
-import { profile, projects, stats, teamProjects, ticker } from "@/data/profile";
+import { T, Tx } from "@/components/T";
+import { journey, profile, stats, ticker } from "@/data/profile";
+import { projects } from "@/data/projects";
 import portraitPhoto from "../../public/images/mee1.png";
 import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
 
-// Showcase order: featured SportHub in the middle, flanked by the others.
+// Showcase order: featured SportHub in the middle, flanked by my own two other products.
+// Team projects (SparkXP, GymHub) get their own row below.
 const [featured, ...others] = projects;
+const teamWork = projects.filter((p) => p.status.kind === "team" || p.slug === "gymhub");
 const showcase = [
   { project: others[0], side: "left" as const, featured: false },
   { project: featured, side: undefined, featured: true },
@@ -22,32 +29,47 @@ export default function Home() {
   return (
     <main>
       <section className="hero" id="top">
+        <HeroRain />
         <div className="hero-grid" aria-hidden="true" />
         <div className="hero-copy">
           <p className="eyebrow intro-1">
-            <span className="pulse-dot" /> {profile.location} · Available for work
+            <span className="pulse-dot" /> <Tx text={profile.location} /> ·{" "}
+            <T en="Available for work" mn="Ажилд нээлттэй" />
           </p>
-          <h1 aria-label="I build systems that move.">
+          <h1>
             <span className="reveal-line" style={line(0)}>
-              <span>I build</span>
+              <span>
+                <T en="I build" mn="Би амьд" />
+              </span>
             </span>
             <span className="reveal-line" style={line(1)}>
-              <span>systems</span>
+              <span>
+                <T en="systems" mn="систем" />
+              </span>
             </span>
             <span className="reveal-line" style={line(2)}>
               <span>
-                that <em>move</em>
+                <T
+                  en={
+                    <>
+                      that <em>move</em>
+                    </>
+                  }
+                  mn={<em>бүтээдэг</em>}
+                />
                 <i className="caret" />
               </span>
             </span>
           </h1>
           <p className="hero-description intro-2">
-            Full-stack engineer turning ambitious ideas into products — from backend architecture
-            to web, mobile and deployment.
+            <T
+              en="Full-stack engineer turning ambitious ideas into products — from backend architecture to web, mobile and deployment."
+              mn="Амбицтай санааг бүтээгдэхүүн болгодог full-stack инженер — backend архитектураас эхлээд веб, мобайл, deployment хүртэл."
+            />
           </p>
           <div className="hero-actions intro-3">
             <a className="button button-primary" href="#work" data-magnetic data-cursor="Go">
-              Explore my work <Icon name="arrow" />
+              <T en="Explore my work" mn="Ажлуудыг үзэх" /> <Icon name="arrow" />
             </a>
             <a className="text-link" href={profile.github.href} target="_blank" rel="noreferrer">
               <Icon name="github" /> {profile.github.label}
@@ -65,32 +87,36 @@ export default function Home() {
               src={portraitPhoto}
               alt="Batsaikhan working on a laptop"
               fill
-              priority
+              preload
               placeholder="blur"
               sizes="(max-width: 760px) 92vw, 460px"
             />
           </div>
-          <div className="float-card card-commits" data-depth="18" data-lag>
-            <b>
-              250<span>+</span>
-            </b>
-            <small>commits & PRs</small>
-            <div className="mini-bars" aria-hidden="true">
-              {[30, 52, 40, 70, 58, 92].map((h, i) => (
-                <i key={i} style={{ "--h": `${h}%`, "--i": i } as CSSProperties} />
-              ))}
-            </div>
-          </div>
+          <TransitionLink className="float-card card-building" href="/work/sporthub" label="SportHub" data-depth="18" data-lag data-cursor="View">
+            <small>
+              <i className="status-dot" /> <T en="Now building" mn="Одоо бүтээж буй" />
+            </small>
+            <b>SportHub</b>
+            <span className="building-sub">
+              <T en="Multi-sport platform" mn="Олон спортын платформ" />
+            </span>
+            <span className="building-bar" aria-hidden="true">
+              <i />
+            </span>
+            <span className="building-stack">NestJS · React · Flutter</span>
+          </TransitionLink>
           <div className="float-card card-scope" data-depth="26" data-lag>
             <span>Full-stack</span>
-            <span>Web / Mobile</span>
+            <span>
+              <T en="Web / Mobile" mn="Веб / Мобайл" />
+            </span>
             <span>Cloud · DevOps</span>
             <i className="card-scope-icon">
               <Icon name="arrowUpRight" size={14} />
             </i>
           </div>
           <div className="float-pill" data-depth="12" data-lag>
-            <i /> shipping since 2023
+            <i /> <T en="shipping since 2023" mn="2023 оноос хойш" />
           </div>
         </div>
 
@@ -98,7 +124,7 @@ export default function Home() {
           <span className="scroll-circle">
             <Icon name="arrowDown" size={16} />
           </span>
-          Scroll to explore
+          <T en="Scroll to explore" mn="Доош гүйлгэх" />
         </a>
       </section>
 
@@ -116,21 +142,30 @@ export default function Home() {
         <header className="work-heading" data-reveal>
           <div>
             <p className="eyebrow-label" data-scramble>
-              01 / Selected work
+              <T en="01 / Selected work" mn="01 / Сонгосон ажлууд" />
             </p>
             <h2>
               <span className="reveal-line">
-                <span>Built with purpose.</span>
+                <span>
+                  <T en="Built with purpose." mn="Зорилготой бүтээсэн." />
+                </span>
               </span>
               <span className="reveal-line">
-                <em>Engineered to scale.</em>
+                <em>
+                  <T en="Engineered to scale." mn="Өсөлтөд бэлэн." />
+                </em>
               </span>
             </h2>
           </div>
           <div className="work-intro">
-            <p>A collection of products and systems I&apos;ve built — from idea to production.</p>
+            <p>
+              <T
+                en="A collection of products and systems I've built — from idea to production."
+                mn="Санаанаас production хүртэл хүргэсэн бүтээгдэхүүн, системүүд."
+              />
+            </p>
             <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
-              More on GitHub <Icon name="arrow" size={16} />
+              <T en="More on GitHub" mn="GitHub дээр дэлгэрэнгүй" /> <Icon name="arrow" size={16} />
             </a>
           </div>
         </header>
@@ -148,19 +183,19 @@ export default function Home() {
           ))}
         </div>
 
-        <article className="team-work" data-reveal>
-          <div>
-            <p className="eyebrow-label">04 / Team projects</p>
-            <p className="team-note">Shipped through a team PR workflow.</p>
-          </div>
-          {teamProjects.map((item) => (
-            <div className="team-item" key={item.title}>
-              <b>{item.title}</b>
-              <span>{item.description}</span>
-              <strong>{item.stats}</strong>
-            </div>
+        <div className="team-heading" data-reveal>
+          <p className="eyebrow-label">
+            <T en="Team projects" mn="Багийн төслүүд" />
+          </p>
+          <p className="team-note">
+            <T en="Shipped with product teams through a PR workflow." mn="Бүтээгдэхүүний багуудтай PR урсгалаар хүргэсэн." />
+          </p>
+        </div>
+        <div className="team-grid">
+          {teamWork.map((project, i) => (
+            <ProjectCard key={project.slug} project={project} total={projects.length} index={i} />
           ))}
-        </article>
+        </div>
       </section>
 
       <section className="about section" id="about">
@@ -176,48 +211,104 @@ export default function Home() {
             />
           </div>
           <span className="curtain" aria-hidden="true" />
+          <span className="frame-run" aria-hidden="true" />
+          <span className="frame-run is-bloom" aria-hidden="true" />
           <div className="image-caption">
-            <span data-scramble>02 / The person</span>
+            <span data-scramble>
+              <T en="02 / The person" mn="02 / Хүн" />
+            </span>
             <b>
-              Engineer by craft.
-              <br />
-              Builder by nature.
+              <T
+                en={
+                  <>
+                    Engineer by craft.
+                    <br />
+                    Builder by nature.
+                  </>
+                }
+                mn={
+                  <>
+                    Мэргэжлээрээ инженер.
+                    <br />
+                    Мөн чанараараа бүтээгч.
+                  </>
+                }
+              />
             </b>
           </div>
         </div>
 
         <div className="about-copy" data-reveal>
           <p className="eyebrow-label" data-scramble>
-            About me
+            <T en="About me" mn="Миний тухай" />
           </p>
           <h2>
             <span className="reveal-line">
-              <span>More than code.</span>
+              <span>
+                <T en="More than code." mn="Кодоос илүү." />
+              </span>
             </span>
             <span className="reveal-line">
-              <em>I own the outcome.</em>
+              <em>
+                <T en="I own the outcome." mn="Үр дүнг хариуцна." />
+              </em>
             </span>
           </h2>
           <p className="about-lead">
-            I&apos;m Batsaikhan — a full-stack developer who can take a product from the first
-            database schema all the way to production.
+            <T
+              en="I'm Batsaikhan — a full-stack developer who can take a product from the first database schema all the way to production."
+              mn="Би Батсайхан — өгөгдлийн сангийн анхны схемээс эхлээд production хүртэл бүтээгдэхүүнийг авч явж чаддаг full-stack хөгжүүлэгч."
+            />
           </p>
           <p>
-            I care about clean architecture, thoughtful interfaces and systems that stay reliable as
-            they grow. Whether working independently or through a team PR workflow, I focus on
-            shipping real value.
+            <T
+              en="I care about clean architecture, thoughtful interfaces and systems that stay reliable as they grow. Whether working independently or through a team PR workflow, I focus on shipping real value."
+              mn="Цэвэр архитектур, бодож боловсруулсан интерфейс, өсөх тусам найдвартай хэвээр үлдэх системийг би чухалчилдаг. Бие даан ч, багийн PR урсгалаар ч жинхэнэ үнэ цэнийг хүргэхэд анхаардаг."
+            />
           </p>
           <div className="about-stats">
             {stats.map((stat) => (
-              <div key={stat.label}>
+              <div key={stat.label.en}>
                 <strong>
                   <i data-count={stat.value}>{stat.value}</i>
                   {stat.suffix && <span>{stat.suffix}</span>}
                 </strong>
-                <p>{stat.label}</p>
+                <p>
+                  <Tx text={stat.label} />
+                </p>
               </div>
             ))}
           </div>
+
+          <ol className="journey">
+            {journey.map((item, i) => (
+              <li
+                key={item.title}
+                className={`journey-item is-${item.kind}${item.current ? " is-current" : ""}`}
+                data-reveal
+                style={{ "--delay": `${i * 90}ms` } as CSSProperties}
+              >
+                <span className="journey-period">
+                  {item.current && <i className="status-dot" />}
+                  <Tx text={item.period} />
+                </span>
+                <div>
+                  <b>{item.title}</b>
+                  <p>
+                    <Tx text={item.role} />
+                  </p>
+                  {item.note && (
+                    <small>
+                      <Tx text={item.note} />
+                    </small>
+                  )}
+                </div>
+                <span className="journey-kind">
+                  {item.kind === "work" ? <T en="Work" mn="Ажил" /> : <T en="Education" mn="Боловсрол" />}
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
 
         <div className="about-orbit" data-parallax="-0.08" aria-hidden="true">
@@ -226,36 +317,99 @@ export default function Home() {
             <ellipse cx="200" cy="200" rx="190" ry="120" />
           </svg>
           <i className="orbit-dot" />
-          <p>Open to opportunities · Let&apos;s build</p>
+          <p>
+            <T en="Open to opportunities · Let's build" mn="Боломжид нээлттэй · Хамтдаа бүтээе" />
+          </p>
         </div>
 
         <div className="location-card" data-reveal>
           <p>
             <Icon name="pin" size={16} />
             <span>
-              Based in <b>{profile.location}</b>
+              <T en="Based in" mn="Байршил" /> <b>
+                <Tx text={profile.location} />
+              </b>
             </span>
           </p>
           <p>
             <i className="status-dot" />
             <span>
-              Available for work <b>Worldwide</b>
+              <T en="Available for work" mn="Ажилд нээлттэй" />{" "}
+              <b>
+                <T en="Worldwide" mn="Дэлхий даяар" />
+              </b>
             </span>
           </p>
         </div>
       </section>
 
-      <section className="stack section" id="stack">
-        <header className="stack-heading" data-reveal>
-          <p className="eyebrow-label" data-scramble>
-            03 / Capabilities
+      <section className="devid section" aria-label="Developer ID">
+        <div className="devid-intro" data-reveal>
+          <p className="eyebrow-label">
+            <T en="Hi, I'm" mn="Сайн уу, би" />
           </p>
           <h2>
             <span className="reveal-line">
-              <span>One developer.</span>
+              <span>Batsaikhan</span>
             </span>
             <span className="reveal-line">
-              <em>Full product scope.</em>
+              <em>
+                <T en="Product builder." mn="Бүтээгдэхүүн бүтээгч." />
+              </em>
+            </span>
+          </h2>
+          <p className="devid-quote">
+            <T
+              en="“From the first database schema all the way to production.”"
+              mn="“Өгөгдлийн сангийн анхны схемээс production хүртэл.”"
+            />
+          </p>
+        </div>
+
+        <div className="devid-stage" data-reveal>
+          <DevIdCard />
+        </div>
+
+        <dl className="devid-facts" data-reveal>
+          <p className="eyebrow-label">
+            <T en="Quick facts" mn="Товч мэдээлэл" />
+          </p>
+          {(
+            [
+              [{ en: "Based in", mn: "Байршил" }, profile.location],
+              [{ en: "Studying", mn: "Сургууль" }, { en: "MUST · Software Engineering", mn: "ШУТИС · Програм хангамж" }],
+              [{ en: "Batch", mn: "Он" }, { en: "2022 – 2026", mn: "2022 – 2026" }],
+              [{ en: "Working at", mn: "Ажил" }, { en: "Aether Tech Core LLC", mn: "Aether Tech Core LLC" }],
+              [{ en: "Focus", mn: "Чиглэл" }, { en: "Full-stack · Web · Mobile · AI", mn: "Full-stack · Веб · Мобайл · AI" }],
+            ] as const
+          ).map(([label, value]) => (
+            <div key={label.en}>
+              <dt>
+                <Tx text={label} />
+              </dt>
+              <dd>
+                <Tx text={value} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="stack section" id="stack">
+        <header className="stack-heading" data-reveal>
+          <p className="eyebrow-label" data-scramble>
+            <T en="03 / Capabilities" mn="03 / Чадварууд" />
+          </p>
+          <h2>
+            <span className="reveal-line">
+              <span>
+                <T en="One developer." mn="Нэг хөгжүүлэгч." />
+              </span>
+            </span>
+            <span className="reveal-line">
+              <em>
+                <T en="Full product scope." mn="Бүтээгдэхүүний бүх шат." />
+              </em>
             </span>
           </h2>
         </header>
@@ -277,27 +431,41 @@ export default function Home() {
           </i>
         </div>
         <ul className="contact-topics" aria-hidden="true">
-          <li>Ideas</li>
-          <li>Products</li>
-          <li>Partnerships</li>
-          <li>Opportunities</li>
+          <li>
+            <T en="Ideas" mn="Санаа" />
+          </li>
+          <li>
+            <T en="Products" mn="Бүтээгдэхүүн" />
+          </li>
+          <li>
+            <T en="Partnerships" mn="Түншлэл" />
+          </li>
+          <li>
+            <T en="Opportunities" mn="Боломж" />
+          </li>
         </ul>
 
         <div className="contact-content" data-reveal>
           <p className="eyebrow-label">
-            <span className="pulse-dot" /> Let&apos;s talk
+            <span className="pulse-dot" /> <T en="Let's talk" mn="Ярилцъя" />
           </p>
           <h2>
             <span className="reveal-line">
-              <span>Let&apos;s build</span>
+              <span>
+                <T en="Let's build" mn="Хамтдаа" />
+              </span>
             </span>
             <span className="reveal-line">
-              <em>something real.</em>
+              <em>
+                <T en="something real." mn="бодитыг бүтээе." />
+              </em>
             </span>
           </h2>
           <p className="contact-sub">
-            Have an idea, a project or just want to say hi? I&apos;m always open to new
-            opportunities.
+            <T
+              en="Have an idea, a project or just want to say hi? I'm always open to new opportunities."
+              mn="Санаа, төсөл байна уу, эсвэл зүгээр л мэндлэх үү? Би шинэ боломжид үргэлж нээлттэй."
+            />
           </p>
           <a
             className="button button-primary contact-button"
@@ -305,7 +473,7 @@ export default function Home() {
             data-magnetic
             data-cursor="Go"
           >
-            Start a conversation <Icon name="arrow" />
+            <T en="Start a conversation" mn="Яриа эхлүүлэх" /> <Icon name="arrow" />
           </a>
         </div>
 
