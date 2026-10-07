@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { AboutBridge } from "@/components/AboutBridge";
+import { CodeColumns } from "@/components/CodeColumns";
+import { CodeTerminal } from "@/components/CodeTerminal";
 import { DevIdCard } from "@/components/DevIdCard";
 import { HeroPlanet, HeroProducts } from "@/components/HeroOrbit";
 import { HeroRain } from "@/components/HeroRain";
@@ -156,6 +158,7 @@ export default function Home() {
 
       <section className="about section" id="about">
         <div className="about-ambient" aria-hidden="true" />
+        <CodeColumns />
         <div className="about-image" data-reveal>
           <div className="about-image-inner" data-parallax="0.06">
             <Image
@@ -278,6 +281,8 @@ export default function Home() {
             <T en="Open to opportunities · Let's build" mn="Боломжид нээлттэй · Хамтдаа бүтээе" />
           </p>
         </div>
+
+        <CodeTerminal />
 
         <div className="location-card" data-reveal>
           <p>
