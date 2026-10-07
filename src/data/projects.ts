@@ -30,6 +30,17 @@ import gymLightPartners from "../../public/images/projects/gymhub/light-partners
 import gymLightFaq from "../../public/images/projects/gymhub/light-faq.jpg";
 import gymLightContact from "../../public/images/projects/gymhub/light-contact.jpg";
 import gymLightMobile from "../../public/images/projects/gymhub/light-mobile.jpg";
+import bikeMap from "../../public/images/projects/bikemap/map.jpg";
+import bikeSafeRoute from "../../public/images/projects/bikemap/safe-route.jpg";
+import bikeHeatmap from "../../public/images/projects/bikemap/heatmap.jpg";
+import bikeGpx from "../../public/images/projects/bikemap/gpx-import.jpg";
+import bikeSegmentEdit from "../../public/images/projects/bikemap/segment-edit.jpg";
+import bikeStats from "../../public/images/projects/bikemap/stats.jpg";
+import bikePoi from "../../public/images/projects/bikemap/poi.jpg";
+import bikeProfile from "../../public/images/projects/bikemap/profile.jpg";
+import bikeLogin from "../../public/images/projects/bikemap/login.jpg";
+import bikeAdmin from "../../public/images/projects/bikemap/admin.jpg";
+import bikeMobile from "../../public/images/projects/bikemap/mobile.jpg";
 
 export type Shot = {
   src: StaticImageData;
@@ -418,6 +429,18 @@ export const projects: Project[] = [
       { title: { en: "Admin audit trail", mn: "Админ audit trail" }, text: { en: "Every moderation action is recorded, with role-based access throughout.", mn: "Модерацийн үйлдэл бүрийг бүртгэж, бүх хэсэгт үүрэгт суурилсан эрхтэй." } },
       { title: { en: "Tested & automated", mn: "Тестэлсэн, автомат" }, text: { en: "65 tests across models, auth, voting, GPX import and aggregation run in CI.", mn: "Model, нэвтрэлт, санал, GPX импорт, нэгтгэлийг хамарсан 65 тест CI дээр ажиллана." } },
     ],
-    shots: [],
+    shots: [
+      { src: bikeMap, label: { en: "Bike-lane map", mn: "Дугуйн замын газрын зураг" }, group: { en: "Map", mn: "Газрын зураг" }, url: "bikemap-ub.onrender.com", device: "desktop" },
+      { src: bikeMobile, label: { en: "Mobile map", mn: "Мобайл газрын зураг" }, group: { en: "Mobile", mn: "Мобайл" }, url: "bikemap-ub.onrender.com", device: "mobile" },
+      { src: bikeSafeRoute, label: { en: "Safest route", mn: "Аюулгүй маршрут" }, group: { en: "Map", mn: "Газрын зураг" }, url: "bikemap-ub.onrender.com", device: "desktop" },
+      { src: bikeHeatmap, label: { en: "Road-condition heatmap", mn: "Замын нөхцлийн heatmap" }, group: { en: "Data", mn: "Өгөгдөл" }, url: "bikemap-ub.onrender.com/heatmap/", device: "desktop" },
+      { src: bikeGpx, label: { en: "GPX import & tagging", mn: "GPX оруулж тэмдэглэх" }, group: { en: "Data", mn: "Өгөгдөл" }, url: "bikemap-ub.onrender.com/gpx-import/", device: "desktop" },
+      { src: bikeSegmentEdit, label: { en: "Tag a segment", mn: "Сегмент тэмдэглэх" }, group: { en: "Map", mn: "Газрын зураг" }, url: "bikemap-ub.onrender.com", device: "desktop" },
+      { src: bikeStats, label: { en: "System statistics", mn: "Системийн статистик" }, group: { en: "Data", mn: "Өгөгдөл" }, url: "bikemap-ub.onrender.com/stats/", device: "desktop" },
+      { src: bikePoi, label: { en: "Report a hazard", mn: "Аюулын цэг нэмэх" }, group: { en: "Map", mn: "Газрын зураг" }, url: "bikemap-ub.onrender.com", device: "desktop" },
+      { src: bikeProfile, label: { en: "Rider profile", mn: "Хэрэглэгчийн профайл" }, group: { en: "Account", mn: "Бүртгэл" }, url: "bikemap-ub.onrender.com/profile/", device: "desktop" },
+      { src: bikeLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "Account", mn: "Бүртгэл" }, url: "bikemap-ub.onrender.com/login/", device: "desktop" },
+      { src: bikeAdmin, label: { en: "Django admin", mn: "Django админ" }, group: { en: "Admin", mn: "Админ" }, url: "bikemap-ub.onrender.com/admin/", device: "desktop" },
+    ],
   },
 ];
