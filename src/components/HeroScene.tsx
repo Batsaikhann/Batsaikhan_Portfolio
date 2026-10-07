@@ -35,11 +35,12 @@ export function HeroScene() {
 
       let renderer: InstanceType<typeof THREE.WebGLRenderer>;
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
       } catch {
         return; // No WebGL — keep the CSS fallback.
       }
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+      // Soft, masked background terrain: 1× resolution is visually identical and far cheaper.
+      renderer.setPixelRatio(1);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       host.appendChild(renderer.domElement);
 
@@ -146,8 +147,11 @@ export function HeroScene() {
 
       let frame = 0;
       const timer = new THREE.Timer();
+      const story = host.closest<HTMLElement>(".story");
       const render = (now: number) => {
         frame = 0;
+        // Faded out once the hero story leaves the hero — keep the loop alive but skip drawing.
+        if (story && /portal|work|next/.test(story.dataset.phase ?? "")) return schedule();
         timer.update(now);
         const t = timer.getElapsed();
         camera.position.x += (pointerX * 0.7 + Math.sin(t * 0.12) * 0.25 - camera.position.x) * 0.04;

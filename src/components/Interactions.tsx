@@ -111,7 +111,7 @@ export function Interactions() {
 
     if (reduced) return cleanup;
 
-    const lenis = new Lenis({ autoRaf: true, anchors: true, lerp: 0.16 });
+    const lenis = new Lenis({ autoRaf: true, anchors: true, smoothWheel: false });
     setLenis(lenis);
     cleanups.push(() => {
       setLenis(null);
@@ -190,7 +190,8 @@ export function Interactions() {
     let followX = 0;
     let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
-    const heroCopy = document.querySelector<HTMLElement>(".hero-copy");
+    // Inside the pinned story the copy is choreographed by HeroStory instead.
+    const heroCopy = document.querySelector<HTMLElement>(".hero-copy:not(.story .hero-copy)");
     const ticker = document.querySelector<HTMLElement>(".ticker-track");
     if (ticker) ticker.style.animation = "none";
 

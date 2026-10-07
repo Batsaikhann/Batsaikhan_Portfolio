@@ -1,7 +1,9 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { DevIdCard } from "@/components/DevIdCard";
+import { HeroPlanet, HeroProducts } from "@/components/HeroOrbit";
 import { HeroRain } from "@/components/HeroRain";
+import { HeroStory } from "@/components/HeroStory";
 import { HeroScene } from "@/components/HeroScene";
 import { Icon } from "@/components/Icon";
 import { ProjectShowcase } from "@/components/ProjectShowcase";
@@ -10,14 +12,19 @@ import { StackOrbit } from "@/components/StackOrbit";
 import { T, Tx } from "@/components/T";
 import { journey, profile, stats, ticker } from "@/data/profile";
 import { projects } from "@/data/projects";
-import portraitPhoto from "../../public/images/mee1.png";
+import portraitPhoto from "../../public/images/hero/portrait-cutout.png";
 import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
+
+const sporthubShot = projects.find((p) => p.slug === "sporthub")?.shots[0];
+const storyProjects = ["barilgahub", "sporthub", "gymhub", "bikemap", "sparkxp"].flatMap((slug) => projects.filter((p) => p.slug === slug));
+const heroProducts = ["barilgahub", "gymhub", "sparkxp"].flatMap((slug) => projects.filter((p) => p.slug === slug));
 
 const line = (index: number) => ({ "--l": index }) as CSSProperties;
 
 export default function Home() {
   return (
     <main>
+      <HeroStory projects={storyProjects} silhouette={portraitPhoto}>
       <section className="hero" id="top">
         <HeroRain />
         <div className="hero-grid" data-depth="-3" data-lag aria-hidden="true" />
@@ -68,8 +75,9 @@ export default function Home() {
         </div>
 
         <div className="hero-visual">
-          {/* Depth stack, back to front: grid (-3) · glow · rock planes (-7) · portrait (10) · cards (12–16). */}
+          {/* Depth stack, back to front: grid (-3) · glow · rock planes (-7) · planet (-6) · portrait (10) · cards (12–24). */}
           <div className="hero-glow" data-depth="-5" aria-hidden="true" />
+          <HeroPlanet projects={projects} />
           <div className="hero-scene-wrap" data-depth="-7">
             <HeroScene />
           </div>
@@ -85,6 +93,7 @@ export default function Home() {
             />
             <span className="portrait-rim" aria-hidden="true" />
           </div>
+          <div className="hero-cards">
           <TransitionLink className="float-card card-building" href="/work/sporthub" label="SportHub" data-depth="16" data-lag data-cursor="View">
             <small>
               <i className="status-dot" /> <T en="Now building" mn="Одоо бүтээж буй" />
@@ -97,6 +106,11 @@ export default function Home() {
               <i />
             </span>
             <span className="building-stack">NestJS · React · Flutter</span>
+            {sporthubShot && (
+              <span className="building-shot">
+                <Image src={sporthubShot.src} alt="" sizes="240px" />
+              </span>
+            )}
           </TransitionLink>
           <div className="float-card card-scope" data-depth="14" data-lag>
             <span>Full-stack</span>
@@ -107,6 +121,8 @@ export default function Home() {
             <i className="card-scope-icon">
               <Icon name="arrowUpRight" size={14} />
             </i>
+          </div>
+          <HeroProducts projects={heroProducts} />
           </div>
           <div className="float-pill" data-depth="12" data-lag>
             <i /> <T en="shipping since 2023" mn="2023 оноос хойш" />
@@ -120,6 +136,7 @@ export default function Home() {
           <T en="Scroll to explore" mn="Доош гүйлгэх" />
         </a>
       </section>
+      </HeroStory>
 
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track">
@@ -130,41 +147,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
-      <section className="work section" id="work">
-        <header className="work-heading" data-reveal>
-          <div>
-            <p className="eyebrow-label" data-scramble>
-              <T en="01 / Selected work" mn="01 / Сонгосон ажлууд" />
-            </p>
-            <h2>
-              <span className="reveal-line">
-                <span>
-                  <T en="Built with purpose." mn="Зорилготой бүтээсэн." />
-                </span>
-              </span>
-              <span className="reveal-line">
-                <em>
-                  <T en="Engineered to scale." mn="Өсөлтөд бэлэн." />
-                </em>
-              </span>
-            </h2>
-          </div>
-          <div className="work-intro">
-            <p>
-              <T
-                en="A collection of products and systems I've built — from idea to production."
-                mn="Санаанаас production хүртэл хүргэсэн бүтээгдэхүүн, системүүд."
-              />
-            </p>
-            <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
-              <T en="More on GitHub" mn="GitHub дээр дэлгэрэнгүй" /> <Icon name="arrow" size={16} />
-            </a>
-          </div>
-        </header>
-
-        <ProjectShowcase projects={projects} />
-      </section>
 
       <section className="about section" id="about">
         <div className="about-ambient" aria-hidden="true" />
@@ -183,7 +165,7 @@ export default function Home() {
           <span className="frame-run is-bloom" aria-hidden="true" />
           <div className="image-caption">
             <span data-scramble>
-              <T en="02 / The person" mn="02 / Хүн" />
+              <T en="01 / The person" mn="01 / Хүн" />
             </span>
             <b>
               <T
@@ -310,6 +292,41 @@ export default function Home() {
             </span>
           </p>
         </div>
+      </section>
+
+      <section className="work section" id="work">
+        <header className="work-heading" data-reveal>
+          <div>
+            <p className="eyebrow-label" data-scramble>
+              <T en="02 / Selected work" mn="02 / Сонгосон ажлууд" />
+            </p>
+            <h2>
+              <span className="reveal-line">
+                <span>
+                  <T en="Built with purpose." mn="Зорилготой бүтээсэн." />
+                </span>
+              </span>
+              <span className="reveal-line">
+                <em>
+                  <T en="Engineered to scale." mn="Өсөлтөд бэлэн." />
+                </em>
+              </span>
+            </h2>
+          </div>
+          <div className="work-intro">
+            <p>
+              <T
+                en="A collection of products and systems I've built — from idea to production."
+                mn="Санаанаас production хүртэл хүргэсэн бүтээгдэхүүн, системүүд."
+              />
+            </p>
+            <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
+              <T en="More on GitHub" mn="GitHub дээр дэлгэрэнгүй" /> <Icon name="arrow" size={16} />
+            </a>
+          </div>
+        </header>
+
+        <ProjectShowcase projects={projects} />
       </section>
 
       <section className="devid section" aria-label="Developer ID">

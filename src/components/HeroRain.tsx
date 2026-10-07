@@ -97,9 +97,12 @@ export function HeroRain() {
     let frame = 0;
     let last = 0;
     let visible = true;
+    // Once the hero story has moved past the hero, the rain is faded out — stop drawing it.
+    const story = canvas.closest<HTMLElement>(".story");
     const loop = (now: number) => {
       frame = requestAnimationFrame(loop);
       if (!visible || document.hidden || now - last < 33) return; // ~30fps is plenty
+      if (story && /portal|work|next/.test(story.dataset.phase ?? "")) return;
       last = now;
       step();
       draw();
