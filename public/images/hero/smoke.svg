@@ -1,0 +1,15 @@
+<!-- Source for smoke.webp (pre-rendered for scroll performance). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <filter id="s" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".009 .014" numOctaves="5" seed="12"/>
+      <feColorMatrix values="0 0 0 0 .95  0 0 0 0 .1  0 0 0 0 .14  0 0 0 3 -1.2"/>
+    </filter>
+    <radialGradient id="fade" cx="50%" cy="60%" r="55%">
+      <stop offset=".35" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="m"><rect width="800" height="500" fill="url(#fade)"/></mask>
+  </defs>
+  <rect width="800" height="500" filter="url(#s)" mask="url(#m)"/>
+</svg>

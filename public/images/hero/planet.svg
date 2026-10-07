@@ -1,0 +1,35 @@
+<!-- Source for planet.webp (pre-rendered: live SVG noise filters are too slow to rasterise while scrolling). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <radialGradient id="shade" cx="44%" cy="40%" r="62%">
+      <stop offset="0" stop-color="#4a0b13"/>
+      <stop offset=".5" stop-color="#1e0508"/>
+      <stop offset="1" stop-color="#080304"/>
+    </radialGradient>
+    <radialGradient id="limb" cx="50%" cy="50%" r="50%">
+      <stop offset=".72" stop-color="#ff3b4f" stop-opacity="0"/>
+      <stop offset=".93" stop-color="#ff3b4f" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ff6a7a" stop-opacity=".55"/>
+    </radialGradient>
+    <filter id="clouds" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".0075" numOctaves="6" seed="4"/>
+      <feColorMatrix values="0 0 0 0 .92  0 0 0 0 .1  0 0 0 0 .14  0 0 0 3.6 -1.75"/>
+    </filter>
+    <filter id="dust" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="4" seed="9"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 .3  0 0 0 0 .32  0 0 0 4 -2.3"/>
+    </filter>
+    <filter id="veins" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="turbulence" baseFrequency=".014" numOctaves="3" seed="21"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 .3  0 0 0 0 .34  -10 0 0 0 1.1"/>
+    </filter>
+    <clipPath id="disc"><circle cx="300" cy="300" r="300"/></clipPath>
+  </defs>
+  <g clip-path="url(#disc)">
+    <rect width="600" height="600" fill="url(#shade)"/>
+    <rect width="600" height="600" filter="url(#clouds)" opacity=".8"/>
+    <rect width="600" height="600" filter="url(#veins)" opacity=".3"/>
+    <rect width="600" height="600" filter="url(#dust)" opacity=".28"/>
+    <circle cx="300" cy="300" r="300" fill="url(#limb)"/>
+  </g>
+</svg>
