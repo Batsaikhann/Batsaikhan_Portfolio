@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Mono, JetBrains_Mono, Manrope, Syne, Unbounded } from "next/font/google";
+import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import Script from "next/script";
 import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
@@ -8,36 +8,17 @@ import { RouteTransition } from "@/components/RouteTransition";
 import { langInitScript } from "@/components/T";
 import "./globals.css";
 
-// Syne and DM Mono have no Cyrillic; globals.css stacks them with Unbounded / JetBrains Mono
-// (cyrillic subset only, downloaded only when Mongolian text is on screen).
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+// Two families cover the whole UI in both languages. Mongolian needs "cyrillic-ext" as well
+// as "cyrillic": Ө ө Ү ү (U+04E8–04E9, U+04AE–04AF) are outside the basic Cyrillic subset.
+const sans = Manrope({
+  variable: "--font-sans",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
 });
 
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
-  subsets: ["cyrillic"],
-  weight: ["500", "600", "700"],
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jb-mono",
-  subsets: ["cyrillic"],
-  weight: ["400", "500"],
+const mono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -57,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-lang="en"
-      className={`${syne.variable} ${unbounded.variable} ${manrope.variable} ${dmMono.variable} ${jetbrainsMono.variable}`}
+      className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <body>

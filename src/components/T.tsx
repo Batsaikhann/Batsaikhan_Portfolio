@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
+import { Icon } from "./Icon";
 
 export type Lang = "en" | "mn";
 export type L = { en: string; mn: string };
@@ -23,7 +24,22 @@ export function T({ en, mn }: { en: ReactNode; mn: ReactNode }) {
   );
 }
 
+/** "→" isn't in the UI fonts' subsets, so data strings draw it as the site's SVG arrow instead of a fallback glyph. */
+function withArrows(text: string): ReactNode {
+  if (!text.includes("→")) return text;
+  return text.split("→").map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && (
+        <span className="text-arrow">
+          <Icon name="arrow" size={14} />
+        </span>
+      )}
+      {part}
+    </Fragment>
+  ));
+}
+
 /** Shorthand for a bilingual data string. */
 export function Tx({ text }: { text: L }) {
-  return <T en={text.en} mn={text.mn} />;
+  return <T en={withArrows(text.en)} mn={withArrows(text.mn)} />;
 }

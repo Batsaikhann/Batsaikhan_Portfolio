@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-const GLYPHS =
-  "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789{}<>/=+*";
+// Mongolian Cyrillic + code glyphs — all inside the mono font, so the rain never hits a fallback font.
+const GLYPHS = "БГДЁЖЗИЙЛПФЦЧШЩЪЫЬЭЮЯӨҮбгджзлпфцшщыэюяөү0123456789{}<>/=+*";
 
 type Drop = { x: number; y: number; speed: number; size: number; alpha: number; length: number; chars: string[] };
 
@@ -54,11 +54,14 @@ export function HeroRain() {
       );
     };
 
+    // Canvas can't resolve CSS variables, so read the hashed next/font family name once.
+    const monoFamily = getComputedStyle(document.documentElement).getPropertyValue("--font-mono").trim() || "monospace";
+
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
       ctx.textAlign = "center";
       for (const d of drops) {
-        ctx.font = `600 ${d.size}px "DM Mono", "JetBrains Mono", monospace`;
+        ctx.font = `600 ${d.size}px ${monoFamily}`;
         for (let i = 0; i < d.length; i++) {
           const y = d.y - i * d.size * 1.1;
           if (y < -d.size || y > height + d.size) continue;

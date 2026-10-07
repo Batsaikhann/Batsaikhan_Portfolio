@@ -137,7 +137,11 @@ export function Lightbox({ shots, index, onIndex, onClose }: Props) {
         <span aria-hidden="true">×</span>
       </button>
       <p className="lightbox-hint" aria-hidden="true">
-        ← → · Esc · Click to zoom
+        <span className="lightbox-hint-arrows">
+          <Icon name="arrow" size={12} />
+          <Icon name="arrow" size={12} />
+        </span>
+        · Esc · Click to zoom
       </p>
     </div>,
     document.body,
