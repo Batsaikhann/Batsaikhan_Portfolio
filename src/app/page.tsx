@@ -125,7 +125,7 @@ export default function Home() {
         <div className="ticker-track">
           {[0, 1].map((loop) => (
             <div className="ticker-group" key={loop}>
-              {ticker.map((word) => [<span key={word}>{word}</span>, <i key={`${word}-sep`}>◆</i>])}
+              {ticker.map((word) => [<span key={word}>{word}</span>, <i key={`${word}-sep`} aria-hidden="true" />])}
             </div>
           ))}
         </div>

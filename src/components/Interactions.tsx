@@ -111,7 +111,7 @@ export function Interactions() {
 
     if (reduced) return cleanup;
 
-    const lenis = new Lenis({ autoRaf: true, anchors: true, lerp: 0.09 });
+    const lenis = new Lenis({ autoRaf: true, anchors: true, lerp: 0.16 });
     setLenis(lenis);
     cleanups.push(() => {
       setLenis(null);
@@ -203,8 +203,6 @@ export function Interactions() {
 
     let mouseX = innerWidth / 2;
     let mouseY = innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
     let glowX = mouseX;
     let glowY = mouseY;
     let lastY = scrollY;
@@ -215,9 +213,26 @@ export function Interactions() {
     let frame = 0;
     let lastProgressY = -1;
 
+    // Layout values that only change on resize — reading them every frame forces reflows.
+    let maxScroll = 0;
+    let tickerHalf = 0;
+    const measure = () => {
+      maxScroll = root.scrollHeight - innerHeight;
+      tickerHalf = ticker ? ticker.scrollWidth / 2 : 0;
+    };
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(document.body);
+    if (ticker) resizeObserver.observe(ticker);
+    cleanups.push(() => resizeObserver.disconnect());
+
     listen(window, "pointermove", (event) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
+      // Cursor tracks the pointer 1:1 on the event itself — no easing, no frame of lag.
+      const at = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      if (dotRef.current) dotRef.current.style.transform = at;
+      if (ringRef.current) ringRef.current.style.transform = at;
     });
 
     const loop = () => {
@@ -225,19 +240,26 @@ export function Interactions() {
       const velocity = y - lastY;
       if (velocity !== 0) direction = velocity > 0 ? 1 : -1;
 
+      // Read all geometry first, then write styles, so the frame lays out only once.
+      const followHost = follow && y < innerHeight * 1.2 ? follow.parentElement!.getBoundingClientRect() : null;
+      const parallaxRects = parallax.map((el) => el.parentElement!.getBoundingClientRect());
+      const line = innerHeight * 0.62;
+      const progressRects =
+        y !== lastProgressY
+          ? progressHosts.map(({ el, steps }) => ({
+              rect: el.getBoundingClientRect(),
+              stepTops: steps.map((step) => step.getBoundingClientRect().top),
+            }))
+          : null;
+
       if (finePointer) {
-        ringX += (mouseX - ringX) * 0.2;
-        ringY += (mouseY - ringY) * 0.2;
         glowX += (mouseX - glowX) * 0.06;
         glowY += (mouseY - glowY) * 0.06;
-        if (dotRef.current) dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-        if (ringRef.current) ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
         if (glowRef.current) glowRef.current.style.transform = `translate3d(${glowX - 300}px, ${glowY - 300}px, 0)`;
       }
 
       nav?.classList.toggle("is-scrolled", y > 40);
-      const max = root.scrollHeight - innerHeight;
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${maxScroll > 0 ? Math.min(1, y / maxScroll) : 0})`;
 
       if (heroCopy && y < innerHeight * 1.2) {
         heroCopy.style.translate = `0 ${y * 0.18}px`;
@@ -252,15 +274,14 @@ export function Interactions() {
         layer.el.style.translate = `${layer.x.toFixed(2)}px ${layer.y.toFixed(2)}px`;
       }
 
-      if (follow && y < innerHeight * 1.2) {
-        const host = follow.parentElement!.getBoundingClientRect();
-        followX += (mouseX - host.left - followX) * 0.07;
-        followY += (mouseY - host.top - followY) * 0.07;
+      if (follow && followHost) {
+        followX += (mouseX - followHost.left - followX) * 0.07;
+        followY += (mouseY - followHost.top - followY) * 0.07;
         follow.style.transform = `translate3d(${followX.toFixed(1)}px, ${followY.toFixed(1)}px, 0)`;
       }
 
-      for (const el of parallax) {
-        const host = el.parentElement!.getBoundingClientRect();
+      for (const [i, el] of parallax.entries()) {
+        const host = parallaxRects[i];
         const offset = host.top + host.height / 2 - innerHeight / 2;
         if (Math.abs(offset) < innerHeight * 1.5) {
           const vy = Number(el.dataset.parallax ?? 0);
@@ -270,20 +291,19 @@ export function Interactions() {
       }
 
       // Scroll-linked progress only needs work when the page actually moved.
-      if (y !== lastProgressY) {
+      if (progressRects) {
         lastProgressY = y;
-        const line = innerHeight * 0.62;
-        for (const { el, steps } of progressHosts) {
-          const rect = el.getBoundingClientRect();
-          if (rect.bottom < -innerHeight || rect.top > innerHeight * 2) continue;
+        progressHosts.forEach(({ el, steps }, i) => {
+          const { rect, stepTops } = progressRects[i];
+          if (rect.bottom < -innerHeight || rect.top > innerHeight * 2) return;
           const p = Math.min(1, Math.max(0, (line - rect.top) / rect.height));
           el.style.setProperty("--progress", p.toFixed(4));
-          for (const step of steps) step.classList.toggle("is-reached", step.getBoundingClientRect().top < line);
-        }
+          steps.forEach((step, j) => step.classList.toggle("is-reached", stepTops[j] < line));
+        });
       }
 
       if (ticker) {
-        const half = ticker.scrollWidth / 2;
+        const half = tickerHalf;
         const target = tickerHover ? 0.15 : 0.6 + Math.min(Math.abs(velocity), 60) * 0.3;
         tickerSpeed += (target - tickerSpeed) * 0.08;
         tickerX -= tickerSpeed * direction;

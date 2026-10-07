@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Project } from "@/data/projects";
+import { Icon } from "./Icon";
 
 // Animated product motifs used on project cards and case-study pages.
 // Replace with real screenshots later by rendering an <Image> instead.
@@ -15,10 +16,10 @@ export function ProjectVisual({ type }: { type: Project["visual"] }) {
         </div>
         <div className="terminal-body">
           <div className="terminal-lines">
-            <span><b>→</b> auth / RBAC</span>
-            <span><b>→</b> wallet / ledger</span>
-            <span><b>→</b> orders / catalog</span>
-            <span><b>→</b> web / mobile / admin</span>
+            <span><b><Icon name="arrow" size={12} /></b> auth / RBAC</span>
+            <span><b><Icon name="arrow" size={12} /></b> wallet / ledger</span>
+            <span><b><Icon name="arrow" size={12} /></b> orders / catalog</span>
+            <span><b><Icon name="arrow" size={12} /></b> web / mobile / admin</span>
             <em>system.status: healthy</em>
           </div>
           <div className="terminal-chart" aria-hidden="true">

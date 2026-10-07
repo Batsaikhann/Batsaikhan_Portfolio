@@ -194,7 +194,7 @@ export const projects: Project[] = [
       { title: { en: "Backend API", mn: "Backend API" }, text: { en: "NestJS + Prisma modular monolith with Redis, Meilisearch and BullMQ.", mn: "Redis, Meilisearch, BullMQ-тэй NestJS + Prisma modular monolith." } },
     ],
     highlights: [
-      { title: { en: "Product ≠ offer", mn: "Бараа ≠ санал" }, text: { en: "One canonical product, many supplier offers — price, stock and delivery compared side by side.", mn: "Нэг үндсэн бараа, олон нийлүүлэгчийн санал — үнэ, үлдэгдэл, хүргэлтийг зэрэгцүүлж харьцуулна." } },
+      { title: { en: "Product vs. offer", mn: "Бараа ба санал" }, text: { en: "One canonical product, many supplier offers — price, stock and delivery compared side by side.", mn: "Нэг үндсэн бараа, олон нийлүүлэгчийн санал — үнэ, үлдэгдэл, хүргэлтийг зэрэгцүүлж харьцуулна." } },
       { title: { en: "Real catalog import", mn: "Бодит каталог импорт" }, text: { en: "A scraper → image → import pipeline loaded 2,136 products from a public catalog.", mn: "Scraper → зураг → импорт урсгалаар нийтийн каталогаас 2,136 бараа оруулсан." } },
       { title: { en: "Warehouse maps", mn: "Агуулахын газрын зураг" }, text: { en: "Supplier warehouses shown on Mapbox or a key-free OpenStreetMap fallback.", mn: "Нийлүүлэгчийн агуулахыг Mapbox эсвэл түлхүүргүй OpenStreetMap дээр харуулна." } },
       { title: { en: "Trust & notifications", mn: "Итгэл ба мэдэгдэл" }, text: { en: "Verified-purchase reviews, supplier ratings, and in-app plus optional email/SMS notifications.", mn: "Баталгаажсан худалдан авалтын сэтгэгдэл, нийлүүлэгчийн үнэлгээ, апп дотор болон имэйл/SMS мэдэгдэл." } },
@@ -242,8 +242,8 @@ export const projects: Project[] = [
         mn: "Зургаан app-д хуваасан Django backend — accounts (JWT + RBAC), segments, POI, crowd aggregation, routes, audit log. Дугуйн замыг OpenStreetMap-аас импортолж, саналыг SHA-256 давхардал шалгалттай олонхийн зарчмаар нэгтгэж, OSRM маршрут safety-first tie-breaker ашиглана.",
       },
       result: {
-        en: "Delivered as my diploma project with 65 automated tests (≥40% coverage) running in GitHub Actions CI, Swagger API docs, a Docker Compose setup and a Render deployment.",
-        mn: "GitHub Actions CI дээр ажилладаг 65 автомат тест (≥40% хамрах хүрээ), Swagger API баримт, Docker Compose тохиргоо, Render байршуулалттайгаар дипломын ажил болгон хүлээлгэн өгсөн.",
+        en: "Delivered as my diploma project with 65 automated tests (40%+ coverage) running in GitHub Actions CI, Swagger API docs, a Docker Compose setup and a Render deployment.",
+        mn: "GitHub Actions CI дээр ажилладаг 65 автомат тест (40%-иас дээш хамрах хүрээ), Swagger API баримт, Docker Compose тохиргоо, Render байршуулалттайгаар дипломын ажил болгон хүлээлгэн өгсөн.",
       },
     },
     responsibilities: [

@@ -192,7 +192,7 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
           expand
           className="sc-card"
           style={{ "--dir": dir } as CSSProperties}
-          data-cursor="View ↗"
+          data-cursor="View"
           aria-label={`${project.title} — view case study`}
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
