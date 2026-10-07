@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { AmbientAudio } from "./AmbientAudio";
 import { Icon } from "./Icon";
 import { LangSwitch } from "./LangSwitch";
 import { Logo } from "./Logo";
@@ -56,6 +57,8 @@ export function Nav() {
         </>,
         { className: "nav-cta", magnetic: true },
       )}
+      {/* Lives in the persistent nav, so the soundtrack never restarts between sections or routes. */}
+      <AmbientAudio />
       <LangSwitch />
       <button
         className={`menu-button ${menuOpen ? "open" : ""}`}

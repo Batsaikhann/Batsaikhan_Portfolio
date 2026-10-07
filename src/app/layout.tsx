@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import Script from "next/script";
+import { BackToTop } from "@/components/BackToTop";
 import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
 import { Nav } from "@/components/Nav";
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Nav />
             {children}
             <Footer />
+            <BackToTop />
           </div>
         </RouteTransition>
       </body>

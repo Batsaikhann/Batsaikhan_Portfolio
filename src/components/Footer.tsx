@@ -17,8 +17,8 @@ export function Footer() {
         <a href={profile.github.href} target="_blank" rel="noreferrer" aria-label="GitHub" data-magnetic>
           <Icon name="github" size={18} />
         </a>
-        <a href={profile.linkedin.href} aria-label="LinkedIn" data-magnetic>
-          <Icon name="linkedin" size={18} />
+        <a href={profile.instagram.href} target="_blank" rel="noreferrer" aria-label="Instagram" data-magnetic>
+          <Icon name="instagram" size={18} />
         </a>
         <a href={`mailto:${profile.email}`} aria-label="Email" data-magnetic>
           <Icon name="mail" size={18} />

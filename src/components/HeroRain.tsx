@@ -97,23 +97,38 @@ export function HeroRain() {
     let frame = 0;
     let last = 0;
     let visible = true;
-    // Once the hero story has moved past the hero, the rain is faded out — stop drawing it.
+    // Once the hero story has moved past the hero, the rain is faded out — stop the loop entirely.
     const story = canvas.closest<HTMLElement>(".story");
+    const running = () => visible && !document.hidden && !(story && /portal|work|next/.test(story.dataset.phase ?? ""));
     const loop = (now: number) => {
+      if (!running()) {
+        frame = 0;
+        return;
+      }
       frame = requestAnimationFrame(loop);
-      if (!visible || document.hidden || now - last < 33) return; // ~30fps is plenty
-      if (story && /portal|work|next/.test(story.dataset.phase ?? "")) return;
+      if (now - last < 33) return; // ~30fps is plenty
       last = now;
       step();
       draw();
     };
-    frame = requestAnimationFrame(loop);
-    const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+    const resume = () => {
+      if (!frame && running()) frame = requestAnimationFrame(loop);
+    };
+    resume();
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      resume();
+    });
     io.observe(canvas);
+    const phaseObserver = new MutationObserver(resume);
+    if (story) phaseObserver.observe(story, { attributeFilter: ["data-phase"] });
+    document.addEventListener("visibilitychange", resume);
 
     return () => {
       cancelAnimationFrame(frame);
       io.disconnect();
+      phaseObserver.disconnect();
+      document.removeEventListener("visibilitychange", resume);
       resizeObserver.disconnect();
     };
   }, []);

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import type { Project } from "@/data/projects";
 import { BrowserFrame } from "./BrowserFrame";
 import { Icon } from "./Icon";
@@ -9,29 +9,31 @@ import { ProjectVisual } from "./ProjectVisual";
 import { TransitionLink } from "./RouteTransition";
 import { T, Tx } from "./T";
 
-const FRAME_MS = 3200;
 const pad = (n: number) => String(n).padStart(2, "0");
+const HOVER_MS = 140;
 
-/** Screenshot composition for a project: browser frame with an optional phone in front. */
-function ShowcaseVisual({ project, frame = 0, priority }: { project: Project; frame?: number; priority?: boolean }) {
-  const [desktop, ...more] = project.shots.filter((shot) => shot.device === "desktop");
+/** Browser mockup with the phone overlapping its lower-left corner — real screenshots only. */
+function ShowcaseVisual({ project }: { project: Project }) {
+  const desktop = project.shots.find((shot) => shot.device === "desktop");
   const phone = project.shots.find((shot) => shot.device === "mobile");
 
   if (!desktop) {
     return (
       <div className="sc-visual is-motif">
-        <ProjectVisual type={project.visual} />
+        <div className="sc-browser">
+          <ProjectVisual type={project.visual} />
+        </div>
       </div>
     );
   }
   return (
     <div className={`sc-visual${phone ? " has-phone" : ""}`}>
       <div className="sc-browser">
-        <BrowserFrame shot={desktop} frames={more} frame={frame} sizes="(max-width: 760px) 92vw, 620px" priority={priority} />
+        <BrowserFrame shot={desktop} sizes="(max-width: 760px) 92vw, (max-width: 1100px) 70vw, 760px" />
       </div>
       {phone && (
         <div className="sc-phone">
-          <BrowserFrame shot={phone} sizes="160px" />
+          <BrowserFrame shot={phone} sizes="(max-width: 760px) 30vw, 180px" />
         </div>
       )}
     </div>
@@ -39,118 +41,103 @@ function ShowcaseVisual({ project, frame = 0, priority }: { project: Project; fr
 }
 
 /**
- * Featured work as a single active showcase. Exactly one project is active and clickable;
- * its neighbours sit behind it as faint, non-interactive previews. Projects change only via
- * the list, arrows, dots, ← → keys or a horizontal swipe — page scrolling is never touched.
+ * Selected work: one large featured panel, a project list on the left and a thumbnail strip below.
+ * Projects change via the list (click or hover), thumbnails, arrows, dots, ← → keys while the
+ * section is on screen, or a horizontal swipe — page scrolling is never intercepted.
+ * Only the active project's large screenshots are rendered; thumbnails lazy-load.
  */
 export function ProjectShowcase({ projects }: { projects: Project[] }) {
   const count = projects.length;
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState(1);
-  const [inView, setInView] = useState(false);
-  // Walkthrough frame, tagged with its project so a newly active one starts at frame 0.
-  const [walk, setWalk] = useState({ card: 0, frame: 0 });
   const hostRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLAnchorElement>(null);
-  const swipe = useRef<{ x: number; y: number } | null>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
+  const swipe = useRef<{ x: number; y: number } | null>(null);
+  const hover = useRef(0);
+  const inView = useRef(false);
+  // Latest index for handlers created once (keyboard, hover timer).
+  const activeRef = useRef(0);
 
   const project = projects[active];
-  const prev = projects[(active - 1 + count) % count];
-  const next = projects[(active + 1) % count];
 
   const go = (i: number, direction?: number) => {
+    const current = activeRef.current;
     const target = (i + count) % count;
-    if (target === active) return;
-    setDir(direction ?? (target > active ? 1 : -1));
+    if (target === current) return;
+    activeRef.current = target;
+    setDir(direction ?? (target > current ? 1 : -1));
     setActive(target);
   };
-  const step = (d: number) => go(active + d, d);
+  const step = (d: number) => go(activeRef.current + d, d);
 
+  // ← → switch projects while the section is on screen (ignored while typing or with modifiers).
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
-    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.25 });
+    const io = new IntersectionObserver(([entry]) => (inView.current = entry.isIntersecting), { threshold: 0.35 });
     io.observe(host);
-    return () => io.disconnect();
+    const onKey = (event: KeyboardEvent) => {
+      if (!inView.current || event.altKey || event.ctrlKey || event.metaKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable]")) return;
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        step(event.key === "ArrowLeft" ? -1 : 1);
+      }
+    };
+    addEventListener("keydown", onKey);
+    return () => {
+      io.disconnect();
+      removeEventListener("keydown", onKey);
+      clearTimeout(hover.current);
+    };
+    // step only reads refs and stable setters, so the first render's copy stays correct.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // The active project quietly cycles through its real screens while on screen.
-  useEffect(() => {
-    if (!inView || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(
-      () => setWalk((w) => (w.card === active ? { card: active, frame: w.frame + 1 } : { card: active, frame: 1 })),
-      FRAME_MS,
-    );
-    return () => window.clearInterval(id);
-  }, [active, inView]);
-  const frame = walk.card === active ? walk.frame : 0;
-
-  // Mobile thumbnail strip: keep the active project in view (horizontal only — never moves the page).
+  // Keep the active thumbnail in view inside the strip (horizontal only — never moves the page).
   useEffect(() => {
     const strip = thumbsRef.current;
     const thumb = strip?.children[active] as HTMLElement | undefined;
-    if (!strip || !thumb || !strip.offsetParent) return;
+    if (!strip || !thumb || strip.scrollWidth <= strip.clientWidth) return;
     const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
     strip.scrollTo({ left: thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" });
   }, [active]);
 
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "ArrowLeft") step(-1);
-    if (event.key === "ArrowRight") step(1);
+  // Hovering a list item previews it after a short pause, so sweeping the pointer past doesn't flicker.
+  const preview = (i: number) => {
+    clearTimeout(hover.current);
+    hover.current = window.setTimeout(() => go(i), HOVER_MS);
   };
+  const cancelPreview = () => clearTimeout(hover.current);
 
-  // Subtle image depth on desktop: the visual drifts a few px with the pointer.
-  const onPointerMove = (event: PointerEvent<HTMLAnchorElement>) => {
+  // Desktop depth: the phone and glow drift a few px against the pointer (CSS vars, transitions do the easing).
+  const onPanelMove = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== "mouse") return;
-    const card = cardRef.current;
-    if (!card) return;
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty("--px", ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3));
-    card.style.setProperty("--py", ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--px", ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3));
+    event.currentTarget.style.setProperty("--py", ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
   };
-  const onPointerLeave = () => {
-    cardRef.current?.style.removeProperty("--px");
-    cardRef.current?.style.removeProperty("--py");
+  const onPanelLeave = (event: PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.style.removeProperty("--px");
+    event.currentTarget.style.removeProperty("--py");
   };
 
   return (
-    <div className="showcase" ref={hostRef} onKeyDown={onKeyDown} data-reveal>
-      {/* Mobile header: title, position and arrows above the card. */}
-      <div className="sc-mhead">
-        <div>
-          <p className="sc-mtitle">
-            <T
-              en={
-                <>
-                  Featured <em>work</em>
-                </>
-              }
-              mn={
-                <>
-                  Онцлох <em>ажлууд</em>
-                </>
-              }
-            />
-          </p>
-          <p className="sc-mcount">
-            <span>{pad(active + 1)}</span> / {pad(count)}
-          </p>
-        </div>
-        <div className="sc-marrows">
-          <button type="button" className="sc-pager-arrow is-prev" aria-label="Previous project" onClick={() => step(-1)}>
-            <Icon name="arrow" size={16} />
-          </button>
-          <button type="button" className="sc-pager-arrow" aria-label="Next project" onClick={() => step(1)}>
-            <Icon name="arrow" size={16} />
-          </button>
-        </div>
-      </div>
-
-      <ol className="sc-list" aria-label="Projects">
+    <div className="showcase" ref={hostRef} data-reveal>
+      <ol className="sc-list" aria-label="Projects" onPointerLeave={cancelPreview}>
         {projects.map((p, i) => (
           <li key={p.slug}>
-            <button type="button" className={i === active ? "is-active" : undefined} aria-current={i === active ? "true" : undefined} onClick={() => go(i)}>
+            <button
+              type="button"
+              className={i === active ? "is-active" : undefined}
+              aria-current={i === active ? "true" : undefined}
+              onClick={() => {
+                cancelPreview();
+                go(i);
+              }}
+              onPointerEnter={(event) => event.pointerType === "mouse" && preview(i)}
+            >
               <span className="sc-list-num">{p.number}</span>
               <span className="sc-list-text">
                 <b>{p.title}</b>
@@ -164,7 +151,8 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
       </ol>
 
       <div
-        className="sc-stage"
+        className="sc-panel"
+        style={{ "--dir": dir } as CSSProperties}
         onPointerDown={(event) => {
           if (event.pointerType !== "mouse") swipe.current = { x: event.clientX, y: event.clientY };
         }}
@@ -175,94 +163,87 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
           const dx = event.clientX - start.x;
           if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(event.clientY - start.y) * 1.5) step(dx < 0 ? 1 : -1);
         }}
+        onPointerCancel={() => (swipe.current = null)}
+        onPointerMove={onPanelMove}
+        onPointerLeave={onPanelLeave}
       >
-        {/* Neighbours: faint, inert previews behind the active card. */}
-        <div className="sc-preview is-prev" key={`prev-${prev.slug}`} aria-hidden="true" inert>
-          <ShowcaseVisual project={prev} />
-        </div>
-        <div className="sc-preview is-next" key={`next-${next.slug}`} aria-hidden="true" inert>
-          <ShowcaseVisual project={next} />
+        {/* Corner ticks frame the panel like a film plate. */}
+        <span className="sc-corners" aria-hidden="true">
+          <i /> <i /> <i /> <i />
+        </span>
+        {/* Re-keyed per project so each change replays the short entrance animations. */}
+        <span className="sc-glow" key={`glow-${project.slug}`} aria-hidden="true" />
+        {/* Static scenery behind the device: red-lit rocks and haze (no animation). */}
+        <span className="sc-terrain" aria-hidden="true" />
+
+        <div className="sc-copy" key={`copy-${project.slug}`}>
+          <p className="sc-meta">
+            <span className={`status-badge is-${project.status.kind}`}>
+              <Tx text={project.status.label} />
+            </span>
+          </p>
+          <p className="sc-category">
+            <Tx text={project.category} /> · {project.year}
+          </p>
+          <h3>{project.title}</h3>
+          <p className="sc-desc">
+            <Tx text={project.description} />
+          </p>
+          <i className="sc-rule-h" aria-hidden="true" />
+          <div className="tags">
+            {project.stack.slice(0, 6).map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
+          <TransitionLink className="sc-cta" href={`/work/${project.slug}`} label={project.title} data-cursor="View">
+            <T en="View case study" mn="Кейс судалгаа үзэх" /> <Icon name="arrow" size={16} />
+          </TransitionLink>
         </div>
 
         <TransitionLink
-          ref={cardRef}
-          key={project.slug}
+          className="sc-media"
+          key={`media-${project.slug}`}
           href={`/work/${project.slug}`}
           label={project.title}
           expand
-          className="sc-card"
-          style={{ "--dir": dir } as CSSProperties}
+          tabIndex={-1}
+          aria-hidden="true"
           data-cursor="View"
-          aria-label={`${project.title} — view case study`}
-          onPointerMove={onPointerMove}
-          onPointerLeave={onPointerLeave}
+          data-expand
         >
-          <div className="sc-copy">
-            <p className="sc-meta">
-              <span>{project.number}</span> / {pad(count)}
-              <span className={`status-badge is-${project.status.kind}`}>
-                <Tx text={project.status.label} />
-              </span>
-            </p>
-            <p className="sc-category">
-              <Tx text={project.category} /> · {project.year}
-            </p>
-            <h3>{project.title}</h3>
-            <p className="sc-desc">
-              <Tx text={project.description} />
-            </p>
-            <div className="tags">
-              {project.stack.slice(0, 5).map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-            <span className="sc-cta">
-              View project <Icon name="arrowUpRight" size={16} />
-            </span>
-          </div>
-          <div className="sc-media" data-expand>
-            <ShowcaseVisual project={project} frame={frame} priority={active === 0} />
-          </div>
+          <ShowcaseVisual project={project} />
         </TransitionLink>
 
-        <button type="button" className="sc-arrow is-prev" aria-label={`Previous project: ${prev.title}`} onClick={() => step(-1)}>
-          <Icon name="arrow" size={18} />
-        </button>
-        <button type="button" className="sc-arrow is-next" aria-label={`Next project: ${next.title}`} onClick={() => step(1)}>
-          <Icon name="arrow" size={18} />
-        </button>
-      </div>
-
-      <div className="sc-pager">
-        <span className="sc-count" aria-live="polite">
-          {pad(active + 1)} / {pad(count)}
-        </span>
-        <div className="sc-pager-row">
-          <button type="button" className="sc-pager-arrow is-prev" aria-label="Previous project" onClick={() => step(-1)}>
-            <Icon name="arrow" size={16} />
-          </button>
-          <i className="sc-rule" aria-hidden="true" />
-          <div className="sc-dots" role="group" aria-label="Choose project">
-            {projects.map((p, i) => (
-              <button
-                key={p.slug}
-                type="button"
-                className={i === active ? "is-active" : undefined}
-                aria-label={`${p.title} (${i + 1} of ${count})`}
-                aria-current={i === active ? "true" : undefined}
-                onClick={() => go(i)}
-              />
-            ))}
+        <div className="sc-pager">
+          <span className="sc-count" aria-live="polite">
+            <b>{pad(active + 1)}</b> / {pad(count)}
+          </span>
+          <div className="sc-pager-row">
+            <button type="button" className="sc-pager-arrow is-prev" aria-label="Previous project" onClick={() => step(-1)}>
+              <Icon name="arrow" size={16} />
+            </button>
+            <i className="sc-rule" aria-hidden="true" />
+            <div className="sc-dots" role="group" aria-label="Choose project">
+              {projects.map((p, i) => (
+                <button
+                  key={p.slug}
+                  type="button"
+                  className={i === active ? "is-active" : undefined}
+                  aria-label={`${p.title} (${i + 1} of ${count})`}
+                  aria-current={i === active ? "true" : undefined}
+                  onClick={() => go(i)}
+                />
+              ))}
+            </div>
+            <i className="sc-rule" aria-hidden="true" />
+            <button type="button" className="sc-pager-arrow" aria-label="Next project" onClick={() => step(1)}>
+              <Icon name="arrow" size={16} />
+            </button>
           </div>
-          <i className="sc-rule" aria-hidden="true" />
-          <button type="button" className="sc-pager-arrow" aria-label="Next project" onClick={() => step(1)}>
-            <Icon name="arrow" size={16} />
-          </button>
         </div>
       </div>
 
-      {/* Mobile: thumbnails of every project, swipeable sideways. */}
-      <div className="sc-thumbs" ref={thumbsRef} role="group" aria-label="Projects">
+      <div className="sc-thumbs" ref={thumbsRef} role="group" aria-label="Project thumbnails">
         {projects.map((p, i) => {
           const cover = p.shots.find((shot) => shot.device === "desktop");
           return (
@@ -271,12 +252,19 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
               type="button"
               className={i === active ? "is-active" : undefined}
               aria-current={i === active ? "true" : undefined}
+              aria-label={`Show ${p.title}`}
               onClick={() => go(i)}
             >
               <span className="sc-thumb-img">
-                {cover ? <Image src={cover.src} alt="" sizes="120px" /> : <ProjectVisual type={p.visual} />}
+                {cover ? <Image src={cover.src} alt="" sizes="(max-width: 760px) 160px, 280px" /> : <ProjectVisual type={p.visual} />}
+                <span className="sc-thumb-num" aria-hidden="true">{p.number}</span>
               </span>
-              <span className="sc-thumb-name">{p.title}</span>
+              <span className="sc-thumb-name">
+                {p.title}
+                <small>
+                  <Tx text={p.category} />
+                </small>
+              </span>
             </button>
           );
         })}
