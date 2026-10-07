@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import type { Project } from "@/data/projects";
 import { BrowserFrame } from "./BrowserFrame";
@@ -40,17 +39,16 @@ function ShowcaseVisual({ project }: { project: Project }) {
 }
 
 /**
- * Selected work: one large featured panel, a project list on the left and a thumbnail strip below.
- * Projects change via the list (click only — hovering never switches), thumbnails, arrows, dots, ← → keys while the
+ * Selected work: one large featured panel with a project list on the left.
+ * Projects change via the list (click only — hovering never switches), arrows, dots, ← → keys while the
  * section is on screen, or a horizontal swipe — page scrolling is never intercepted.
- * Only the active project's large screenshots are rendered; thumbnails lazy-load.
+ * Only the active project's large screenshots are rendered.
  */
 export function ProjectShowcase({ projects }: { projects: Project[] }) {
   const count = projects.length;
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState(1);
   const hostRef = useRef<HTMLDivElement>(null);
-  const thumbsRef = useRef<HTMLDivElement>(null);
   const swipe = useRef<{ x: number; y: number } | null>(null);
   const inView = useRef(false);
   // Latest index for handlers created once (keyboard).
@@ -91,15 +89,6 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
     // step only reads refs and stable setters, so the first render's copy stays correct.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Keep the active thumbnail in view inside the strip (horizontal only — never moves the page).
-  useEffect(() => {
-    const strip = thumbsRef.current;
-    const thumb = strip?.children[active] as HTMLElement | undefined;
-    if (!strip || !thumb || strip.scrollWidth <= strip.clientWidth) return;
-    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-    strip.scrollTo({ left: thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" });
-  }, [active]);
 
   // Desktop depth: the phone and glow drift a few px against the pointer (CSS vars, transitions do the easing).
   const onPanelMove = (event: PointerEvent<HTMLDivElement>) => {
@@ -227,33 +216,6 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="sc-thumbs" ref={thumbsRef} role="group" aria-label="Project thumbnails">
-        {projects.map((p, i) => {
-          const cover = p.shots.find((shot) => shot.device === "desktop");
-          return (
-            <button
-              key={p.slug}
-              type="button"
-              className={i === active ? "is-active" : undefined}
-              aria-current={i === active ? "true" : undefined}
-              aria-label={`Show ${p.title}`}
-              onClick={() => go(i)}
-            >
-              <span className="sc-thumb-img">
-                {cover ? <Image src={cover.src} alt="" sizes="(max-width: 760px) 160px, 280px" /> : <ProjectVisual type={p.visual} />}
-                <span className="sc-thumb-num" aria-hidden="true">{p.number}</span>
-              </span>
-              <span className="sc-thumb-name">
-                {p.title}
-                <small>
-                  <Tx text={p.category} />
-                </small>
-              </span>
-            </button>
-          );
-        })}
       </div>
     </div>
   );

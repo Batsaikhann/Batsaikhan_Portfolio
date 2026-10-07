@@ -1,4 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
+import { BridgeCode } from "./BridgeCode";
+import { CodeColumns } from "./CodeColumns";
 import { Icon } from "./Icon";
 import { T } from "./T";
 
@@ -11,6 +13,12 @@ export function AboutBridge({ silhouette }: { silhouette: StaticImageData }) {
   return (
     <section className="bridge" data-reveal aria-label="About">
       <span className="next-grid" aria-hidden="true" />
+      <CodeColumns />
+      <BridgeCode />
+      {/* A loose red code fragment in the empty top-right corner. */}
+      <span className="next-code is-b" aria-hidden="true">
+        stack = [<em>&quot;Next.js&quot;</em>, <em>&quot;React&quot;</em>, <em>&quot;NestJS&quot;</em>, <em>&quot;Flutter&quot;</em>];
+      </span>
       <span className="next-marks" aria-hidden="true">
         <i /> <i /> <i /> <i />
       </span>

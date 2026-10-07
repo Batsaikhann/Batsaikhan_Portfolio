@@ -587,7 +587,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 @media (prefers-reduced-motion: no-preference) and (min-width: 761px) and (min-height: 560px) {
   @supports (animation-timeline: view()) {
     .bridge { view-timeline: --bridge block; }
-    .bridge :is(.next-title, .next-label, .next-side, .next-copy > *, .next-figure, .next-horizon, .next-grid, .next-marks) {
+    .bridge :is(.next-title, .next-label, .next-side, .next-copy > *, .next-figure, .next-horizon, .next-grid, .next-marks, .code-columns, .bridge-code) {
       transition: none; will-change: transform, opacity;
       animation: bridge-scrub linear both; animation-timeline: --bridge; animation-range: cover 0% cover 100%; }
     /* Depth per piece: (in-y, out-y) — far layers move less, near layers more. */
@@ -599,7 +599,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
     .bridge .next-copy > :nth-child(1) { --in-y: 14vh; --out-y: -10vh; }
     .bridge .next-copy > :nth-child(2) { --in-y: 18vh; --out-y: -12vh; }
     .bridge .next-copy > :nth-child(3) { --in-y: 22vh; --out-y: -14vh; }
-    .bridge :is(.next-grid, .next-marks) { --in-y: 0px; --out-y: 0px; }
+    .bridge :is(.next-grid, .next-marks, .code-columns) { --in-y: 0px; --out-y: 0px; }
+    .bridge .bridge-code { --in-y: 6vh; --out-y: -6vh; }
   }
 }
 /* 0% = top edge entering at the bottom · 40–60% = filling the screen · 100% = bottom edge leaving at the top. */
@@ -681,8 +682,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .work-intro::before { content: ""; display: block; width: 30px; height: 2px; margin-bottom: 18px; background: var(--brand-hot); }
 .work-intro p { max-width: 320px; margin: 0 0 16px; color: #a39d9d; font-size: 15px; line-height: 1.6; }
 
-/* Featured project panel + list + thumbnails. Changing project never touches page scroll. */
-.showcase { display: grid; grid-template-columns: 250px minmax(0, 1fr); grid-template-areas: "list panel" "thumbs thumbs"; column-gap: 40px; row-gap: 46px; }
+/* Featured project panel + list. Changing project never touches page scroll. */
+.showcase { display: grid; grid-template-columns: 250px minmax(0, 1fr); grid-template-areas: "list panel"; column-gap: 40px; row-gap: 46px; }
 .sc-list { grid-area: list; align-self: center; display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line-2); }
 .sc-list button { position: relative; display: flex; align-items: baseline; gap: 20px; width: 100%; padding: 14px 0 14px 24px; border: 0; background: none; text-align: left; cursor: pointer; }
 .sc-list button::before { content: ""; position: absolute; left: -1px; top: 10px; bottom: 10px; width: 2px; background: var(--brand-hot); box-shadow: 0 0 10px var(--brand-hot); transform: scaleY(0); transition: transform .35s var(--ease); }
@@ -717,7 +718,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .sc-cta svg { transition: transform .3s var(--ease); }
 .sc-cta:hover { background: #ef2c43; }
 .sc-cta:hover svg { transform: translateX(4px); }
-.sc-cta:focus-visible, .sc-list button:focus-visible, .sc-thumbs button:focus-visible, .sc-pager button:focus-visible { outline: 2px solid var(--brand-hot); outline-offset: 3px; }
+.sc-cta:focus-visible, .sc-list button:focus-visible, .sc-pager button:focus-visible { outline: 2px solid var(--brand-hot); outline-offset: 3px; }
 
 /* The visual breaks slightly out of the panel's top-right corner, like a product shot. */
 .sc-media { position: relative; z-index: 1; grid-area: media; align-self: start; display: block; margin: -84px -64px 0 0; }
@@ -745,16 +746,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .sc-dots button:hover::after { background: #8e8989; }
 .sc-dots button.is-active::after { background: var(--brand-hot); box-shadow: 0 0 10px var(--brand-hot); transform: scale(1.6); }
 
-.sc-thumbs { grid-area: thumbs; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; }
-.sc-thumbs button { display: grid; gap: 12px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
-.sc-thumb-img { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid #2e2828; border-radius: 10px; background: #0f0d0d; opacity: .5; transition: border-color .25s, opacity .25s; }
-.sc-thumb-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.sc-thumb-img .viz { inset: 0; transform: scale(.7); transform-origin: 30% 40%; }
-.sc-thumb-name { overflow: hidden; color: #8e8989; font-size: 14px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; transition: color .25s; }
-.sc-thumbs button:hover .sc-thumb-img { opacity: .8; }
-/* Active is marked by border, full opacity and name colour — not colour alone. */
-.sc-thumbs button.is-active .sc-thumb-img { opacity: 1; border: 2px solid var(--brand-hot); box-shadow: 0 0 22px rgba(255, 59, 79, .25); }
-.sc-thumbs button.is-active .sc-thumb-name { color: var(--text); }
 
 /* Wide screens: the cinematic version — tilted tablet + phone over red-lit rocks, light arcs at the edge. */
 @media (min-width: 1101px) {
@@ -765,7 +756,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
     -webkit-mask-image: linear-gradient(90deg, transparent 55%, #000 80%); mask-image: linear-gradient(90deg, transparent 55%, #000 80%); }
   .showcase::before { right: -9vw; top: -14%; width: 60%; height: 120%; rotate: -14deg; }
   .showcase::after { right: -6vw; top: 2%; width: 48%; height: 96%; rotate: -20deg; opacity: .5; }
-  .sc-list, .sc-thumbs { position: relative; z-index: 1; }
+  .sc-list { position: relative; z-index: 1; }
   .sc-panel { border-color: rgba(255, 59, 79, .42); background: linear-gradient(160deg, #171213, #0b090a 70%);
     box-shadow: 0 30px 80px rgba(0, 0, 0, .55), 0 0 60px rgba(255, 48, 74, .12), inset 0 1px 0 rgba(255, 255, 255, .04); }
   .sc-copy { padding-bottom: 20px; }
@@ -845,18 +836,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .sc-media::after { content: ""; position: absolute; z-index: -1; left: 6%; right: 2%; bottom: -46px; height: 80px; pointer-events: none; background: radial-gradient(ellipse 50% 50% at 50% 30%, rgba(255, 48, 74, .32), transparent 75%); }
 
 /* Thumbnails as mini posters: number + gradient on the image, title and category below. */
-.sc-thumbs { gap: 18px; }
-.sc-thumbs button { gap: 14px; transition: transform .35s var(--ease); }
-.sc-thumbs button:hover { transform: translateY(-4px); }
-.sc-thumb-img { aspect-ratio: 16 / 10.5; border-radius: 12px; opacity: .55; }
-.sc-thumb-img::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(8, 5, 6, 0) 45%, rgba(8, 5, 6, .75)); }
-.sc-thumb-img img { transition: transform .6s var(--ease); }
-.sc-thumbs button:hover .sc-thumb-img img { transform: scale(1.05); }
-.sc-thumb-num { position: absolute; z-index: 1; left: 12px; bottom: 10px; color: #f2eeee; font: 11px var(--mono); letter-spacing: .1em; }
-.sc-thumbs button.is-active .sc-thumb-num { color: var(--brand-hot); }
-.sc-thumbs button.is-active .sc-thumb-img { box-shadow: 0 0 0 4px rgba(255, 59, 79, .12), 0 16px 40px rgba(255, 48, 74, .22); }
-.sc-thumb-name { display: grid; gap: 4px; font-size: 15px; }
-.sc-thumb-name small { overflow: hidden; color: #6f6969; font-size: 12px; font-weight: 400; text-overflow: ellipsis; }
 
 @keyframes sc-rise { from { opacity: 0; transform: translateY(12px); } }
 @keyframes sc-wipe { from { clip-path: inset(0 0 0 100% round 10px); } to { clip-path: inset(0 0 0 0 round 10px); } }
@@ -1443,7 +1422,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .sc-panel { grid-template-columns: minmax(0, 1fr); grid-template-areas: "media" "copy" "pager"; padding: 30px 28px 26px; }
   .sc-media { margin: 0 0 30px; }
   .sc-phone { left: 2%; bottom: -4%; }
-  .sc-thumbs { gap: 14px; }
   .contact-topics { display: none; }
   .case-body { grid-template-columns: 1fr; padding-top: 80px; }
   .case-aside { display: none; }
@@ -1538,8 +1516,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .stack-accordion ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0 0 22px; list-style: none; }
   .stack-accordion li { padding: 9px 12px; border: 1px solid #2e2828; color: #d6d0d0; font: 11px var(--mono); animation: fade-up .4s var(--ease) backwards; }
   .gallery-steps { display: none; }
-  /* Mobile: no side list — visual, title and copy stacked; swipe or tap thumbnails to switch. */
-  .showcase { grid-template-columns: minmax(0, 1fr); grid-template-areas: "panel" "thumbs"; row-gap: 22px; }
+  /* Mobile: no side list — visual, title and copy stacked; swipe, arrows or dots to switch. */
+  .showcase { grid-template-columns: minmax(0, 1fr); grid-template-areas: "panel"; row-gap: 22px; }
   .sc-list { display: none; }
   .sc-panel { padding: 0 0 22px; border-radius: 14px; overflow: hidden; }
   .sc-media { margin: 14px 14px 22px; }
@@ -1550,10 +1528,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .sc-copy > *, .sc-glow, .sc-phone { animation: none; }
   .sc-pager { margin-top: 18px; }
   .sc-pager-row .sc-rule { display: none; }
-  .sc-thumbs { display: flex; gap: 12px; margin: 0 -22px; padding: 4px 22px 6px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
-  .sc-thumbs::-webkit-scrollbar { display: none; }
-  .sc-thumbs button { flex: none; width: 128px; scroll-snap-align: center; }
-  .sc-thumb-name { font-size: 12px; }
   .gallery-track { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 16px; overflow: visible; padding: 0; -webkit-mask-image: none; mask-image: none; }
   .gallery-item, .gallery-item.is-desktop, .gallery-item.is-mobile { width: auto; opacity: 1; transform: none; }
   .gallery-item.is-desktop { grid-column: 1 / -1; }
@@ -1707,3 +1681,103 @@ html[data-loading] .site-shell, html[data-loading] .site-shell * { animation-pla
   .preloader[data-state="done"] .pl-seam { animation: none; }
   .pl-orbit { animation: none; }
 }
+
+/* ============================================================
+   Ambient code (About): two faint vertical code strips on each edge + a small typing terminal card.
+   Decorative only. Columns drift very slowly (translateY) with a soft opacity flicker — transform/opacity
+   only, glow and blur are static (painted once). Reduced motion: everything holds still.
+   ============================================================ */
+.code-columns { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; translate: -50% 0; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent); }
+.code-col { position: absolute; top: 0; height: 100%; overflow: hidden; writing-mode: vertical-rl; color: rgba(255, 70, 90, .55);
+  font: 11px/1 var(--mono); letter-spacing: .22em; white-space: nowrap; text-shadow: 0 0 8px rgba(255, 48, 74, .7); filter: blur(.3px);
+  opacity: .22; animation: code-flicker 7s steps(1, end) infinite; }
+.code-col.is-1 { left: 1.6vw; }
+.code-col.is-2 { left: 3.4vw; opacity: .12; font-size: 10px; animation-delay: -3s; }
+.code-col.is-3 { right: 1.6vw; animation-delay: -1.5s; }
+.code-col.is-4 { right: 3.4vw; opacity: .12; font-size: 10px; animation-delay: -5s; }
+/* In vertical-rl the inline axis is vertical: both copies run on as one tall line, so -50% is exactly one copy. */
+.code-col-track { display: block; height: max-content; will-change: transform; animation: code-drift 70s linear infinite; }
+.code-col.is-2 .code-col-track { animation-duration: 95s; animation-direction: reverse; }
+.code-col.is-3 .code-col-track { animation-duration: 85s; }
+.code-col.is-4 .code-col-track { animation-duration: 110s; animation-direction: reverse; }
+.code-col-track > span { padding-inline-end: 2em; }
+@keyframes code-drift { to { transform: translateY(-50%); } }
+/* A rare, gentle dip — like a monitor breathing, never a strobe. */
+@keyframes code-flicker { 0%, 100% { opacity: var(--o, .22); } 46% { opacity: calc(var(--o, .22) * .55); } 48% { opacity: var(--o, .22); } 81% { opacity: calc(var(--o, .22) * .75); } 83% { opacity: var(--o, .22); } }
+.code-col.is-2, .code-col.is-4 { --o: .12; }
+
+.code-terminal { position: absolute; z-index: 3; left: 5vw; bottom: 64px; width: 360px; rotate: 2deg; overflow: hidden; pointer-events: none;
+  background: linear-gradient(160deg, rgba(26, 18, 19, .92), rgba(10, 8, 9, .9)); border: 1px solid rgba(255, 255, 255, .07); border-top-color: rgba(255, 59, 79, .45); border-radius: 8px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .5), 0 0 40px rgba(255, 48, 74, .1); }
+.ct-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.ct-bar i { width: 7px; height: 7px; border-radius: 50%; background: #3a3132; }
+.ct-bar i:first-child { background: var(--brand-hot); box-shadow: 0 0 8px var(--brand-hot); }
+.ct-bar span { margin-left: auto; color: #6f6969; font: 10px var(--mono); letter-spacing: .14em; }
+/* Three fixed-height lines: typing never changes the card's size. */
+.ct-body { display: grid; grid-template-rows: repeat(3, 20px); margin: 0; padding: 12px 14px 14px; color: #d9d3d3; font: 11.5px/20px var(--mono); white-space: pre; overflow: hidden; }
+.ct-line { display: block; overflow: hidden; text-overflow: clip; }
+.ct-line b { display: inline-block; width: 26px; color: #4f4a4a; font-weight: 400; }
+.tk-kw { color: #ff6b7c; } .tk-str { color: #e8c8a8; } .tk-fn { color: #ff3b4f; } .tk-num { color: var(--brand-hot); } .tk-dim { color: #7d7777; } .tk-tag { color: #ff8a98; }
+.ct-caret { display: inline-block; width: 7px; height: 13px; margin-left: 2px; vertical-align: -2px; background: var(--brand-hot); box-shadow: 0 0 8px var(--brand-hot); animation: caret 1.1s steps(2, jump-none) infinite; }
+
+@media (max-width: 1100px) {
+  .code-terminal { width: 320px; }
+}
+@media (max-width: 900px) {
+  /* Stacked layout: the card sits in flow after the copy, the strips hug the screen edges. */
+  .code-terminal { position: relative; left: auto; bottom: auto; rotate: 0deg; width: 100%; max-width: 420px; }
+  .code-col.is-2, .code-col.is-4 { display: none; }
+  .code-col.is-1 { left: 4px; } .code-col.is-3 { right: 4px; }
+  .code-col { font-size: 9px; --o: .14; opacity: .14; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .code-col, .code-col-track, .ct-caret { animation: none !important; }
+}
+
+/* The same ambient code strips inside the About bridge — a little brighter, placed clear of the side lists and copy. */
+.bridge > .code-columns { position: absolute; z-index: 0; top: 0; bottom: 0; left: 50%; translate: -50% 0; }
+.bridge .code-col { color: rgba(255, 75, 95, .85); }
+/* The left edge belongs to the code panel. */
+.bridge .code-col:is(.is-1, .is-2) { display: none; }
+.bridge .code-col.is-3 { right: 1.2vw; --o: .55; opacity: .55; }
+.bridge .code-col.is-4 { display: none; }
+@media (max-width: 760px), (max-height: 559px) {
+  .bridge .code-col.is-2 { display: none; }
+  .bridge .code-col { --o: .3; opacity: .3; }
+  .bridge > .next-code { display: none; }
+}
+/* Loose code fragments: static red mono text with a soft glow; each breathes gently on its own clock. */
+.next-code { z-index: 1; color: rgba(255, 70, 90, .75); font: 11px/1 var(--mono); letter-spacing: .08em; white-space: nowrap; text-shadow: 0 0 10px rgba(255, 48, 74, .6);
+  pointer-events: none; animation: code-breathe 9s ease-in-out infinite; }
+.next-code i { color: #ff3b4f; font-style: normal; }
+.next-code em { color: #e8b8a8; font-style: normal; }
+.next-code.is-b { right: 3.5vw; top: 16%; animation-delay: -3s; }
+@keyframes code-breathe { 0%, 100% { opacity: .85; } 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .next-code { animation: none; } }
+
+/* About bridge code panel: numbered TypeScript flowing slowly downward down the left edge.
+   One transform loop (translateY -50% → 0) on a single layer; colours, glow and fades are static. */
+.bridge-code { z-index: 1; left: 2.2vw; top: 0; bottom: 0; width: min(24vw, 380px); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent), linear-gradient(to right, #000 82%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent), linear-gradient(to right, #000 82%, transparent); mask-composite: intersect; }
+.bc-track { margin: 0; will-change: transform; animation: code-flow 60s linear infinite; color: rgba(225, 216, 216, .78); font: 12.5px/2 var(--mono); white-space: pre;
+  text-shadow: 0 0 10px rgba(255, 48, 74, .25); }
+.bc-listing, .bc-line { display: block; }
+.bc-line b { display: inline-block; width: 3.4em; padding-right: 1em; color: rgba(255, 59, 79, .35); font-weight: 400; text-align: right; }
+.bc-kw { color: #ff3b4f; } .bc-ty { color: #ff6b7c; } .bc-str { color: #ff9aa6; } .bc-fn { color: #f2eeee; }
+.bc-cm { color: rgba(160, 150, 150, .55); } .bc-num { color: var(--brand-hot); }
+/* Downward flow: start one listing up, end where it began. */
+@keyframes code-flow { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+/* The side list's content now lives inside the code, so it steps aside on desktop. */
+.bridge .next-side.is-left { display: none; }
+@media (max-width: 1100px) { .bridge-code { width: 26vw; } .bc-track { font-size: 11px; } }
+/* Phones / short windows: the bridge is a plain stacked block, so the panel becomes a faint backdrop
+   behind ABOUT and the portrait (out of flow, so it never adds height). */
+@media (max-width: 760px), (max-height: 559px) {
+  .bridge > .bridge-code { position: absolute; z-index: 0; left: 8px; top: 0; bottom: 0; width: 78%; opacity: .32;
+    /* Fades out above the copy, so the text below stays clean. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 42%, transparent 60%); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 42%, transparent 60%); }
+  .bridge-code .bc-track { font-size: 10.5px; line-height: 1.9; animation-duration: 50s; }
+}
+@media (prefers-reduced-motion: reduce) { .bc-track { animation: none; } }
