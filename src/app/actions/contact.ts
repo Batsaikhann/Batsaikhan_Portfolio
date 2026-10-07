@@ -65,6 +65,8 @@ export async function sendContact(_prev: ContactState, data: FormData): Promise<
   // Bots get a quiet "success" so they don't learn what tripped them.
   const startedAt = Number(text(data, "startedAt"));
   if (text(data, "company") || !startedAt || Date.now() - startedAt < MIN_FILL_MS) {
+    const why = text(data, "company") ? "honeypot" : !startedAt ? "no start time" : `sent ${Date.now() - startedAt}ms after opening`;
+    console.warn(`[contact] Dropped as spam (${why}).`);
     return { status: "success" };
   }
 
@@ -105,10 +107,13 @@ export async function sendContact(_prev: ContactState, data: FormData): Promise<
       }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!res.ok) {
+    const body = (await res.text().catch(() => "")).slice(0, 300);
+    if (res.ok) {
+      // Resend's message id — look it up under Emails in the Resend dashboard.
+      console.info(`[contact] Sent to Resend: ${body} (from ${SENDER} to ${INBOX})`);
+    } else {
       // Log Resend's status and short error text only — never request headers (they carry the key).
-      const detail = (await res.text().catch(() => "")).slice(0, 300);
-      console.error(`[contact] Resend rejected the message (${res.status}): ${detail}`);
+      console.error(`[contact] Resend rejected the message (${res.status}): ${body}`);
       if (res.status === 429) return { status: "error", reason: "rate-limit", values };
       if (res.status === 401 || res.status === 403) return { status: "error", reason: "not-configured", values };
       return { status: "error", reason: "send-failed", values };
