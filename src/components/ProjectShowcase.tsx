@@ -10,7 +10,6 @@ import { TransitionLink } from "./RouteTransition";
 import { T, Tx } from "./T";
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const HOVER_MS = 140;
 
 /** Browser mockup with the phone overlapping its lower-left corner — real screenshots only. */
 function ShowcaseVisual({ project }: { project: Project }) {
@@ -42,7 +41,7 @@ function ShowcaseVisual({ project }: { project: Project }) {
 
 /**
  * Selected work: one large featured panel, a project list on the left and a thumbnail strip below.
- * Projects change via the list (click or hover), thumbnails, arrows, dots, ← → keys while the
+ * Projects change via the list (click only — hovering never switches), thumbnails, arrows, dots, ← → keys while the
  * section is on screen, or a horizontal swipe — page scrolling is never intercepted.
  * Only the active project's large screenshots are rendered; thumbnails lazy-load.
  */
@@ -53,9 +52,8 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const swipe = useRef<{ x: number; y: number } | null>(null);
-  const hover = useRef(0);
   const inView = useRef(false);
-  // Latest index for handlers created once (keyboard, hover timer).
+  // Latest index for handlers created once (keyboard).
   const activeRef = useRef(0);
 
   const project = projects[active];
@@ -89,7 +87,6 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
     return () => {
       io.disconnect();
       removeEventListener("keydown", onKey);
-      clearTimeout(hover.current);
     };
     // step only reads refs and stable setters, so the first render's copy stays correct.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,13 +100,6 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
     const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
     strip.scrollTo({ left: thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" });
   }, [active]);
-
-  // Hovering a list item previews it after a short pause, so sweeping the pointer past doesn't flicker.
-  const preview = (i: number) => {
-    clearTimeout(hover.current);
-    hover.current = window.setTimeout(() => go(i), HOVER_MS);
-  };
-  const cancelPreview = () => clearTimeout(hover.current);
 
   // Desktop depth: the phone and glow drift a few px against the pointer (CSS vars, transitions do the easing).
   const onPanelMove = (event: PointerEvent<HTMLDivElement>) => {
@@ -125,18 +115,14 @@ export function ProjectShowcase({ projects }: { projects: Project[] }) {
 
   return (
     <div className="showcase" ref={hostRef} data-reveal>
-      <ol className="sc-list" aria-label="Projects" onPointerLeave={cancelPreview}>
+      <ol className="sc-list" aria-label="Projects">
         {projects.map((p, i) => (
           <li key={p.slug}>
             <button
               type="button"
               className={i === active ? "is-active" : undefined}
               aria-current={i === active ? "true" : undefined}
-              onClick={() => {
-                cancelPreview();
-                go(i);
-              }}
-              onPointerEnter={(event) => event.pointerType === "mouse" && preview(i)}
+              onClick={() => go(i)}
             >
               <span className="sc-list-num">{p.number}</span>
               <span className="sc-list-text">
