@@ -1,9 +1,7 @@
 "use client";
 
-import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { setLenis } from "@/lib/scroll";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
@@ -111,13 +109,6 @@ export function Interactions() {
 
     if (reduced) return cleanup;
 
-    const lenis = new Lenis({ autoRaf: true, anchors: true, smoothWheel: false });
-    setLenis(lenis);
-    cleanups.push(() => {
-      setLenis(null);
-      lenis.destroy();
-    });
-
     if (finePointer) {
       root.classList.add("has-cursor");
       cleanups.push(() => root.classList.remove("has-cursor"));
@@ -190,8 +181,7 @@ export function Interactions() {
     let followX = 0;
     let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
-    // Inside the pinned story the copy is choreographed by HeroStory instead.
-    const heroCopy = document.querySelector<HTMLElement>(".hero-copy:not(.story .hero-copy)");
+    const heroCopy = document.querySelector<HTMLElement>(".hero-copy");
     const ticker = document.querySelector<HTMLElement>(".ticker-track");
     if (ticker) ticker.style.animation = "none";
 

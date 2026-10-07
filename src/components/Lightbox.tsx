@@ -92,7 +92,6 @@ export function Lightbox({ shots, index, onIndex, onClose }: Props) {
         const dx = event.clientX - start.x;
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(event.clientY - start.y)) step(dx < 0 ? 1 : -1);
       }}
-      data-lenis-prevent
     >
       <figure key={index} className={`is-${shot.device}`} onClick={(event) => event.stopPropagation()}>
         <button

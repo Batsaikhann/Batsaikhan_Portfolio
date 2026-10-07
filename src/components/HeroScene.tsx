@@ -147,11 +147,6 @@ export function HeroScene() {
 
       let frame = 0;
       const timer = new THREE.Timer();
-      const story = host.closest<HTMLElement>(".story");
-      // Faded out once the hero story leaves the hero, so the loop stops until it comes back.
-      const storyAway = () => !!story && /portal|work|next/.test(story.dataset.phase ?? "");
-      const phaseObserver = new MutationObserver(() => schedule());
-      if (story) phaseObserver.observe(story, { attributeFilter: ["data-phase"] });
       const render = (now: number) => {
         frame = 0;
         timer.update(now);
@@ -166,7 +161,7 @@ export function HeroScene() {
         schedule();
       };
       function schedule() {
-        const active = inView && document.visibilityState === "visible" && !storyAway();
+        const active = inView && document.visibilityState === "visible";
         if (active && !frame) frame = requestAnimationFrame(render);
         if (!active && frame) {
           cancelAnimationFrame(frame);
@@ -180,7 +175,6 @@ export function HeroScene() {
         cancelAnimationFrame(frame);
         resizeObserver.disconnect();
         viewObserver.disconnect();
-        phaseObserver.disconnect();
         window.removeEventListener("pointermove", onPointer);
         document.removeEventListener("visibilitychange", onVisibility);
         disposables.forEach((item) => item.dispose());
