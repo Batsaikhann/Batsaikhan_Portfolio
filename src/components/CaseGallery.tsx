@@ -1,72 +1,127 @@
 "use client";
 
-import Image from "next/image";
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Shot } from "@/data/projects";
 import { BrowserFrame } from "./BrowserFrame";
 import { Icon } from "./Icon";
+import { Lightbox } from "./Lightbox";
 import { T, Tx } from "./T";
 
-/** Filterable screenshot grid with a keyboard-friendly lightbox. */
+/**
+ * Screens for a case study. Desktop: a snapping horizontal track where the centred
+ * screen is full size and its neighbours recede. Mobile: a plain vertical grid.
+ * Any screen opens the fullscreen viewer.
+ */
 export function CaseGallery({ shots }: { shots: Shot[] }) {
   const groups = [...new Map(shots.map((s) => [s.group.en, s.group])).values()];
   const [filter, setFilter] = useState<string | null>(null);
   const [open, setOpen] = useState<number | null>(null);
+  const [current, setCurrent] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
   const visible = shots.filter((s) => !filter || s.group.en === filter);
 
-  const close = useCallback(() => setOpen(null), []);
-  const step = useCallback(
-    (dir: number) => setOpen((i) => (i === null ? i : (i + dir + visible.length) % visible.length)),
-    [visible.length],
-  );
-
+  // Centre-most item of the track is "current".
   useEffect(() => {
-    if (open === null) return;
-    const root = document.documentElement;
-    root.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowRight") step(1);
-      if (event.key === "ArrowLeft") step(-1);
+    const track = trackRef.current;
+    if (!track) return;
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const box = track.getBoundingClientRect();
+      const mid = box.left + box.width / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      [...track.children].forEach((child, i) => {
+        const r = child.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      setCurrent(best);
     };
-    window.addEventListener("keydown", onKey);
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    track.scrollTo({ left: 0 });
+    measure();
+    track.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      root.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
+      cancelAnimationFrame(frame);
+      track.removeEventListener("scroll", onScroll);
     };
-  }, [open, close, step]);
+  }, [filter]);
 
-  const current = open === null ? null : visible[open];
+  const scrollToItem = useCallback((i: number) => {
+    const track = trackRef.current;
+    const item = track?.children[i] as HTMLElement | undefined;
+    if (!track || !item) return;
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollTo({
+      left: item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }, []);
+
+  const close = useCallback(() => {
+    // Keep the track in step with whatever the viewer ended on.
+    if (open !== null) scrollToItem(open);
+    setOpen(null);
+  }, [open, scrollToItem]);
 
   return (
     <div className="case-gallery">
-      <div className="gallery-filters" role="tablist">
-        <button type="button" className={filter === null ? "is-active" : undefined} onClick={() => setFilter(null)}>
-          <T en="All" mn="Бүгд" /> <span className="count">{shots.length}</span>
-        </button>
-        {groups.map((group) => (
-          <button
-            key={group.en}
-            type="button"
-            className={filter === group.en ? "is-active" : undefined}
-            onClick={() => setFilter(group.en)}
-          >
-            <Tx text={group} /> <span className="count">{shots.filter((s) => s.group.en === group.en).length}</span>
+      <div className="gallery-toolbar">
+        <div className="gallery-filters" role="group" aria-label="Filter screens">
+          <button type="button" className={filter === null ? "is-active" : undefined} aria-pressed={filter === null} onClick={() => setFilter(null)}>
+            <T en="All" mn="Бүгд" /> <span className="count">{shots.length}</span>
           </button>
-        ))}
+          {groups.map((group) => (
+            <button
+              key={group.en}
+              type="button"
+              className={filter === group.en ? "is-active" : undefined}
+              aria-pressed={filter === group.en}
+              onClick={() => setFilter(group.en)}
+            >
+              <Tx text={group} /> <span className="count">{shots.filter((s) => s.group.en === group.en).length}</span>
+            </button>
+          ))}
+        </div>
+        {visible.length > 1 && (
+          <div className="gallery-steps">
+            <span className="count">
+              {String(current + 1).padStart(2, "0")} / {String(visible.length).padStart(2, "0")}
+            </span>
+            <button type="button" aria-label="Previous screen" disabled={current === 0} onClick={() => scrollToItem(current - 1)}>
+              <Icon name="arrow" size={16} />
+            </button>
+            <button
+              type="button"
+              aria-label="Next screen"
+              disabled={current === visible.length - 1}
+              onClick={() => scrollToItem(current + 1)}
+            >
+              <Icon name="arrow" size={16} />
+            </button>
+          </div>
+        )}
       </div>
 
-      <div className="gallery-grid">
+      <div className="gallery-track" ref={trackRef} key={filter ?? "all"}>
         {visible.map((shot, i) => (
           <button
             key={shot.url + shot.label.en}
             type="button"
-            className={`gallery-item is-${shot.device}`}
+            className={`gallery-item is-${shot.device}${i === current ? " is-current" : ""}`}
             onClick={() => setOpen(i)}
+            onFocus={() => scrollToItem(i)}
             data-cursor="Zoom"
-            style={{ "--i": i } as CSSProperties}
+            aria-label={`${shot.label.en} — open fullscreen`}
+            style={{ "--i": i, "--ar": shot.src.width / shot.src.height } as CSSProperties}
           >
-            <BrowserFrame shot={shot} sizes="(max-width: 760px) 90vw, 45vw" />
+            <BrowserFrame shot={shot} sizes="(max-width: 760px) 90vw, 50vw" />
             <span className="gallery-caption">
               <small>
                 <Tx text={shot.group} />
@@ -78,32 +133,7 @@ export function CaseGallery({ shots }: { shots: Shot[] }) {
         ))}
       </div>
 
-      {current && (
-        <div className="lightbox" role="dialog" aria-modal="true" onClick={close} data-lenis-prevent>
-          <figure onClick={(event) => event.stopPropagation()} className={`is-${current.device}`}>
-            <Image src={current.src} alt={current.label.en} sizes="90vw" placeholder="blur" />
-            <figcaption>
-              <Tx text={current.label} />
-              <span className="count">
-                {(open ?? 0) + 1} / {visible.length}
-              </span>
-            </figcaption>
-          </figure>
-          {visible.length > 1 && (
-            <>
-              <button type="button" className="lightbox-nav prev" aria-label="Previous" onClick={(e) => (e.stopPropagation(), step(-1))}>
-                <Icon name="arrow" size={20} />
-              </button>
-              <button type="button" className="lightbox-nav next" aria-label="Next" onClick={(e) => (e.stopPropagation(), step(1))}>
-                <Icon name="arrow" size={20} />
-              </button>
-            </>
-          )}
-          <button type="button" className="lightbox-close" aria-label="Close" onClick={close}>
-            ×
-          </button>
-        </div>
-      )}
+      {open !== null && <Lightbox shots={visible} index={open} onIndex={setOpen} onClose={close} />}
     </div>
   );
 }

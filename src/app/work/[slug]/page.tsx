@@ -27,16 +27,23 @@ const delay = (ms: number) => ({ "--delay": `${ms}ms` }) as CSSProperties;
 
 function SectionHead({ index, title }: { index: number; title: L }) {
   return (
-    <header className="case-section-head" data-reveal>
-      <span data-scramble>0{index}</span>
-      <h2>
-        <span className="reveal-line">
-          <span>
-            <Tx text={title} />
+    <>
+      {/* Oversized section number that stays pinned while its section scrolls by. */}
+      <span className="case-ghost-num" aria-hidden="true">
+        0{index}
+      </span>
+      <header className="case-section-head" data-reveal>
+        <span data-scramble>0{index}</span>
+        <h2>
+          <span className="reveal-line">
+            <span>
+              <Tx text={title} />
+            </span>
           </span>
-        </span>
-      </h2>
-    </header>
+        </h2>
+        <i className="case-head-line" aria-hidden="true" />
+      </header>
+    </>
   );
 }
 
@@ -69,6 +76,9 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
     <main className="case">
       <section className="case-hero">
         <div className="hero-grid" aria-hidden="true" />
+        <span className="case-hero-num" aria-hidden="true">
+          {project.number}
+        </span>
         <TransitionLink href="/#work" label="Work" className="back-link">
           <Icon name="arrow" size={16} /> <T en="All work" mn="Бүх ажил" />
         </TransitionLink>
@@ -98,8 +108,16 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
             )}
           </div>
         </div>
-        <dl className="case-meta intro-3">
-          <div>
+        <dl className="case-meta">
+          <div style={delay(0)}>
+            <dt>
+              <T en="Category" mn="Ангилал" />
+            </dt>
+            <dd>
+              <Tx text={project.category} /> · {project.year}
+            </dd>
+          </div>
+          <div style={delay(80)}>
             <dt>
               <T en="Role" mn="Үүрэг" />
             </dt>
@@ -107,7 +125,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <Tx text={project.role} />
             </dd>
           </div>
-          <div>
+          <div style={delay(160)}>
             <dt>
               <T en="Team" mn="Баг" />
             </dt>
@@ -115,7 +133,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <Tx text={project.team} />
             </dd>
           </div>
-          <div>
+          <div style={delay(240)}>
             <dt>
               <T en="Status" mn="Төлөв" />
             </dt>
@@ -126,7 +144,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
             </dd>
           </div>
         </dl>
-        <div className="tags case-stack intro-3">
+        <div className="tags case-stack intro-4">
           {project.stack.map((tag) => (
             <span key={tag}>{tag}</span>
           ))}
@@ -178,7 +196,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
         ))}
       </section>
 
-      <div className="case-body">
+      <div className="case-body" data-progress>
         <aside className="case-aside">
           <CaseToc items={sections} />
         </aside>

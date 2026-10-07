@@ -24,8 +24,15 @@ export function CaseToc({ items }: { items: Array<{ id: string; label: L }> }) {
 
   return (
     <nav className="case-toc" aria-label="Case study sections">
+      {/* Filled from --progress, set on .case-body by Interactions. */}
+      <span className="case-toc-fill" aria-hidden="true" />
       {items.map((item, i) => (
-        <a key={item.id} href={`#${item.id}`} className={item.id === active ? "is-active" : undefined}>
+        <a
+          key={item.id}
+          href={`#${item.id}`}
+          className={item.id === active ? "is-active" : undefined}
+          aria-current={item.id === active ? "location" : undefined}
+        >
           <span className="num">0{i + 1}</span>
           <Tx text={item.label} />
         </a>
