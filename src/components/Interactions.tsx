@@ -181,8 +181,7 @@ export function Interactions() {
     let followX = 0;
     let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
-    // Inside the pinned story the copy is choreographed by HeroStory instead.
-    const heroCopy = document.querySelector<HTMLElement>(".hero-copy:not(.story .hero-copy)");
+    const heroCopy = document.querySelector<HTMLElement>(".hero-copy");
     const ticker = document.querySelector<HTMLElement>(".ticker-track");
     if (ticker) ticker.style.animation = "none";
 

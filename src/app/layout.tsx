@@ -5,6 +5,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
 import { Nav } from "@/components/Nav";
+import { Preloader } from "@/components/Preloader";
 import { RouteTransition } from "@/components/RouteTransition";
 import { langInitScript } from "@/components/T";
 import "./globals.css";
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       data-lang="en"
       data-scroll-behavior="smooth"
+      data-loading=""
       className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
@@ -47,6 +49,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script id="lang-init" strategy="beforeInteractive">
           {langInitScript}
         </Script>
+        <noscript>
+          <style>{`.preloader { display: none !important; } html[data-loading] { overflow: auto !important; }`}</style>
+        </noscript>
+        <Preloader />
         <RouteTransition>
           <div className="site-shell">
             <Interactions />

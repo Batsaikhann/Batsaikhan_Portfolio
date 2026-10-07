@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { AboutBridge } from "@/components/AboutBridge";
 import { DevIdCard } from "@/components/DevIdCard";
 import { HeroPlanet, HeroProducts } from "@/components/HeroOrbit";
 import { HeroRain } from "@/components/HeroRain";
 import { ContactButton } from "@/components/ContactModal";
-import { HeroStory } from "@/components/HeroStory";
 import { HeroScene } from "@/components/HeroScene";
 import { Icon } from "@/components/Icon";
 import { ProjectShowcase } from "@/components/ProjectShowcase";
@@ -25,7 +25,6 @@ const line = (index: number) => ({ "--l": index }) as CSSProperties;
 export default function Home() {
   return (
     <main>
-      <HeroStory silhouette={silhouettePhoto}>
       <section className="hero" id="top">
         <HeroRain />
         <div className="hero-grid" data-depth="-3" data-lag aria-hidden="true" />
@@ -142,7 +141,8 @@ export default function Home() {
           <T en="Scroll to explore" mn="Доош гүйлгэх" />
         </a>
       </section>
-      </HeroStory>
+
+      <AboutBridge silhouette={silhouettePhoto} />
 
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track">

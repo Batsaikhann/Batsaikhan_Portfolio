@@ -97,9 +97,7 @@ export function HeroRain() {
     let frame = 0;
     let last = 0;
     let visible = true;
-    // Once the hero story has moved past the hero, the rain is faded out — stop the loop entirely.
-    const story = canvas.closest<HTMLElement>(".story");
-    const running = () => visible && !document.hidden && story?.dataset.phase !== "next";
+    const running = () => visible && !document.hidden;
     const loop = (now: number) => {
       if (!running()) {
         frame = 0;
@@ -120,14 +118,11 @@ export function HeroRain() {
       resume();
     });
     io.observe(canvas);
-    const phaseObserver = new MutationObserver(resume);
-    if (story) phaseObserver.observe(story, { attributeFilter: ["data-phase"] });
     document.addEventListener("visibilitychange", resume);
 
     return () => {
       cancelAnimationFrame(frame);
       io.disconnect();
-      phaseObserver.disconnect();
       document.removeEventListener("visibilitychange", resume);
       resizeObserver.disconnect();
     };
