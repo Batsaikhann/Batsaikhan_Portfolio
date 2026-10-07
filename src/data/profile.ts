@@ -7,9 +7,10 @@ export const profile = {
   location: { en: "Ulaanbaatar, Mongolia", mn: "Улаанбаатар, Монгол" } satisfies L,
   city: { en: "Ulaanbaatar", mn: "Улаанбаатар" } satisfies L,
   email: "erdenesukh.batsaikhan@gmail.com",
+  // Mongolian mobile numbers; dialled with the +976 country code.
+  phones: ["9930 8855", "9011 5845"],
   github: { label: "github.com/Batsaikhann", href: "https://github.com/Batsaikhann" },
-  // Replace with your real LinkedIn URL.
-  linkedin: { label: "LinkedIn", href: "#contact" },
+  instagram: { label: "@_batsaikhannn", href: "https://www.instagram.com/_batsaikhannn" },
 };
 
 // Project case studies live in ./projects.ts.

@@ -179,8 +179,8 @@ export function DevIdCard() {
               <a href={profile.github.href} target="_blank" rel="noreferrer">
                 <Icon name="github" size={14} /> GitHub
               </a>
-              <a href={profile.linkedin.href}>
-                <Icon name="linkedin" size={14} /> LinkedIn
+              <a href={profile.instagram.href} target="_blank" rel="noreferrer">
+                <Icon name="instagram" size={14} /> Instagram
               </a>
               <a href={`mailto:${profile.email}`}>
                 <Icon name="mail" size={14} /> Email

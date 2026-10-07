@@ -3,6 +3,7 @@ import Image from "next/image";
 import { DevIdCard } from "@/components/DevIdCard";
 import { HeroPlanet, HeroProducts } from "@/components/HeroOrbit";
 import { HeroRain } from "@/components/HeroRain";
+import { ContactButton } from "@/components/ContactModal";
 import { HeroStory } from "@/components/HeroStory";
 import { HeroScene } from "@/components/HeroScene";
 import { Icon } from "@/components/Icon";
@@ -13,10 +14,10 @@ import { T, Tx } from "@/components/T";
 import { journey, profile, stats, ticker } from "@/data/profile";
 import { projects } from "@/data/projects";
 import portraitPhoto from "../../public/images/hero/portrait-cutout.png";
+import silhouettePhoto from "../../public/images/hero/silhouette.webp";
 import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
 
 const sporthubShot = projects.find((p) => p.slug === "sporthub")?.shots[0];
-const storyProjects = ["barilgahub", "sporthub", "gymhub", "bikemap", "sparkxp"].flatMap((slug) => projects.filter((p) => p.slug === slug));
 const heroProducts = ["barilgahub", "gymhub", "sparkxp"].flatMap((slug) => projects.filter((p) => p.slug === slug));
 
 const line = (index: number) => ({ "--l": index }) as CSSProperties;
@@ -24,7 +25,7 @@ const line = (index: number) => ({ "--l": index }) as CSSProperties;
 export default function Home() {
   return (
     <main>
-      <HeroStory projects={storyProjects} silhouette={portraitPhoto}>
+      <HeroStory silhouette={silhouettePhoto}>
       <section className="hero" id="top">
         <HeroRain />
         <div className="hero-grid" data-depth="-3" data-lag aria-hidden="true" />
@@ -68,8 +69,15 @@ export default function Home() {
             <a className="button button-primary" href="#work" data-magnetic data-cursor="Go">
               <T en="Explore my work" mn="Ажлуудыг үзэх" /> <Icon name="arrow" />
             </a>
-            <a className="text-link" href={profile.github.href} target="_blank" rel="noreferrer">
-              <Icon name="github" /> {profile.github.label}
+            <a className="hero-github" href={profile.github.href} target="_blank" rel="noreferrer" data-magnetic>
+              <span className="hero-github-icon">
+                <Icon name="github" size={18} />
+              </span>
+              <span className="hero-github-text">
+                <small>GitHub</small>
+                {profile.github.label}
+              </span>
+              <Icon name="arrowUpRight" size={15} />
             </a>
           </div>
         </div>
@@ -112,6 +120,9 @@ export default function Home() {
               </span>
             )}
           </TransitionLink>
+          <HeroProducts projects={heroProducts} />
+          </div>
+          {/* Outside .hero-cards so it can sit above the smoke while the project cards stay behind the portrait. */}
           <div className="float-card card-scope" data-depth="14" data-lag>
             <span>Full-stack</span>
             <span>
@@ -121,11 +132,6 @@ export default function Home() {
             <i className="card-scope-icon">
               <Icon name="arrowUpRight" size={14} />
             </i>
-          </div>
-          <HeroProducts projects={heroProducts} />
-          </div>
-          <div className="float-pill" data-depth="12" data-lag>
-            <i /> <T en="shipping since 2023" mn="2023 оноос хойш" />
           </div>
         </div>
 
@@ -297,8 +303,8 @@ export default function Home() {
       <section className="work section" id="work">
         <header className="work-heading" data-reveal>
           <div>
-            <p className="eyebrow-label" data-scramble>
-              <T en="02 / Selected work" mn="02 / Сонгосон ажлууд" />
+            <p className="eyebrow-label work-eyebrow">
+              <b>02</b> / <T en="Selected work" mn="Сонгосон ажлууд" />
             </p>
             <h2>
               <span className="reveal-line">
@@ -316,8 +322,8 @@ export default function Home() {
           <div className="work-intro">
             <p>
               <T
-                en="A collection of products and systems I've built — from idea to production."
-                mn="Санаанаас production хүртэл хүргэсэн бүтээгдэхүүн, системүүд."
+                en="A collection of products and systems from idea to production. Real problems, real users, real impact."
+                mn="Санаанаас production хүртэл хүргэсэн бүтээгдэхүүн, системүүд. Бодит асуудал, бодит хэрэглэгч, бодит үр нөлөө."
               />
             </p>
             <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
@@ -459,26 +465,26 @@ export default function Home() {
               mn="Санаа, төсөл байна уу, эсвэл зүгээр л мэндлэх үү? Би шинэ боломжид үргэлж нээлттэй."
             />
           </p>
-          <a
-            className="button button-primary contact-button button-glow"
-            href={`mailto:${profile.email}`}
-            data-magnetic
-            data-cursor="Go"
-          >
+          <ContactButton className="button button-primary contact-button button-glow" data-magnetic data-cursor="Go">
             <T en="Start a conversation" mn="Яриа эхлүүлэх" /> <Icon name="arrow" />
-          </a>
+          </ContactButton>
         </div>
 
         <div className="contact-links" data-reveal>
           <a href={profile.github.href} target="_blank" rel="noreferrer">
             <Icon name="github" size={18} /> {profile.github.label}
           </a>
-          <a href={profile.linkedin.href}>
-            <Icon name="linkedin" size={18} /> {profile.linkedin.label}
+          <a href={profile.instagram.href} target="_blank" rel="noreferrer">
+            <Icon name="instagram" size={18} /> {profile.instagram.label}
           </a>
           <a href={`mailto:${profile.email}`}>
             <Icon name="mail" size={18} /> {profile.email}
           </a>
+          {profile.phones.map((phone) => (
+            <a key={phone} href={`tel:+976${phone.replace(/\s/g, "")}`}>
+              <Icon name="phone" size={18} /> {phone}
+            </a>
+          ))}
         </div>
       </section>
     </main>
