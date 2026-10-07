@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto";
 import { headers } from "next/headers";
-import { CONTACT_INTENTS, isContactIntent, type ContactState } from "@/data/contact";
+import { BUDGETS, CONTACT_INTENTS, PROJECT_TYPES, TIMELINES, isContactIntent, pick, type ContactState } from "@/data/contact";
 import { profile } from "@/data/profile";
 
 /**
@@ -46,7 +46,17 @@ export async function sendContact(_prev: ContactState, data: FormData): Promise<
     email: text(data, "email").slice(0, 200),
     message: text(data, "message").slice(0, 5000),
     intent: isContactIntent(rawIntent) ? rawIntent : ("project" as const),
+    // Optional project details; anything outside the known options is ignored.
+    projectType: pick(PROJECT_TYPES, text(data, "projectType")),
+    budget: pick(BUDGETS, text(data, "budget")),
+    timeline: pick(TIMELINES, text(data, "timeline")),
   };
+  if (values.intent === "hi") values.projectType = values.budget = values.timeline = undefined;
+  const details = [
+    ["Project", values.projectType && PROJECT_TYPES[values.projectType].en],
+    ["Budget", values.budget && BUDGETS[values.budget].en],
+    ["Timeline", values.timeline && TIMELINES[values.timeline].en],
+  ].filter((row): row is [string, string] => Boolean(row[1]));
 
   const fieldErrors: ContactState["fieldErrors"] = {};
   if (!values.name) fieldErrors.name = "required";
@@ -88,6 +98,7 @@ export async function sendContact(_prev: ContactState, data: FormData): Promise<
       <p style="margin:0 0 4px;color:#e5243b;font-size:12px;letter-spacing:.12em;text-transform:uppercase">${escapeHtml(intent)}</p>
       <h2 style="margin:0 0 16px">${escapeHtml(values.name)}</h2>
       <p style="margin:0 0 16px"><a href="mailto:${escapeHtml(values.email)}">${escapeHtml(values.email)}</a></p>
+      ${details.length ? `<table style="margin:0 0 16px;border-collapse:collapse;font-size:14px">${details.map(([k, v]) => `<tr><td style="padding:2px 16px 2px 0;color:#777">${k}</td><td style="padding:2px 0"><b>${escapeHtml(v)}</b></td></tr>`).join("")}</table>` : ""}
       <p style="margin:0;white-space:pre-wrap">${escapeHtml(values.message)}</p>
     </div>`;
   // Same visitor + same form session + same text ⇒ same key, so Resend drops an accidental double send.
@@ -102,7 +113,7 @@ export async function sendContact(_prev: ContactState, data: FormData): Promise<
         to: [INBOX],
         reply_to: values.email, // "Reply" in your inbox answers the visitor directly
         subject: `[Portfolio] ${intent} — ${values.name}`,
-        text: `${intent}\n\nFrom: ${values.name} <${values.email}>\n\n${values.message}`,
+        text: `${intent}\n\nFrom: ${values.name} <${values.email}>\n${details.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\n${values.message}`,
         html,
       }),
       signal: AbortSignal.timeout(10_000),
