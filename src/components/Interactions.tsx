@@ -3,6 +3,7 @@
 import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { setLenis } from "@/lib/scroll";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
@@ -46,7 +47,10 @@ type Layer = { el: HTMLElement; depth: number; ease: number; x: number; y: numbe
  *   data-scramble    glyph-scramble text when it enters the viewport
  *   data-count       count a number up from 0
  *   data-depth=n     hero layer that follows the cursor by n px (data-lag = slower)
- *   data-parallax=n  drifts vertically at n × scroll speed
+ *   data-parallax=n  drifts vertically at n × scroll speed (data-parallax-x=n drifts sideways)
+ *   data-progress    exposes --progress (0 → 1) as the element scrolls past the viewport's
+ *                    reading line; descendants with data-step get .is-reached as the line passes them
+ *   data-follow      hero light that trails the cursor inside its positioned parent
  *   data-tilt=n      3D tilt up to n degrees; exposes --rx --ry --mx --my --sx --sy
  *   data-magnetic    element is pulled toward the cursor
  *   data-cursor=txt  custom cursor shows a label over this element
@@ -108,7 +112,11 @@ export function Interactions() {
     if (reduced) return cleanup;
 
     const lenis = new Lenis({ autoRaf: true, anchors: true, lerp: 0.09 });
-    cleanups.push(() => lenis.destroy());
+    setLenis(lenis);
+    cleanups.push(() => {
+      setLenis(null);
+      lenis.destroy();
+    });
 
     if (finePointer) {
       root.classList.add("has-cursor");
@@ -123,6 +131,10 @@ export function Interactions() {
         dotRef.current?.classList.toggle("is-hidden", Boolean(labelled));
         if (labelled && labelRef.current) labelRef.current.textContent = labelled.dataset.cursor ?? "";
       });
+      listen(window, "pointerdown", () => ringRef.current?.classList.add("is-down"));
+      listen(window, "pointerup", () => ringRef.current?.classList.remove("is-down"));
+      listen(document, "pointerleave", () => root.classList.add("cursor-away"));
+      listen(document, "pointerenter", () => root.classList.remove("cursor-away"));
 
       document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
         listen(el, "pointermove", (event) => {
@@ -131,6 +143,8 @@ export function Interactions() {
           const y = event.clientY - rect.top - rect.height / 2;
           el.style.transition = "translate .2s ease-out";
           el.style.translate = `${x * 0.28}px ${y * 0.38}px`;
+          el.style.setProperty("--gx", `${(event.clientX - rect.left).toFixed(0)}px`);
+          el.style.setProperty("--gy", `${(event.clientY - rect.top).toFixed(0)}px`);
         });
         listen(el, "pointerleave", () => {
           el.style.transition = "translate .6s cubic-bezier(.2,.9,.2,1)";
@@ -167,7 +181,14 @@ export function Interactions() {
             y: 0,
           }))
         : [];
-    const parallax = wide ? [...document.querySelectorAll<HTMLElement>("[data-parallax]")] : [];
+    const parallax = wide ? [...document.querySelectorAll<HTMLElement>("[data-parallax], [data-parallax-x]")] : [];
+    const progressHosts = [...document.querySelectorAll<HTMLElement>("[data-progress]")].map((el) => ({
+      el,
+      steps: [...el.querySelectorAll<HTMLElement>("[data-step]")],
+    }));
+    const follow = finePointer && wide ? document.querySelector<HTMLElement>("[data-follow]") : null;
+    let followX = 0;
+    let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
     const heroCopy = document.querySelector<HTMLElement>(".hero-copy");
     const ticker = document.querySelector<HTMLElement>(".ticker-track");
@@ -192,6 +213,7 @@ export function Interactions() {
     let direction = 1;
     let skew = 0;
     let frame = 0;
+    let lastProgressY = -1;
 
     listen(window, "pointermove", (event) => {
       mouseX = event.clientX;
@@ -230,11 +252,33 @@ export function Interactions() {
         layer.el.style.translate = `${layer.x.toFixed(2)}px ${layer.y.toFixed(2)}px`;
       }
 
+      if (follow && y < innerHeight * 1.2) {
+        const host = follow.parentElement!.getBoundingClientRect();
+        followX += (mouseX - host.left - followX) * 0.07;
+        followY += (mouseY - host.top - followY) * 0.07;
+        follow.style.transform = `translate3d(${followX.toFixed(1)}px, ${followY.toFixed(1)}px, 0)`;
+      }
+
       for (const el of parallax) {
         const host = el.parentElement!.getBoundingClientRect();
         const offset = host.top + host.height / 2 - innerHeight / 2;
         if (Math.abs(offset) < innerHeight * 1.5) {
-          el.style.translate = `0 ${(-offset * Number(el.dataset.parallax)).toFixed(1)}px`;
+          const vy = Number(el.dataset.parallax ?? 0);
+          const vx = Number(el.dataset.parallaxX ?? 0);
+          el.style.translate = `${(offset * vx).toFixed(1)}px ${(-offset * vy).toFixed(1)}px`;
+        }
+      }
+
+      // Scroll-linked progress only needs work when the page actually moved.
+      if (y !== lastProgressY) {
+        lastProgressY = y;
+        const line = innerHeight * 0.62;
+        for (const { el, steps } of progressHosts) {
+          const rect = el.getBoundingClientRect();
+          if (rect.bottom < -innerHeight || rect.top > innerHeight * 2) continue;
+          const p = Math.min(1, Math.max(0, (line - rect.top) / rect.height));
+          el.style.setProperty("--progress", p.toFixed(4));
+          for (const step of steps) step.classList.toggle("is-reached", step.getBoundingClientRect().top < line);
         }
       }
 

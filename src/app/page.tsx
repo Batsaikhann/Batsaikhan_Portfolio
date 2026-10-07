@@ -4,7 +4,7 @@ import { DevIdCard } from "@/components/DevIdCard";
 import { HeroRain } from "@/components/HeroRain";
 import { HeroScene } from "@/components/HeroScene";
 import { Icon } from "@/components/Icon";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectShowcase } from "@/components/ProjectShowcase";
 import { TransitionLink } from "@/components/RouteTransition";
 import { StackOrbit } from "@/components/StackOrbit";
 import { T, Tx } from "@/components/T";
@@ -13,16 +13,6 @@ import { projects } from "@/data/projects";
 import portraitPhoto from "../../public/images/mee1.png";
 import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
 
-// Showcase order: featured SportHub in the middle, flanked by my own two other products.
-// Team projects (SparkXP, GymHub) get their own row below.
-const [featured, ...others] = projects;
-const teamWork = projects.filter((p) => p.status.kind === "team" || p.slug === "gymhub");
-const showcase = [
-  { project: others[0], side: "left" as const, featured: false },
-  { project: featured, side: undefined, featured: true },
-  { project: others[1], side: "right" as const, featured: false },
-];
-
 const line = (index: number) => ({ "--l": index }) as CSSProperties;
 
 export default function Home() {
@@ -30,7 +20,7 @@ export default function Home() {
     <main>
       <section className="hero" id="top">
         <HeroRain />
-        <div className="hero-grid" aria-hidden="true" />
+        <div className="hero-grid" data-depth="-3" data-lag aria-hidden="true" />
         <div className="hero-copy">
           <p className="eyebrow intro-1">
             <span className="pulse-dot" /> <Tx text={profile.location} /> ·{" "}
@@ -78,11 +68,13 @@ export default function Home() {
         </div>
 
         <div className="hero-visual">
-          <div className="hero-glow" data-depth="-14" aria-hidden="true" />
-          <div className="hero-scene-wrap" data-depth="-6">
+          {/* Depth stack, back to front: grid (-3) · glow · rock planes (-7) · portrait (10) · cards (12–16). */}
+          <div className="hero-glow" data-depth="-5" aria-hidden="true" />
+          <div className="hero-scene-wrap" data-depth="-7">
             <HeroScene />
           </div>
-          <div className="hero-portrait" data-depth="6">
+          <div className="hero-light" data-follow aria-hidden="true" />
+          <div className="hero-portrait" data-depth="10">
             <Image
               src={portraitPhoto}
               alt="Batsaikhan working on a laptop"
@@ -91,8 +83,9 @@ export default function Home() {
               placeholder="blur"
               sizes="(max-width: 760px) 92vw, 460px"
             />
+            <span className="portrait-rim" aria-hidden="true" />
           </div>
-          <TransitionLink className="float-card card-building" href="/work/sporthub" label="SportHub" data-depth="18" data-lag data-cursor="View">
+          <TransitionLink className="float-card card-building" href="/work/sporthub" label="SportHub" data-depth="16" data-lag data-cursor="View">
             <small>
               <i className="status-dot" /> <T en="Now building" mn="Одоо бүтээж буй" />
             </small>
@@ -105,7 +98,7 @@ export default function Home() {
             </span>
             <span className="building-stack">NestJS · React · Flutter</span>
           </TransitionLink>
-          <div className="float-card card-scope" data-depth="26" data-lag>
+          <div className="float-card card-scope" data-depth="14" data-lag>
             <span>Full-stack</span>
             <span>
               <T en="Web / Mobile" mn="Веб / Мобайл" />
@@ -170,32 +163,7 @@ export default function Home() {
           </div>
         </header>
 
-        <div className="showcase">
-          {showcase.map((item, i) => (
-            <ProjectCard
-              key={item.project.slug}
-              project={item.project}
-              total={projects.length}
-              featured={item.featured}
-              side={item.side}
-              index={i}
-            />
-          ))}
-        </div>
-
-        <div className="team-heading" data-reveal>
-          <p className="eyebrow-label">
-            <T en="Team projects" mn="Багийн төслүүд" />
-          </p>
-          <p className="team-note">
-            <T en="Shipped with product teams through a PR workflow." mn="Бүтээгдэхүүний багуудтай PR урсгалаар хүргэсэн." />
-          </p>
-        </div>
-        <div className="team-grid">
-          {teamWork.map((project, i) => (
-            <ProjectCard key={project.slug} project={project} total={projects.length} index={i} />
-          ))}
-        </div>
+        <ProjectShowcase projects={projects} />
       </section>
 
       <section className="about section" id="about">
@@ -280,12 +248,13 @@ export default function Home() {
             ))}
           </div>
 
-          <ol className="journey">
+          <ol className="journey" data-progress>
             {journey.map((item, i) => (
               <li
                 key={item.title}
                 className={`journey-item is-${item.kind}${item.current ? " is-current" : ""}`}
                 data-reveal
+                data-step
                 style={{ "--delay": `${i * 90}ms` } as CSSProperties}
               >
                 <span className="journey-period">
@@ -417,12 +386,18 @@ export default function Home() {
       </section>
 
       <section className="contact section" id="contact">
-        <div className="contact-words" data-parallax="0.1" aria-hidden="true">
-          <span>Build</span>
-          <span>Create</span>
-          <span>Ship</span>
+        <div className="contact-words" aria-hidden="true">
+          <span data-parallax-x="0.12">Build</span>
+          <span data-parallax-x="-0.12">Create</span>
+          <span data-parallax-x="0.12">Ship</span>
         </div>
         <div className="contact-planet" aria-hidden="true" />
+        <svg className="contact-orbits" viewBox="0 0 1000 600" aria-hidden="true">
+          <ellipse cx="500" cy="300" rx="470" ry="150" />
+          <ellipse cx="500" cy="300" rx="380" ry="230" transform="rotate(-14 500 300)" />
+          <ellipse cx="500" cy="300" rx="300" ry="96" transform="rotate(9 500 300)" />
+          <ellipse className="orbit-runner" cx="500" cy="300" rx="380" ry="230" transform="rotate(-14 500 300)" pathLength={1} />
+        </svg>
         <div className="contact-rings" aria-hidden="true">
           <i />
           <i />
@@ -468,7 +443,7 @@ export default function Home() {
             />
           </p>
           <a
-            className="button button-primary contact-button"
+            className="button button-primary contact-button button-glow"
             href={`mailto:${profile.email}`}
             data-magnetic
             data-cursor="Go"
