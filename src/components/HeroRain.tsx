@@ -99,7 +99,7 @@ export function HeroRain() {
     let visible = true;
     // Once the hero story has moved past the hero, the rain is faded out — stop the loop entirely.
     const story = canvas.closest<HTMLElement>(".story");
-    const running = () => visible && !document.hidden && !(story && /portal|work|next/.test(story.dataset.phase ?? ""));
+    const running = () => visible && !document.hidden && story?.dataset.phase !== "next";
     const loop = (now: number) => {
       if (!running()) {
         frame = 0;

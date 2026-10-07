@@ -36,9 +36,9 @@ button { font: inherit; }
 ::selection { color: var(--on-brand); background: var(--brand); }
 :focus-visible { outline: 1px solid var(--brand-hot); outline-offset: 4px; }
 
-html.lenis, html.lenis body { height: auto; }
-html.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: clip; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 
 .site-shell { position: relative; overflow: clip; }
 
@@ -550,7 +550,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .story:is([data-phase="hero"], [data-phase="next"]) .story-orbit,
 .story:is([data-phase="hero"], [data-phase="orbit"]) .story-portal,
 .story[data-story="on"]:not([data-phase="next"]) .story-next,
-.story[data-phase="next"] .hero { visibility: hidden; }
+.story[data-hero-gone] .hero { visibility: hidden; }
 
 /* 1 · Orbit — the ring draws once (in the first half of the chapter) and stays still. */
 .story-orbit { opacity: min(calc(var(--orbit) * 3), calc(1 - var(--portal) * 4)); }

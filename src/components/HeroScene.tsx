@@ -149,7 +149,7 @@ export function HeroScene() {
       const timer = new THREE.Timer();
       const story = host.closest<HTMLElement>(".story");
       // Faded out once the hero story leaves the hero, so the loop stops until it comes back.
-      const storyAway = () => !!story && /portal|work|next/.test(story.dataset.phase ?? "");
+      const storyAway = () => story?.dataset.phase === "next";
       const phaseObserver = new MutationObserver(() => schedule());
       if (story) phaseObserver.observe(story, { attributeFilter: ["data-phase"] });
       const render = (now: number) => {

@@ -1,9 +1,7 @@
 "use client";
 
-import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { setLenis } from "@/lib/scroll";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
@@ -110,13 +108,6 @@ export function Interactions() {
     cleanups.push(() => sectionObserver.disconnect());
 
     if (reduced) return cleanup;
-
-    const lenis = new Lenis({ autoRaf: true, anchors: true, smoothWheel: false });
-    setLenis(lenis);
-    cleanups.push(() => {
-      setLenis(null);
-      lenis.destroy();
-    });
 
     if (finePointer) {
       root.classList.add("has-cursor");

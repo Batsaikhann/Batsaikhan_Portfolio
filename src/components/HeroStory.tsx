@@ -6,12 +6,15 @@ import { Icon } from "./Icon";
 import { T } from "./T";
 
 // Scroll windows (fractions of the pinned distance) for each chapter of the story.
-// The whole story is ~65vh of extra scroll: orbit 28% · portal 27% · About bridge 33% (+ a short hold).
+// The whole story is ~65vh of extra scroll. Chapters overlap so one scene is always
+// cross-fading into the next — there is never a frame with only the dark background.
 const PHASES = [
-  ["--orbit", 0, 0.28],
-  ["--portal", 0.28, 0.55],
-  ["--next", 0.55, 0.88],
+  ["--orbit", 0, 0.3],
+  ["--portal", 0.2, 0.6],
+  ["--next", 0.4, 0.85],
 ] as const;
+// The hero is fully faded (portrait opacity hits 0 at --portal = 1) from here on.
+const HERO_GONE = 0.6;
 
 const clamp = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -44,8 +47,9 @@ export function HeroStory({ children, silhouette }: { children: ReactNode; silho
       last = key;
       for (const [name, from, to] of PHASES) host.style.setProperty(name, clamp((p - from) / (to - from)).toFixed(4));
       host.style.setProperty("--out", out.toFixed(4));
-      const phase = p < 0.01 ? "hero" : p < 0.28 ? "orbit" : p < 0.55 ? "portal" : "next";
+      const phase = p < 0.01 ? "hero" : p < 0.2 ? "orbit" : p < 0.4 ? "portal" : "next";
       if (host.dataset.phase !== phase) host.dataset.phase = phase;
+      host.toggleAttribute("data-hero-gone", p >= HERO_GONE);
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -64,6 +68,7 @@ export function HeroStory({ children, silhouette }: { children: ReactNode; silho
       } else {
         delete host.dataset.story;
         host.dataset.phase = "hero";
+        host.removeAttribute("data-hero-gone");
       }
     };
     sync();
@@ -123,7 +128,8 @@ export function HeroStory({ children, silhouette }: { children: ReactNode; silho
             <T en="About" mn="Тухай" />
           </p>
           <span className="next-figure" aria-hidden="true">
-            <Image src={silhouette} alt="" sizes="(max-width: 760px) 60vw, 380px" />
+            {/* Eager, so the first reveal doesn't stall on a lazy load + decode mid-scroll. */}
+            <Image src={silhouette} alt="" sizes="(max-width: 760px) 60vw, 380px" loading="eager" />
           </span>
           <span className="next-horizon" aria-hidden="true" />
           <div className="next-copy">

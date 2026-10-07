@@ -39,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-lang="en"
+      data-scroll-behavior="smooth"
       className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
