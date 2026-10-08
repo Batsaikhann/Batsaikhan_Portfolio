@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import Script from "next/script";
 import { BackToTop } from "@/components/BackToTop";
+import { MobileCta } from "@/components/MobileCta";
 import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
 import { Nav } from "@/components/Nav";
@@ -24,11 +25,20 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://batsaikhandev.vercel.app"),
   title: {
     default: "Batsaikhan — Full-stack Engineer",
     template: "%s — Batsaikhan",
   },
   description: "Batsaikhan — full-stack engineer building scalable web, mobile and backend products.",
+  openGraph: {
+    type: "website",
+    siteName: "Batsaikhan",
+    title: "Batsaikhan — Full-stack Engineer",
+    description: "I build systems that move — web, mobile and backend products, from architecture to deployment.",
+    url: "/",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -60,6 +70,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
             <Footer />
             <BackToTop />
+            <MobileCta />
           </div>
         </RouteTransition>
       </body>
