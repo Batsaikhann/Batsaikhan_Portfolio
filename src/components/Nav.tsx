@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { AmbientAudio } from "./AmbientAudio";
+import { ContactButton } from "./ContactModal";
 import { Icon } from "./Icon";
 import { LangSwitch } from "./LangSwitch";
 import { Logo } from "./Logo";
@@ -50,13 +51,9 @@ export function Nav() {
           <span key={link.hash}>{navLink(link.hash, <T en={link.label} mn={link.mn} />)}</span>
         ))}
       </div>
-      {navLink(
-        "#contact",
-        <>
-          <T en="Let's talk" mn="Ярилцъя" /> <Icon name="arrowUpRight" size={15} />
-        </>,
-        { className: "nav-cta", magnetic: true },
-      )}
+      <ContactButton className="nav-cta" data-magnetic>
+        <T en="Let's talk" mn="Ярилцъя" /> <Icon name="arrowUpRight" size={15} />
+      </ContactButton>
       {/* Lives in the persistent nav, so the soundtrack never restarts between sections or routes. */}
       <AmbientAudio />
       <LangSwitch />

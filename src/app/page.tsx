@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { AboutBridge } from "@/components/AboutBridge";
+import { AboutPortrait } from "@/components/AboutPortrait";
 import { CodeColumns } from "@/components/CodeColumns";
 import { CodeTerminal } from "@/components/CodeTerminal";
 import { DevIdCard } from "@/components/DevIdCard";
@@ -17,7 +18,6 @@ import { journey, profile, stats, ticker } from "@/data/profile";
 import { projects } from "@/data/projects";
 import portraitPhoto from "../../public/images/hero/portrait-cutout.png";
 import silhouettePhoto from "../../public/images/hero/silhouette.webp";
-import graduationPhoto from "../../public/images/batsaikhan-graduation.png";
 
 const sporthubShot = projects.find((p) => p.slug === "sporthub")?.shots[0];
 const heroProducts = ["barilgahub", "gymhub", "sparkxp"].flatMap((slug) => projects.filter((p) => p.slug === slug));
@@ -159,43 +159,7 @@ export default function Home() {
       <section className="about section" id="about">
         <div className="about-ambient" aria-hidden="true" />
         <CodeColumns />
-        <div className="about-image" data-reveal>
-          <div className="about-image-inner" data-parallax="0.06">
-            <Image
-              src={graduationPhoto}
-              alt="Batsaikhan on graduation day"
-              fill
-              placeholder="blur"
-              sizes="(max-width: 760px) 92vw, 42vw"
-            />
-          </div>
-          <span className="curtain" aria-hidden="true" />
-          <span className="frame-run" aria-hidden="true" />
-          <span className="frame-run is-bloom" aria-hidden="true" />
-          <div className="image-caption">
-            <span data-scramble>
-              <T en="01 / The person" mn="01 / Хүн" />
-            </span>
-            <b>
-              <T
-                en={
-                  <>
-                    Engineer by craft.
-                    <br />
-                    Builder by nature.
-                  </>
-                }
-                mn={
-                  <>
-                    Мэргэжлээрээ инженер.
-                    <br />
-                    Мөн чанараараа бүтээгч.
-                  </>
-                }
-              />
-            </b>
-          </div>
-        </div>
+        <AboutPortrait />
 
         <div className="about-copy" data-reveal>
           <p className="eyebrow-label" data-scramble>
@@ -276,7 +240,9 @@ export default function Home() {
           <svg viewBox="0 0 400 400">
             <ellipse cx="200" cy="200" rx="190" ry="120" />
           </svg>
-          <i className="orbit-dot" />
+          <i className="orbit-dot">
+            <i />
+          </i>
           <p>
             <T en="Open to opportunities · Let's build" mn="Боломжид нээлттэй · Хамтдаа бүтээе" />
           </p>
@@ -361,35 +327,71 @@ export default function Home() {
               mn="“Өгөгдлийн сангийн анхны схемээс production хүртэл.”"
             />
           </p>
+          <ul className="devid-tags">
+            {["Web", "Mobile", "Cloud", "AI"].map((tag) => (
+              <li key={tag}>{tag}</li>
+            ))}
+          </ul>
+          <p className="devid-site">
+            <Icon name="arrow" size={22} />
+            <a href="https://batsaikhandev.vercel.app">batsaikhandev.vercel.app</a>
+            <i aria-hidden="true" />
+            <small>
+              <T en="Building products that move." mn="Хөдөлгөөнтэй бүтээгдэхүүн бүтээнэ." />
+            </small>
+          </p>
         </div>
 
         <div className="devid-stage" data-reveal>
+          <div className="devid-orbit" aria-hidden="true">
+            <span />
+            <span />
+            <i />
+            <i />
+            <i />
+          </div>
           <DevIdCard />
         </div>
 
-        <dl className="devid-facts" data-reveal>
-          <p className="eyebrow-label">
-            <T en="Quick facts" mn="Товч мэдээлэл" />
+        <div className="devid-side" data-reveal>
+          <p className="devid-facts-head">
+            <span>
+              <T en="Quick facts" mn="Товч мэдээлэл" />
+            </span>
+            <small>01</small>
           </p>
-          {(
-            [
-              [{ en: "Based in", mn: "Байршил" }, profile.location],
-              [{ en: "Studying", mn: "Сургууль" }, { en: "MUST · Software Engineering", mn: "ШУТИС · Програм хангамж" }],
-              [{ en: "Batch", mn: "Он" }, { en: "2022 – 2026", mn: "2022 – 2026" }],
-              [{ en: "Working at", mn: "Ажил" }, { en: "Aether Tech Core LLC", mn: "Aether Tech Core LLC" }],
-              [{ en: "Focus", mn: "Чиглэл" }, { en: "Full-stack · Web · Mobile · AI", mn: "Full-stack · Веб · Мобайл · AI" }],
-            ] as const
-          ).map(([label, value]) => (
-            <div key={label.en}>
-              <dt>
-                <Tx text={label} />
-              </dt>
-              <dd>
-                <Tx text={value} />
-              </dd>
-            </div>
-          ))}
-        </dl>
+          <dl className="devid-facts">
+            {(
+              [
+                ["pin", { en: "Based in", mn: "Байршил" }, profile.location],
+                ["cap", { en: "Studying", mn: "Сургууль" }, { en: "MUST · Software Engineering", mn: "ШУТИС · Програм хангамж" }],
+                ["calendar", { en: "Batch", mn: "Он" }, { en: "2022 – 2026", mn: "2022 – 2026" }],
+                ["building", { en: "Working at", mn: "Ажил" }, { en: "Aether Tech Core LLC", mn: "Aether Tech Core LLC" }],
+                ["layers", { en: "Focus", mn: "Чиглэл" }, { en: "Full-stack · Web · Mobile · AI", mn: "Full-stack · Веб · Мобайл · AI" }],
+              ] as const
+            ).map(([icon, label, value]) => (
+              <div key={label.en}>
+                <dt>
+                  <Icon name={icon} size={20} />
+                  <Tx text={label} />
+                </dt>
+                <dd>
+                  <Tx text={value} />
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <div className="devid-radar" aria-hidden="true">
+            <span className="devid-radar-dial" />
+            <ul>
+              {["Ideas", "Systems", "People", "Impact"].map((key) => (
+                <li key={key}>
+                  {key} <b>+</b>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="stack section" id="stack">

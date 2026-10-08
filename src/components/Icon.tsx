@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type IconName = "arrow" | "arrowUpRight" | "arrowDown" | "github" | "instagram" | "mail" | "phone" | "external" | "pin";
+export type IconName = "arrow" | "arrowUpRight" | "arrowDown" | "github" | "instagram" | "mail" | "phone" | "external" | "pin" | "cap" | "calendar" | "building" | "layers" | "globe";
 
 const paths: Record<IconName, ReactNode> = {
   arrow: (
@@ -25,6 +25,38 @@ const paths: Record<IconName, ReactNode> = {
     <>
       <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
       <circle cx="12" cy="9.5" r="2.5" />
+    </>
+  ),
+  cap: (
+    <>
+      <path d="m2 9 10-5 10 5-10 5z" />
+      <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+      <path d="M22 9v6" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2" />
+    </>
+  ),
+  building: (
+    <>
+      <rect x="5" y="3" width="14" height="18" rx="1" />
+      <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3" />
+    </>
+  ),
+  layers: (
+    <>
+      <path d="m12 3 9 5-9 5-9-5z" />
+      <path d="m3 12.5 9 5 9-5" />
+      <path d="m3 17 9 5 9-5" />
+    </>
+  ),
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" />
     </>
   ),
   github: (

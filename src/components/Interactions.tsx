@@ -94,6 +94,15 @@ export function Interactions() {
       .forEach((el) => observer.observe(el));
     cleanups.push(() => observer.disconnect());
 
+    // Pause every looping animation in sections that are well off screen (CSS: .is-offscreen).
+    // Scroll-linked animations (hero, bridge) re-sync to the scroll position when they resume.
+    const offscreenObserver = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.target.classList.toggle("is-offscreen", !entry.isIntersecting)),
+      { rootMargin: "300px 0px" },
+    );
+    document.querySelectorAll("main > section, .footer").forEach((el) => offscreenObserver.observe(el));
+    cleanups.push(() => offscreenObserver.disconnect());
+
     // Highlight the nav link of the section in the middle of the viewport.
     const navLinks = [...document.querySelectorAll<HTMLAnchorElement>(".nav-links a")];
     const sectionObserver = new IntersectionObserver(
@@ -203,6 +212,18 @@ export function Interactions() {
     let skew = 0;
     let frame = 0;
     let lastProgressY = -1;
+    let lastParallaxY = -1;
+
+    // The marquee only needs per-frame work while it is on screen.
+    let tickerVisible = false;
+    if (ticker) {
+      const tickerObserver = new IntersectionObserver(([entry]) => {
+        tickerVisible = entry.isIntersecting;
+        if (tickerVisible) kick();
+      });
+      tickerObserver.observe(ticker);
+      cleanups.push(() => tickerObserver.disconnect());
+    }
 
     // Layout values that only change on resize — reading them every frame forces reflows.
     let maxScroll = 0;
@@ -224,6 +245,7 @@ export function Interactions() {
       const at = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
       if (dotRef.current) dotRef.current.style.transform = at;
       if (ringRef.current) ringRef.current.style.transform = at;
+      kick();
     });
 
     const loop = () => {
@@ -233,7 +255,8 @@ export function Interactions() {
 
       // Read all geometry first, then write styles, so the frame lays out only once.
       const followHost = follow && y < innerHeight * 1.2 ? follow.parentElement!.getBoundingClientRect() : null;
-      const parallaxRects = parallax.map((el) => el.parentElement!.getBoundingClientRect());
+      const scrolled = y !== lastParallaxY;
+      const parallaxRects = scrolled ? parallax.map((el) => el.parentElement!.getBoundingClientRect()) : [];
       const line = innerHeight * 0.62;
       const progressRects =
         y !== lastProgressY
@@ -243,35 +266,57 @@ export function Interactions() {
             }))
           : null;
 
+      // Anything still easing toward its target keeps the loop alive for another frame.
+      let settling = false;
+
       if (finePointer) {
-        glowX += (mouseX - glowX) * 0.06;
-        glowY += (mouseY - glowY) * 0.06;
-        if (glowRef.current) glowRef.current.style.transform = `translate3d(${glowX - 300}px, ${glowY - 300}px, 0)`;
+        const dx = mouseX - glowX;
+        const dy = mouseY - glowY;
+        if (Math.abs(dx) + Math.abs(dy) > 0.5) {
+          glowX += dx * 0.06;
+          glowY += dy * 0.06;
+          settling = true;
+          if (glowRef.current) glowRef.current.style.transform = `translate3d(${glowX - 300}px, ${glowY - 300}px, 0)`;
+        }
       }
 
-      nav?.classList.toggle("is-scrolled", y > 40);
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${maxScroll > 0 ? Math.min(1, y / maxScroll) : 0})`;
+      if (scrolled) {
+        nav?.classList.toggle("is-scrolled", y > 40);
+        if (progressRef.current) progressRef.current.style.transform = `scaleX(${maxScroll > 0 ? Math.min(1, y / maxScroll) : 0})`;
+      }
 
-      if (heroCopy && y < innerHeight * 1.2) {
+      if (heroCopy && scrolled && y < innerHeight * 1.2) {
         heroCopy.style.translate = `0 ${y * 0.18}px`;
         heroCopy.style.opacity = String(Math.max(0, 1 - y / (innerHeight * 0.8)));
       }
 
       const nx = mouseX / innerWidth - 0.5;
       const ny = mouseY / innerHeight - 0.5;
-      for (const layer of heroLayers) {
-        layer.x += (nx * layer.depth - layer.x) * layer.ease;
-        layer.y += (ny * layer.depth - layer.y) * layer.ease;
-        layer.el.style.translate = `${layer.x.toFixed(2)}px ${layer.y.toFixed(2)}px`;
+      if (y < innerHeight * 1.2) {
+        for (const layer of heroLayers) {
+          const dx = nx * layer.depth - layer.x;
+          const dy = ny * layer.depth - layer.y;
+          if (Math.abs(dx) + Math.abs(dy) < 0.02) continue;
+          layer.x += dx * layer.ease;
+          layer.y += dy * layer.ease;
+          settling = true;
+          layer.el.style.translate = `${layer.x.toFixed(2)}px ${layer.y.toFixed(2)}px`;
+        }
       }
 
       if (follow && followHost) {
-        followX += (mouseX - followHost.left - followX) * 0.07;
-        followY += (mouseY - followHost.top - followY) * 0.07;
-        follow.style.transform = `translate3d(${followX.toFixed(1)}px, ${followY.toFixed(1)}px, 0)`;
+        const dx = mouseX - followHost.left - followX;
+        const dy = mouseY - followHost.top - followY;
+        if (Math.abs(dx) + Math.abs(dy) > 0.2) {
+          followX += dx * 0.07;
+          followY += dy * 0.07;
+          settling = true;
+          follow.style.transform = `translate3d(${followX.toFixed(1)}px, ${followY.toFixed(1)}px, 0)`;
+        }
       }
 
-      for (const [i, el] of parallax.entries()) {
+      if (scrolled) lastParallaxY = y;
+      for (const [i, el] of parallaxRects.length ? parallax.entries() : []) {
         const host = parallaxRects[i];
         const offset = host.top + host.height / 2 - innerHeight / 2;
         if (Math.abs(offset) < innerHeight * 1.5) {
@@ -293,7 +338,7 @@ export function Interactions() {
         });
       }
 
-      if (ticker) {
+      if (ticker && tickerVisible) {
         const half = tickerHalf;
         const target = tickerHover ? 0.15 : 0.6 + Math.min(Math.abs(velocity), 60) * 0.3;
         tickerSpeed += (target - tickerSpeed) * 0.08;
@@ -305,9 +350,15 @@ export function Interactions() {
       }
 
       lastY = y;
-      frame = requestAnimationFrame(loop);
+      // Idle (no scroll, nothing easing, ticker off screen) → stop; scroll / pointer / resize restart it.
+      frame = settling || velocity !== 0 || (ticker && tickerVisible) ? requestAnimationFrame(loop) : 0;
     };
-    frame = requestAnimationFrame(loop);
+    function kick() {
+      if (!frame) frame = requestAnimationFrame(loop);
+    }
+    listen(window, "scroll", kick);
+    listen(window, "resize", kick);
+    kick();
     cleanups.push(() => cancelAnimationFrame(frame));
 
     return cleanup;

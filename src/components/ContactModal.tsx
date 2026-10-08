@@ -86,7 +86,9 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
     root.classList.add("modal-open");
     // When the form was opened — the server rejects sends that come back implausibly fast.
     if (startedRef.current) startedRef.current.value = String(Date.now());
-    dialogRef.current?.querySelector<HTMLElement>("input[name=name]")?.focus({ preventScroll: true });
+    // Only jump into the name field with a mouse/keyboard — on touch it pops the keyboard over the whole sheet.
+    const nameInput = matchMedia("(pointer: fine)").matches ? dialogRef.current?.querySelector<HTMLElement>("input[name=name]") : null;
+    (nameInput ?? dialogRef.current)?.focus({ preventScroll: true });
     return () => {
       root.style.overflow = "";
       root.classList.remove("modal-open");
@@ -129,7 +131,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
 
   return createPortal(
     <div className={`cm${closing ? " is-closing" : ""}`} onPointerDown={(event) => event.target === event.currentTarget && close()}>
-      <div className="cm-panel" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="cm-title">
+      <div className="cm-panel" ref={dialogRef} role="dialog" aria-modal="true" tabIndex={-1} aria-labelledby="cm-title">
         <button type="button" className="cm-close" aria-label="Close" onClick={close} />
 
         {/* Left: the pitch, response time and direct contacts. */}
