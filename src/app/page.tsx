@@ -333,14 +333,6 @@ export default function Home() {
               <li key={tag}>{tag}</li>
             ))}
           </ul>
-          <p className="devid-site">
-            <Icon name="arrow" size={22} />
-            <a href="https://batsaikhan.dev">batsaikhan.dev</a>
-            <i aria-hidden="true" />
-            <small>
-              <T en="Building products that move." mn="Хөдөлгөөнтэй бүтээгдэхүүн бүтээнэ." />
-            </small>
-          </p>
         </div>
 
         <div className="devid-stage" data-reveal>

@@ -1143,12 +1143,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .devid-quote::before { content: ""; position: absolute; left: 0; top: .78em; width: 26px; height: 1.5px; background: var(--brand-hot); box-shadow: 0 0 8px var(--brand-hot); }
 .devid-tags { display: flex; flex-wrap: wrap; gap: 0; margin: 34px 0 0; padding: 0; list-style: none; color: #a7a1a1; font: 12px var(--mono); letter-spacing: .16em; text-transform: uppercase; }
 .devid-tags li + li::before { content: "•"; margin: 0 22px; color: var(--brand-hot); }
-.devid-site { display: flex; align-items: center; gap: 16px; margin: 80px 0 0; }
-.devid-site svg { flex: none; color: var(--brand-hot); }
-.devid-site a { color: #ece6e6; font-size: 16px; transition: color .3s; }
-.devid-site a:hover { color: var(--brand-hot); }
-.devid-site i { flex: 0 1 80px; height: 1px; background: #3a3333; }
-.devid-site small { max-width: 170px; color: #8a8383; font: 9.5px/1.7 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
 
 /* Orbit rings + glow behind the badge */
 .devid-stage { z-index: 1; }
@@ -1219,7 +1213,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 @media (max-width: 1180px) {
   .devid-ghosts { display: none; }
   .devid { grid-template-columns: minmax(0, 1fr) 330px minmax(0, 1fr); gap: 32px; }
-  .devid-site i, .devid-site small, .devid-radar-dial { display: none; }
+  .devid-radar-dial { display: none; }
   .devid-tags { font-size: 11px; letter-spacing: .1em; }
   .devid-tags li + li::before { margin: 0 10px; }
   .devid-radar { height: auto; margin-top: 28px; }
@@ -1698,9 +1692,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .devid-side { width: 100%; max-width: 420px; text-align: left; }
   .devid-quote { padding-left: 0; }
   .devid-quote::before { display: none; }
-  .devid-tags, .devid-site { justify-content: center; }
-  .devid-site { margin-top: 36px; }
-  .devid-site i, .devid-site small, .devid-radar-dial { display: none; }
+  .devid-tags { justify-content: center; }
+  .devid-radar-dial { display: none; }
   .devid-radar { height: auto; margin-top: 24px; }
   .location-card { position: relative; right: auto; bottom: auto; rotate: 0deg; width: 100%; max-width: 420px; }
   .stack-orbit { grid-template-columns: 1fr; gap: 50px; }
