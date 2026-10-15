@@ -40,7 +40,7 @@ export default function OpengraphImage() {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 26, borderTop: "1px solid rgba(255, 255, 255, .1)", fontSize: 20, color: "#8a8383" }}>
-          <span>batsaikhandev.vercel.app</span>
+          <span>batsaikhan.dev</span>
           <span>Ulaanbaatar, Mongolia</span>
         </div>
       </div>
