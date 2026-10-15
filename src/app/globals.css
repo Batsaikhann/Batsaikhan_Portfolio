@@ -202,6 +202,10 @@ button { font: inherit; }
   .back-to-top { transition: opacity .3s ease, transform .35s var(--ease), background-color .25s, bottom .35s var(--ease); }
   .has-mobile-cta .back-to-top { bottom: calc(82px + env(safe-area-inset-bottom)); }
 }
+/* Touch screens: both floating buttons step aside while the project arrows are on screen (ProjectShowcase). */
+@media (max-width: 760px), (hover: none) {
+  .pager-in-view :is(.mobile-cta, .back-to-top) { opacity: 0; transform: translateY(24px); pointer-events: none; }
+}
 
 .scroll-progress { position: fixed; z-index: 95; top: 0; left: 0; right: 0; height: 2px; background: var(--brand-hot); transform-origin: left; transform: scaleX(0); box-shadow: 0 0 12px var(--brand-hot); pointer-events: none; }
 
@@ -1209,6 +1213,11 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .devid-ghost.is-far { transform: translate(70px, 40px) rotate(7deg) scale(.92); opacity: .8; }
 .devid-ghost small { position: absolute; right: 20px; bottom: 26px; color: #8a8383; font: 7px/1.5 var(--mono); letter-spacing: .2em; text-align: right; text-transform: uppercase; }
 .devid-ghost img { position: absolute; right: 24px; bottom: 58px; width: auto; opacity: .5; }
+/* Laptops: tighter tag spacing so "Web · Mobile · Cloud · AI" stays on one line beside the badge. */
+@media (max-width: 1440px) {
+  .devid-tags { letter-spacing: .12em; }
+  .devid-tags li + li::before { margin: 0 12px; }
+}
 /* Below this width the fan would reach the facts column, so the badge stands alone. */
 @media (max-width: 1180px) {
   .devid-ghosts { display: none; }
@@ -1699,7 +1708,9 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .stack-orbit { grid-template-columns: 1fr; gap: 50px; }
 }
 
-@media (max-width: 760px) {
+/* Tablets and phones: the inline links don't fit next to the logo and switches (they collided at 768–1024px),
+   so the menu button takes over. */
+@media (max-width: 1024px) {
   .nav { height: 70px; padding-inline: 22px; }
   .nav .logo img { height: 34px; width: auto; }
   .nav-cta { display: none; }
@@ -1721,6 +1732,9 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .nav-links a::before { left: -20px; }
   html[data-lang="mn"] .nav-links a { font-size: 30px; }
   .lang-switch { margin: 0 14px 0 8px; }
+}
+
+@media (max-width: 760px) {
   html[data-lang="mn"] .hero h1 { font-size: clamp(38px, 11vw, 60px); }
   html[data-lang="mn"] .contact-content h2 { font-size: clamp(34px, 10vw, 54px); }
   .section { padding: 96px 22px; }
@@ -1797,6 +1811,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .contact-rings { width: 480px; height: 480px; }
   .contact-links { position: static; flex-direction: column; align-items: center; margin-top: 60px; }
   .footer { flex-wrap: wrap; padding: 24px 22px; }
+  .devid { padding-top: 0; }
+  .devid-stage { margin-top: 150px; }
   .footer p { order: 3; flex-basis: 100%; }
   .case-hero { padding: 120px 22px 36px; }
   .case-hero .eyebrow { flex-wrap: wrap; row-gap: 8px; line-height: 1.4; }
@@ -2050,3 +2066,6 @@ html[data-loading] .site-shell, html[data-loading] .site-shell * { animation-pla
   .bridge-code .bc-track { font-size: 10.5px; line-height: 1.9; animation-duration: 50s; }
 }
 @media (prefers-reduced-motion: reduce) { .bc-track { animation: none; } }
+
+/* Tablets and phones: room under the footer so the floating back-to-top button never covers its last line. */
+@media (max-width: 1024px) { .footer { padding-bottom: calc(84px + env(safe-area-inset-bottom)); } }

@@ -49,6 +49,7 @@ export function ProjectShowcase({ projects }: { projects: ShowcaseProject[] }) {
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState(1);
   const hostRef = useRef<HTMLDivElement>(null);
+  const pagerRef = useRef<HTMLDivElement>(null);
   const swipe = useRef<{ x: number; y: number } | null>(null);
   const inView = useRef(false);
   // Latest index for handlers created once (keyboard).
@@ -88,6 +89,20 @@ export function ProjectShowcase({ projects }: { projects: ShowcaseProject[] }) {
     };
     // step only reads refs and stable setters, so the first render's copy stays correct.
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // While the arrows are on screen, phones hide the floating "Start a project" bar and back-to-top button:
+  // they sat on top of the arrows, so taps opened the contact modal (and then its Instagram link) instead.
+  useEffect(() => {
+    const pager = pagerRef.current;
+    if (!pager) return;
+    const root = document.documentElement;
+    const io = new IntersectionObserver(([entry]) => root.classList.toggle("pager-in-view", entry.isIntersecting));
+    io.observe(pager);
+    return () => {
+      io.disconnect();
+      root.classList.remove("pager-in-view");
+    };
   }, []);
 
   // Desktop depth: the phone and glow drift a few px against the pointer (CSS vars, transitions do the easing).
@@ -189,7 +204,7 @@ export function ProjectShowcase({ projects }: { projects: ShowcaseProject[] }) {
           <ShowcaseVisual project={project} />
         </TransitionLink>
 
-        <div className="sc-pager">
+        <div className="sc-pager" ref={pagerRef}>
           <span className="sc-count" aria-live="polite">
             <b>{pad(active + 1)}</b> / {pad(count)}
           </span>
