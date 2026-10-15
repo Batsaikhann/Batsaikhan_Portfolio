@@ -6,6 +6,7 @@ import { CaseGallery } from "@/components/CaseGallery";
 import { CaseToc } from "@/components/CaseToc";
 import { Icon } from "@/components/Icon";
 import { ProjectVisual } from "@/components/ProjectVisual";
+import { SparkAvatar } from "@/components/SparkAvatar";
 import { TransitionLink } from "@/components/RouteTransition";
 import { T, Tx, type L } from "@/components/T";
 import { profile } from "@/data/profile";
@@ -65,6 +66,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
 
   const sections: Array<{ id: string; label: L }> = [
     { id: "overview", label: { en: "Overview", mn: "Тойм" } },
+    ...(project.avatar ? [{ id: "avatar", label: { en: "Companion avatar", mn: "Хамтрагчийн аватар" } }] : []),
     { id: "role", label: { en: "Role & responsibilities", mn: "Үүрэг ба хариуцлага" } },
     { id: "system", label: { en: "The system", mn: "Системийн бүтэц" } },
     ...(project.shots.length ? [{ id: "screens", label: { en: "Screens", mn: "Дэлгэцийн зургууд" } }] : []),
@@ -170,7 +172,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           </div>
           <ul className="stage-labels" aria-hidden="true">
             {project.shots.map((shot) => (
-              <li key={shot.url + shot.label.en}>
+              <li key={shot.device + shot.url + shot.label.en}>
                 <Tx text={shot.label} />
               </li>
             ))}
@@ -227,6 +229,13 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               ))}
             </div>
           </section>
+
+          {project.avatar && (
+            <section id="avatar" className="case-section">
+              <SectionHead index={sectionIndex("avatar")} title={{ en: "Companion avatar", mn: "Хамтрагчийн аватар" }} />
+              <SparkAvatar src={project.avatar.src} caption={project.avatar.caption} />
+            </section>
+          )}
 
           <section id="role" className="case-section">
             <SectionHead index={sectionIndex("role")} title={{ en: "Role & responsibilities", mn: "Үүрэг ба хариуцлага" }} />

@@ -3,21 +3,23 @@
 import type { StaticImageData } from "next/image";
 import type { L } from "@/components/T";
 
-import sporthubHome from "../../public/images/projects/sporthub/web-home.jpg";
-import sporthubSport from "../../public/images/projects/sporthub/web-sport.jpg";
-import sporthubClubs from "../../public/images/projects/sporthub/web-clubs.jpg";
-import sporthubMembership from "../../public/images/projects/sporthub/web-membership.jpg";
-import sporthubLogin from "../../public/images/projects/sporthub/web-login.jpg";
-import sporthubMobile from "../../public/images/projects/sporthub/mobile.jpg";
-import sporthubMobileClubs from "../../public/images/projects/sporthub/mobile-clubs.jpg";
-import sporthubMobileMembership from "../../public/images/projects/sporthub/mobile-membership.jpg";
+import sporthubWebLogin from "../../public/images/projects/sporthub/web-login.jpg";
+import sporthubWebRegister from "../../public/images/projects/sporthub/web-register.jpg";
+import sporthubWebHome from "../../public/images/projects/sporthub/web-home.jpg";
+import sporthubWebClubs from "../../public/images/projects/sporthub/web-clubs.jpg";
+import sporthubWebClub from "../../public/images/projects/sporthub/web-club.jpg";
+import sporthubWebMembership from "../../public/images/projects/sporthub/web-membership.jpg";
+import sporthubWebWallet from "../../public/images/projects/sporthub/web-wallet.jpg";
+import sporthubAdminLogin from "../../public/images/projects/sporthub/admin-login.jpg";
 import sporthubAppHome from "../../public/images/projects/sporthub/app-home.jpg";
 import sporthubAppSearch from "../../public/images/projects/sporthub/app-search.jpg";
+import sporthubAppMap from "../../public/images/projects/sporthub/app-map.jpg";
 import sporthubAppSport from "../../public/images/projects/sporthub/app-sport.jpg";
+import sporthubAppClub from "../../public/images/projects/sporthub/app-club.jpg";
 import sporthubAppMembership from "../../public/images/projects/sporthub/app-membership.jpg";
 import sporthubAppWallet from "../../public/images/projects/sporthub/app-wallet.jpg";
-import sporthubAppProfile from "../../public/images/projects/sporthub/app-profile.jpg";
 import sporthubAppLogin from "../../public/images/projects/sporthub/app-login.jpg";
+import sporthubAppRegister from "../../public/images/projects/sporthub/app-register.jpg";
 import barilgaStorefront from "../../public/images/projects/barilgahub/storefront.jpg";
 import barilgaProduct from "../../public/images/projects/barilgahub/product.jpg";
 import barilgaTrack from "../../public/images/projects/barilgahub/track.jpg";
@@ -26,10 +28,20 @@ import appWorld from "../../public/images/projects/sparkxp/app-world.jpg";
 import appLevel from "../../public/images/projects/sparkxp/app-level.jpg";
 import appLesson from "../../public/images/projects/sparkxp/app-lesson.jpg";
 import appProfile from "../../public/images/projects/sparkxp/app-profile.jpg";
+import appHomeLight from "../../public/images/projects/sparkxp/app-home-light.webp";
+import appHomeDark from "../../public/images/projects/sparkxp/app-home-dark.webp";
+import appBuddy from "../../public/images/projects/sparkxp/app-buddy.webp";
+import sparkLanding from "../../public/images/projects/sparkxp/web-landing.webp";
 import sparkLessons from "../../public/images/projects/sparkxp/admin-lessons.jpg";
 import sparkWords from "../../public/images/projects/sparkxp/admin-words.jpg";
 import sparkQuizzes from "../../public/images/projects/sparkxp/admin-quizzes.jpg";
 import sparkBuddy from "../../public/images/projects/sparkxp/admin-buddy.jpg";
+import gymAppHome from "../../public/images/projects/gymhub/app-home.jpg";
+import gymAppSearch from "../../public/images/projects/gymhub/app-search.jpg";
+import gymAppGym from "../../public/images/projects/gymhub/app-gym.jpg";
+import gymAppMembership from "../../public/images/projects/gymhub/app-membership.jpg";
+import gymAppOnboarding from "../../public/images/projects/gymhub/app-onboarding.jpg";
+import gymAppLogin from "../../public/images/projects/gymhub/app-login.jpg";
 import gymDarkHero from "../../public/images/projects/gymhub/dark-hero.jpg";
 import gymDarkCompany from "../../public/images/projects/gymhub/dark-company.jpg";
 import gymDarkPartners from "../../public/images/projects/gymhub/dark-partners.jpg";
@@ -86,6 +98,8 @@ export type Project = {
   shots: Shot[];
   /** Optional note shown above the gallery (e.g. where the screens come from). */
   shotsNote?: L;
+  /** Optional interactive 3D model shown in its own section (a rigged GLB under /public). */
+  avatar?: { src: string; caption: L };
 };
 
 export const projects: Project[] = [
@@ -97,15 +111,15 @@ export const projects: Project[] = [
     category: { en: "Fitness membership", mn: "Фитнессийн гишүүнчлэл" },
     status: { kind: "live", label: { en: "Live", mn: "Ажиллаж байна" } },
     description: {
-      en: "Mongolia's multi-gym membership network — one membership across 30+ fitness clubs. I shipped new membership packages, upgrades, an HR portal for companies and admin tooling.",
-      mn: "Монголын олон фитнессийн нэгдсэн гишүүнчлэл — 30 гаруй клубт нэг гишүүнчлэл. Шинэ багц, багц ахиулах, байгууллагын HR портал болон админы хэрэгслүүдийг би гаргасан.",
+      en: "Mongolia's multi-gym membership network — one membership across 30+ fitness clubs. I shipped a completely new interface for gymhub.mn, plus new membership packages, upgrades, an HR portal for companies and admin tooling.",
+      mn: "Монголын олон фитнессийн нэгдсэн гишүүнчлэл — 30 гаруй клубт нэг гишүүнчлэл. gymhub.mn-ийн цоо шинэ интерфейс, шинэ багц, багц ахиулах, байгууллагын HR портал болон админы хэрэгслүүдийг би гаргасан.",
     },
     role: { en: "Full-stack developer · Team member", mn: "Full-stack хөгжүүлэгч · Багийн гишүүн" },
     team: {
       en: "3 contributors across the member site and admin dashboard — 20 of my pull requests merged.",
       mn: "Гишүүдийн сайт болон админ самбар дээр 3 оролцогч — миний 20 pull request merge хийгдсэн.",
     },
-    stack: ["React", "Vite", "Next.js", "TypeScript", "Tailwind CSS", "Supabase", "QPay", "Vercel"],
+    stack: ["React", "Vite", "Next.js", "Flutter", "TypeScript", "Tailwind CSS", "Supabase", "QPay", "Vercel"],
     links: { live: "https://gymhub.mn", liveLabel: { en: "Visit gymhub.mn", mn: "gymhub.mn нээх" } },
     visual: "terminal",
     metrics: [
@@ -133,6 +147,7 @@ export const projects: Project[] = [
       },
     },
     responsibilities: [
+      { en: "A completely new interface for gymhub.mn, designed and shipped to production", mn: "gymhub.mn-ийн цоо шинэ интерфейсийг хийж production-д гаргасан" },
       { en: "GymGo package tier and the package-upgrade flow", mn: "GymGo багцын түвшин, багц ахиулах урсгал" },
       { en: "HR portal for companies with an admin HR catalog and backend", mn: "Админ HR каталог, backend-тэй байгууллагын HR портал" },
       { en: "Organization invite links that lock the company at sign-up", mn: "Бүртгүүлэхэд байгууллагыг түгжих урилгын линк" },
@@ -146,12 +161,19 @@ export const projects: Project[] = [
       { title: { en: "Packages & payments", mn: "Багц ба төлбөр" }, text: { en: "Tiered packages, upgrades, promo banners and QPay checkout.", mn: "Түвшинтэй багц, ахиулалт, промо баннер, QPay төлбөр." } },
     ],
     highlights: [
+      { title: { en: "A brand-new interface", mn: "Цоо шинэ интерфейс" }, text: { en: "I rebuilt gymhub.mn with a completely new interface — in dark and light themes, on desktop and mobile — and shipped it to production.", mn: "gymhub.mn-ийг цоо шинэ интерфейстэй болгож — харанхуй, гэрэлтэй горим, desktop болон мобайл дээр — production-д гаргасан." } },
       { title: { en: "Timezone-correct status", mn: "Цагийн бүсэд зөв төлөв" }, text: { en: "Membership status is computed in Ulaanbaatar time, so members don't expire a day early.", mn: "Гишүүнчлэлийн төлөвийг Улаанбаатарын цагаар тооцдог тул нэг өдрийн өмнө дуусахгүй." } },
       { title: { en: "Locked invite sign-up", mn: "Түгжээтэй урилга" }, text: { en: "Employees joining via an HR invite can't pick the wrong organization.", mn: "HR урилгаар нэгдсэн ажилтан буруу байгууллага сонгож чадахгүй." } },
       { title: { en: "Weekly visit limits", mn: "Долоо хоногийн хязгаар" }, text: { en: "Seven-day visit rights are enforced and explained to members in the app.", mn: "7 хоногийн зочлох эрхийг хэрэгжүүлж, гишүүдэд апп дотор тайлбарладаг." } },
       { title: { en: "Upgrades without churn", mn: "Ахиулалт" }, text: { en: "Members upgrade packages in place, including from the new GymGo tier.", mn: "Гишүүд, үүнд GymGo-гийнхон, багцаа шууд ахиулж болно." } },
     ],
     shots: [
+      { src: gymAppHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
+      { src: gymAppSearch, label: { en: "Gym search", mn: "Фитнес хайх" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
+      { src: gymAppGym, label: { en: "Gym details", mn: "Фитнесийн дэлгэрэнгүй" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
+      { src: gymAppMembership, label: { en: "Membership plans", mn: "Гишүүнчлэлийн багц" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
+      { src: gymAppOnboarding, label: { en: "Onboarding", mn: "Танилцуулга" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
+      { src: gymAppLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "GymHub · iOS", device: "mobile" },
       { src: gymDarkHero, label: { en: "Landing · Dark", mn: "Нүүр · Харанхуй" }, group: { en: "Dark mode", mn: "Харанхуй горим" }, url: "gymhub.mn", device: "desktop" },
       { src: gymDarkCompany, label: { en: "For companies · Dark", mn: "Байгууллагад · Харанхуй" }, group: { en: "Dark mode", mn: "Харанхуй горим" }, url: "gymhub.mn/#company", device: "desktop" },
       { src: gymDarkPartners, label: { en: "Partner gyms · Dark", mn: "Хамтрагч фитнес · Харанхуй" }, group: { en: "Dark mode", mn: "Харанхуй горим" }, url: "gymhub.mn/#partners", device: "desktop" },
@@ -179,12 +201,23 @@ export const projects: Project[] = [
     },
     role: { en: "Mobile & AI developer", mn: "Мобайл ба AI хөгжүүлэгч" },
     team: {
-      en: "6-person team at Aether Tech Core LLC — 34 of my pull requests merged.",
-      mn: "Aether Tech Core LLC-ийн 6 хүний баг — миний 34 pull request merge хийгдсэн.",
+      en: "3-person team at Aether Tech Core LLC — 34 of my pull requests merged.",
+      mn: "Aether Tech Core LLC-ийн 3 хүний баг — миний 34 pull request merge хийгдсэн.",
     },
     stack: ["React Native", "Expo", "TypeScript", "NestJS", "PostgreSQL", "Redis", "Gemini", "Azure Speech"],
-    links: { source: "https://github.com/usukh6ayar/SparkXP" },
+    links: {
+      live: "https://spark-xp-web.vercel.app",
+      liveLabel: { en: "Visit the landing page", mn: "Танилцуулга хуудас нээх" },
+      source: "https://github.com/usukh6ayar/SparkXP",
+    },
     visual: "buddy",
+    avatar: {
+      src: "/models/spark-fox.glb",
+      caption: {
+        en: "Spark — the app's own rigged 3D avatar. Move your cursor and he follows; click him and he hops.",
+        mn: "Spark — аппын өөрийн 3D аватар. Курсорын хөдөлгөөнийг дагаж харна, дарвал үсэрнэ.",
+      },
+    },
     shotsNote: {
       en: "Mobile app and admin dashboard run locally on demo data — no production data is shown.",
       mn: "Мобайл апп болон админ самбарыг демо өгөгдөлтэйгээр локал дээр ажиллуулж авсан — production өгөгдөл харуулаагүй.",
@@ -193,7 +226,7 @@ export const projects: Project[] = [
       { value: 58, suffix: "%", label: { en: "faster AI Buddy replies", mn: "хурдан AI Buddy хариу" } },
       { value: 34, label: { en: "merged pull requests", mn: "merge хийсэн PR" } },
       { value: 34, label: { en: "ARKit blendshapes for lip-sync", mn: "уруулын синкийн blendshape" } },
-      { value: 6, label: { en: "people on the team", mn: "хүний баг" } },
+      { value: 3, label: { en: "people on the team", mn: "хүний баг" } },
     ],
     overview: {
       summary: {
@@ -233,14 +266,18 @@ export const projects: Project[] = [
       { title: { en: "Every screen size", mn: "Бүх дэлгэцийн хэмжээ" }, text: { en: "A QA pass made every screen responsive and added a reactive language and theme setting.", mn: "QA-гаар бүх дэлгэцийг responsive болгож, хэл ба горимын тохиргоо нэмсэн." } },
     ],
     shots: [
+      { src: appHomeLight, label: { en: "Home · Light", mn: "Нүүр · Гэрэлтэй" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
+      { src: appHomeDark, label: { en: "Home · Dark", mn: "Нүүр · Харанхуй" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
+      { src: appBuddy, label: { en: "AI Buddy chat", mn: "AI хамтрагчтай ярилцах" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
       { src: appWorld, label: { en: "Lesson world map", mn: "Хичээлийн ертөнц" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
       { src: appLevel, label: { en: "Level journey", mn: "Түвшний аялал" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
       { src: appLesson, label: { en: "Lesson", mn: "Хичээл" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
       { src: appProfile, label: { en: "Profile & stats", mn: "Профайл, статистик" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SparkXP app", device: "mobile" },
-      { src: sparkLessons, label: { en: "Lessons", mn: "Хичээлүүд" }, group: { en: "Content", mn: "Контент" }, url: "admin · /lessons", device: "desktop" },
-      { src: sparkWords, label: { en: "Word bank", mn: "Үгийн сан" }, group: { en: "Content", mn: "Контент" }, url: "admin · /words", device: "desktop" },
-      { src: sparkQuizzes, label: { en: "Quizzes", mn: "Quiz" }, group: { en: "Content", mn: "Контент" }, url: "admin · /quizzes", device: "desktop" },
-      { src: sparkBuddy, label: { en: "AI Buddy", mn: "AI Buddy" }, group: { en: "AI", mn: "AI" }, url: "admin · /buddy", device: "desktop" },
+      { src: sparkLanding, label: { en: "Landing page", mn: "Танилцуулга хуудас" }, group: { en: "Landing page", mn: "Танилцуулга хуудас" }, url: "spark-xp-web.vercel.app", device: "desktop" },
+      { src: sparkLessons, label: { en: "Lessons", mn: "Хичээлүүд" }, group: { en: "Admin site", mn: "Админ сайт" }, url: "admin · /lessons", device: "desktop" },
+      { src: sparkWords, label: { en: "Word bank", mn: "Үгийн сан" }, group: { en: "Admin site", mn: "Админ сайт" }, url: "admin · /words", device: "desktop" },
+      { src: sparkQuizzes, label: { en: "Quizzes", mn: "Quiz" }, group: { en: "Admin site", mn: "Админ сайт" }, url: "admin · /quizzes", device: "desktop" },
+      { src: sparkBuddy, label: { en: "AI Buddy", mn: "AI Buddy" }, group: { en: "Admin site", mn: "Админ сайт" }, url: "admin · /buddy", device: "desktop" },
     ],
   },
   {
@@ -251,15 +288,15 @@ export const projects: Project[] = [
     category: { en: "Sports platform", mn: "Спортын платформ" },
     status: { kind: "preview", label: { en: "Pre-production", mn: "Pre-production" } },
     description: {
-      en: "Multi-sport membership, booking and wallet platform for Mongolia — one account across gyms, yoga and future sports, on web, mobile and an admin dashboard.",
-      mn: "Монголын олон төрлийн спортын гишүүнчлэл, захиалга, хэтэвчийн платформ — фитнесс, йога болон цаашдын спортуудад нэг бүртгэл, веб, мобайл, админ самбар дээр.",
+      en: "Multi-sport membership, booking and wallet platform for Mongolia — GymHub, moved in full from Supabase onto SportHub's own backend on Railway, with one account across gyms, yoga and future sports.",
+      mn: "Монголын олон төрлийн спортын гишүүнчлэл, захиалга, хэтэвчийн платформ — GymHub-ийг Supabase-ээс Railway дээрх SportHub-ийн өөрийн backend руу бүрэн шилжүүлж, фитнесс, йога болон цаашдын спортуудад нэг бүртгэлтэй болгосон.",
     },
     role: { en: "Lead developer · Full-stack", mn: "Ахлах хөгжүүлэгч · Full-stack" },
     team: {
-      en: "2 contributors — I wrote 85 of the 87 commits and set the architecture.",
-      mn: "2 оролцогч — 87 commit-оос 85-ыг нь би хийж, архитектурыг тодорхойлсон.",
+      en: "3-person team — I set the architecture and wrote 85 of the 87 commits in the SportHub repository.",
+      mn: "3 хүний баг — архитектурыг тодорхойлж, SportHub repository-ийн 87 commit-оос 85-ыг нь би хийсэн.",
     },
-    stack: ["NestJS", "React", "Flutter", "Next.js", "TypeScript", "PostgreSQL", "TanStack Query", "Riverpod"],
+    stack: ["NestJS", "React", "Flutter", "Next.js", "TypeScript", "PostgreSQL", "Railway", "TanStack Query", "Riverpod"],
     links: { live: "https://sporthub-eight.vercel.app", liveLabel: { en: "Open preview", mn: "Preview нээх" } },
     visual: "terminal",
     metrics: [
@@ -270,20 +307,20 @@ export const projects: Project[] = [
     ],
     overview: {
       summary: {
-        en: "SportHub is the successor to GymHub. It launches with Gym and Yoga and is designed so more sports — swimming, tennis, football — can be added without a platform redesign. Members use the web and Flutter apps; staff use an admin dashboard.",
-        mn: "SportHub бол GymHub-ийн залгамжлагч. Фитнесс, йогоор эхэлж, усан сэлэлт, теннис, хөл бөмбөг зэрэг спортуудыг платформоо дахин зохиолгүйгээр нэмэх боломжтойгоор бүтээгдсэн. Гишүүд веб болон Flutter апп, ажилтнууд админ самбар ашиглана.",
+        en: "SportHub is where GymHub now lives. I moved GymHub off Supabase and onto SportHub's NestJS backend and PostgreSQL on Railway, then built it out for more than one sport: it launches with Gym and Yoga, and swimming, tennis or football can be added without a platform redesign. Members use the web and Flutter apps; staff use an admin dashboard.",
+        mn: "GymHub одоо SportHub дотор ажилладаг. Би GymHub-ийг Supabase-ээс Railway дээрх SportHub-ийн NestJS backend, PostgreSQL руу шилжүүлж, олон спортод зориулж өргөжүүлсэн: фитнесс, йогоор эхэлж, усан сэлэлт, теннис, хөл бөмбөгийг платформоо дахин зохиолгүйгээр нэмэх боломжтой. Гишүүд веб болон Flutter апп, ажилтнууд админ самбар ашиглана.",
       },
       problem: {
-        en: "GymHub served a single sport. Members needed one account and one wallet across sports and facilities — while existing GymHub memberships had to keep their original rights without touching the legacy production systems.",
-        mn: "GymHub ганцхан спортод зориулагдсан байсан. Гишүүдэд спорт, байгууллага бүрт нэг бүртгэл, нэг хэтэвч хэрэгтэй байсан бөгөөд одоо байгаа GymHub гишүүнчлэлүүд legacy систем рүү хүрэлгүйгээр анхны эрхээ хадгалах ёстой байв.",
+        en: "GymHub served a single sport and ran on Supabase. Members needed one account and one wallet across sports and facilities, and the whole of GymHub had to move onto the new platform with existing memberships keeping their rights.",
+        mn: "GymHub ганцхан спортод зориулагдсан, Supabase дээр ажилладаг байсан. Гишүүдэд спорт, байгууллага бүрт нэг бүртгэл, нэг хэтэвч хэрэгтэй байсан бөгөөд GymHub бүхэлдээ шинэ платформ руу шилжиж, одоо байгаа гишүүнчлэлүүд эрхээ хадгалах ёстой байв.",
       },
       solution: {
         en: "A fresh npm-workspace monorepo where the NestJS backend is the only place business logic lives. Identity uses opaque bearer sessions with deny-by-default RBAC; entitlements and the wallet are append-only ledgers whose balances are derived, never stored. Planned APIs are answered by contract mocks so web, mobile and admin move in parallel.",
         mn: "Бизнес логик зөвхөн NestJS backend-д байх шинэ npm-workspace monorepo. Нэвтрэлт нь opaque bearer session, deny-by-default RBAC-тэй; эрх болон хэтэвч нь append-only ledger бөгөөд үлдэгдлийг хадгалахгүй, тооцоолж гаргадаг. Төлөвлөсөн API-уудыг contract mock-оор хариулж веб, мобайл, админыг зэрэг хөгжүүлдэг.",
       },
       result: {
-        en: "Pre-production: the backend, React web app, Flutter app and Next.js admin UI are implemented and the web preview is deployed on Vercel. Postgres persistence is verified in tests; real payments and the production rollout are next on the roadmap.",
-        mn: "Pre-production шат: backend, React веб, Flutter апп, Next.js админ UI хэрэгжиж, веб preview Vercel дээр байршсан. Postgres-д хадгалалтыг тестээр баталгаажуулсан; бодит төлбөр болон production нэвтрүүлэлт дараагийн шатанд.",
+        en: "GymHub has been moved in full from Supabase to SportHub on Railway. The backend, React web app, Flutter app and Next.js admin UI are implemented, and the web preview is deployed on Vercel.",
+        mn: "GymHub-ийг Supabase-ээс Railway дээрх SportHub руу бүрэн шилжүүлсэн. Backend, React веб, Flutter апп, Next.js админ UI хэрэгжиж, веб preview Vercel дээр байршсан.",
       },
     },
     responsibilities: [
@@ -291,7 +328,7 @@ export const projects: Project[] = [
       { en: "NestJS backend: identity, RBAC, entitlement and wallet ledgers, top-ups", mn: "NestJS backend: нэвтрэлт, RBAC, эрх ба хэтэвчийн ledger, цэнэглэлт" },
       { en: "React member web app with MN/EN, search, booking and wallet flows", mn: "MN/EN-тэй React веб: хайлт, захиалга, хэтэвчийн урсгал" },
       { en: "Flutter mobile app with five tabs and secure session storage", mn: "Таван табтай, аюулгүй session хадгалалттай Flutter апп" },
-      { en: "Next.js admin dashboard and the legacy GymHub migration mapping", mn: "Next.js админ самбар болон GymHub-аас шилжүүлэх mapping" },
+      { en: "Moving GymHub in full from Supabase to SportHub on Railway, plus the Next.js admin dashboard", mn: "GymHub-ийг Supabase-ээс Railway дээрх SportHub руу бүрэн шилжүүлэх, Next.js админ самбар" },
     ],
     modules: [
       { title: { en: "Backend · NestJS", mn: "Backend · NestJS" }, text: { en: "The single writer of business data: sessions, RBAC, ledgers and server-verified top-ups.", mn: "Бизнес өгөгдлийг цорын ганц бичигч: session, RBAC, ledger, сервер талд шалгадаг цэнэглэлт." } },
@@ -302,25 +339,27 @@ export const projects: Project[] = [
     highlights: [
       { title: { en: "Append-only ledgers", mn: "Append-only ledger" }, text: { en: "Wallet and entitlements are never edited in place — every change is a new entry and the balance is derived from history.", mn: "Хэтэвч, эрхийг хэзээ ч засдаггүй — өөрчлөлт бүр шинэ бичлэг болж, үлдэгдэл түүхээс тооцоологдоно." } },
       { title: { en: "Deny-by-default RBAC", mn: "Deny-by-default RBAC" }, text: { en: "Every endpoint is closed unless a role explicitly allows it.", mn: "Үүрэг тодорхой зөвшөөрөөгүй бол endpoint бүр хаалттай." } },
-      { title: { en: "Legacy-safe by design", mn: "Legacy-д аюулгүй" }, text: { en: "No shared code or database with GymHub; legacy memberships are shown read-only and never resold.", mn: "GymHub-тай код, өгөгдлийн сан хуваалцахгүй; хуучин гишүүнчлэлийг зөвхөн уншихаар харуулна." } },
+      { title: { en: "Supabase → Railway", mn: "Supabase → Railway" }, text: { en: "GymHub left Supabase entirely: its data and features now run on SportHub's NestJS backend and PostgreSQL on Railway.", mn: "GymHub Supabase-ээс бүрэн гарсан: өгөгдөл, боломжууд нь одоо Railway дээрх SportHub-ийн NestJS backend, PostgreSQL дээр ажилладаг." } },
       { title: { en: "Contract-first mocks", mn: "Contract-first mock" }, text: { en: "MSW and a mock server answer planned APIs so every client is built against the real contract.", mn: "MSW болон mock server төлөвлөсөн API-г хариулж, клиент бүрийг бодит contract-аар бүтээдэг." } },
     ],
     shots: [
-      { src: sporthubHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app", device: "desktop" },
-      { src: sporthubSport, label: { en: "Sport page", mn: "Спортын хуудас" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/sports/fitness", device: "desktop" },
-      { src: sporthubClubs, label: { en: "Club search & map", mn: "Клуб хайлт ба газрын зураг" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/clubs", device: "desktop" },
-      { src: sporthubMembership, label: { en: "My membership", mn: "Миний багц" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/membership", device: "desktop" },
-      { src: sporthubLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/login", device: "desktop" },
-      { src: sporthubAppHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppSearch, label: { en: "Club search", mn: "Клуб хайлт" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppSport, label: { en: "Sport page", mn: "Спортын хуудас" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppMembership, label: { en: "My membership", mn: "Миний багц" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppWallet, label: { en: "Wallet", mn: "Хэтэвч" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppProfile, label: { en: "Profile", mn: "Профайл" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubAppLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "App · Flutter", mn: "Апп · Flutter" }, url: "SportHub · iOS", device: "mobile" },
-      { src: sporthubMobile, label: { en: "Mobile home", mn: "Мобайл нүүр" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app", device: "mobile" },
-      { src: sporthubMobileClubs, label: { en: "Mobile clubs", mn: "Мобайл клубууд" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app/clubs", device: "mobile" },
-      { src: sporthubMobileMembership, label: { en: "Mobile membership", mn: "Мобайл багц" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app/membership", device: "mobile" },
+      { src: sporthubWebHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app", device: "desktop" },
+      { src: sporthubWebClubs, label: { en: "Clubs & map", mn: "Клубууд ба газрын зураг" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/clubs", device: "desktop" },
+      { src: sporthubAdminLogin, label: { en: "Admin sign-in", mn: "Админ нэвтрэх" }, group: { en: "Admin dashboard", mn: "Админ самбар" }, url: "SportHub Admin", device: "desktop" },
+      { src: sporthubWebClub, label: { en: "Club page", mn: "Клубын хуудас" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/clubs/…", device: "desktop" },
+      { src: sporthubWebMembership, label: { en: "My membership", mn: "Миний багц" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/membership", device: "desktop" },
+      { src: sporthubWebWallet, label: { en: "Wallet", mn: "Хэтэвч" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/wallet", device: "desktop" },
+      { src: sporthubWebLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/login", device: "desktop" },
+      { src: sporthubWebRegister, label: { en: "Register", mn: "Бүртгүүлэх" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/register", device: "desktop" },
+      { src: sporthubAppHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppSearch, label: { en: "Sport search", mn: "Спорт хайх" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppMap, label: { en: "Clubs on the map", mn: "Газрын зураг дээрх клубууд" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppSport, label: { en: "Sport page", mn: "Спортын хуудас" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppClub, label: { en: "Club page", mn: "Клубын хуудас" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppMembership, label: { en: "My membership", mn: "Миний багц" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppWallet, label: { en: "Wallet", mn: "Хэтэвч" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
+      { src: sporthubAppRegister, label: { en: "Register", mn: "Бүртгүүлэх" }, group: { en: "Mobile app", mn: "Мобайл апп" }, url: "SportHub · iOS", device: "mobile" },
     ],
   },
   {

@@ -6,9 +6,11 @@ import { MobileCta } from "@/components/MobileCta";
 import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
 import { Nav } from "@/components/Nav";
+import { PerfGuard } from "@/components/PerfGuard";
 import { Preloader } from "@/components/Preloader";
 import { RouteTransition } from "@/components/RouteTransition";
 import { langInitScript } from "@/components/T";
+import { liteInitScript } from "@/lib/lite";
 import "./globals.css";
 
 // Two families cover the whole UI in both languages. Mongolian needs "cyrillic-ext" as well
@@ -59,6 +61,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script id="lang-init" strategy="beforeInteractive">
           {langInitScript}
         </Script>
+        <Script id="lite-init" strategy="beforeInteractive">
+          {liteInitScript}
+        </Script>
         <noscript>
           <style>{`.preloader { display: none !important; } html[data-loading] { overflow: auto !important; }`}</style>
         </noscript>
@@ -66,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <RouteTransition>
           <div className="site-shell">
             <Interactions />
+            <PerfGuard />
             <Nav />
             {children}
             <Footer />
