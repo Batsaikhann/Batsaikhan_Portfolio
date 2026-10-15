@@ -1528,41 +1528,40 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .case-highlights h3 { margin: 0 0 8px; font: 600 21px/1.25 var(--display); letter-spacing: -.01em; }
 .case-highlights p { margin: 0; color: #9d9696; font-size: 15px; line-height: 1.7; }
 
-.gallery-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
-.gallery-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.gallery-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 34px; }
 .gallery-filters button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid #332d2d; border-radius: 999px; color: #b0aaaa; font-size: 13px; background: transparent; cursor: pointer; transition: border-color .3s, color .3s, background-color .3s; }
-.gallery-filters .count, .gallery-steps .count { color: #6f6969; font: 10px var(--mono); }
+.gallery-filters .count, .gallery-group-head .count { color: #6f6969; font: 10px var(--mono); }
 .gallery-filters button:hover { border-color: rgba(255, 59, 79, .5); color: var(--text); }
 .gallery-filters button.is-active { border-color: var(--brand); background: var(--brand); color: #fff; }
 .gallery-filters button.is-active .count { color: rgba(255, 255, 255, .75); }
-.gallery-steps { display: flex; align-items: center; gap: 8px; }
-.gallery-steps .count { margin-right: 8px; color: #8e8989; letter-spacing: .1em; }
-.gallery-steps button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #3a3232; border-radius: 50%; color: var(--text); background: transparent; cursor: pointer; transition: border-color .3s, background-color .3s, opacity .3s; }
-.gallery-steps button:first-of-type svg { rotate: 180deg; }
-.gallery-steps button:hover:not(:disabled) { border-color: var(--brand-hot); background: rgba(255, 59, 79, .1); }
-.gallery-steps button:disabled { opacity: .3; cursor: default; }
 
-/* Desktop: a snapping horizontal track. The centred screen is full size, neighbours recede. */
-.gallery-track {
-  --gh: clamp(260px, 30vw, 430px);
-  display: flex; align-items: flex-start; gap: 26px; overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory; scrollbar-width: none; padding: 14px max(16px, calc(50% - var(--gh) * .75)) 22px;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-}
-.gallery-track::-webkit-scrollbar { display: none; }
-.gallery-item { flex: none; display: block; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; scroll-snap-align: center; opacity: .45; transform: scale(.9); transform-origin: 50% 40%; transition: transform .6s var(--ease), opacity .6s ease; }
-.gallery-item.is-current { opacity: 1; transform: none; }
-.gallery-item.is-desktop { width: calc((var(--gh) - 31px) * var(--ar)); }
-.gallery-item.is-mobile { width: calc((var(--gh) - 18px) * var(--ar) + 18px); }
-.gallery-item .browser, .gallery-item .device-phone { transition: transform .5s var(--ease), border-color .3s, box-shadow .5s; }
-.gallery-item img { transition: transform .8s var(--ease); }
-.gallery-item:hover .browser, .gallery-item:hover .device-phone { transform: translateY(-6px); border-color: rgba(255, 59, 79, .5); box-shadow: 0 30px 70px rgba(0, 0, 0, .6), 0 0 40px rgba(255, 48, 74, .15); }
-.gallery-item:hover img { transform: scale(1.03); }
-.gallery-caption { display: flex; align-items: center; gap: 10px; margin-top: 14px; color: #ddd7d7; font-size: 14px; font-weight: 600; }
-.gallery-caption small { flex: none; padding: 3px 8px; border: 1px solid #332d2d; border-radius: 999px; color: #8e8989; font: 9px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
-.gallery-caption svg { flex: none; margin-left: auto; color: var(--brand-hot); transition: transform .35s var(--ease); }
-.gallery-item:hover .gallery-caption svg { transform: rotate(45deg); }
+/* One block per group: phones in a row, desktop screens two to a row underneath. */
+.gallery-grid { display: grid; gap: 64px; }
+.gallery-group-head { display: flex; align-items: baseline; gap: 12px; margin: 0 0 22px; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: #ddd7d7; font: 500 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+.gallery-phones { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 30px 22px; }
+.gallery-desktops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 24px; }
+.gallery-desktops > :only-child { grid-column: 1 / -1; }
+.gallery-phones + .gallery-desktops { margin-top: 40px; }
+.gallery-item { display: block; min-width: 0; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; animation: fade-up .6s var(--ease) calc(min(var(--i, 0), 8) * 50ms) backwards; }
+.gallery-item.is-mobile { max-width: 220px; }
+.gallery-item .browser, .gallery-item .device-phone { transition: transform .45s var(--ease), border-color .3s, box-shadow .45s; }
+.gallery-item .device-phone { padding: 6px; border-radius: 24px; }
+.gallery-item .device-phone img { border-radius: 18px; }
+.gallery-item:hover .browser, .gallery-item:hover .device-phone, .gallery-item:focus-visible .browser, .gallery-item:focus-visible .device-phone { transform: translateY(-6px); border-color: rgba(255, 59, 79, .5); box-shadow: 0 30px 70px rgba(0, 0, 0, .6), 0 0 40px rgba(255, 48, 74, .15); }
+.gallery-caption { display: flex; align-items: center; gap: 10px; margin-top: 14px; color: #a9a2a2; font: 500 10.5px/1.5 var(--mono); letter-spacing: .14em; text-transform: uppercase; transition: color .3s; }
+.gallery-caption svg { flex: none; margin-left: auto; color: var(--brand-hot); opacity: 0; transition: opacity .3s, transform .35s var(--ease); }
+.gallery-item:hover .gallery-caption { color: var(--text); }
+.gallery-item:hover .gallery-caption svg { opacity: 1; transform: rotate(45deg); }
+
+/* Interactive 3D avatar (SparkAvatar.tsx). */
+.spark-avatar { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: radial-gradient(ellipse 60% 70% at 50% 45%, rgba(124, 77, 255, .16), transparent 70%), linear-gradient(180deg, #121018, #0b0a0d); }
+.spark-avatar-stage { position: relative; display: grid; place-items: center; height: clamp(360px, 46vw, 620px); cursor: pointer; touch-action: pan-y; }
+.spark-avatar-stage canvas { position: absolute; inset: 0; display: block; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity .8s ease; }
+.spark-avatar.is-ready canvas { opacity: 1; }
+.spark-avatar-loading { color: #6f6969; font: 10px var(--mono); letter-spacing: .18em; text-transform: uppercase; animation: pulse-soft 1.4s ease-in-out infinite alternate; }
+.spark-avatar figcaption { padding: 16px 22px; border-top: 1px solid var(--line); color: #8e8989; font: 10.5px/1.6 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+.spark-avatar.is-failed .spark-avatar-stage { display: none; }
+@keyframes pulse-soft { from { opacity: .35; } to { opacity: 1; } }
 
 .lightbox { position: fixed; z-index: 250; inset: 0; display: grid; place-items: center; padding: 64px 100px 70px; overflow: hidden; background: rgba(5, 4, 4, .96); touch-action: pinch-zoom; animation: fade-in .3s ease backwards; }
 .lightbox.is-closing { animation: fade-out .22s ease forwards; }
@@ -1779,7 +1778,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .stack-accordion details[open] .orbit-num { color: var(--brand-hot); }
   .stack-accordion ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0 0 22px; list-style: none; }
   .stack-accordion li { padding: 9px 12px; border: 1px solid #2e2828; color: #d6d0d0; font: 11px var(--mono); animation: fade-up .4s var(--ease) backwards; }
-  .gallery-steps { display: none; }
   /* Mobile: no side list — visual, title and copy stacked; swipe, arrows or dots to switch. */
   .showcase { grid-template-columns: minmax(0, 1fr); grid-template-areas: "panel"; row-gap: 22px; }
   .sc-list { display: none; }
@@ -1792,12 +1790,13 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .sc-copy > *, .sc-glow, .sc-phone { animation: none; }
   .sc-pager { margin-top: 18px; }
   .sc-pager-row .sc-rule { display: none; }
-  .gallery-track { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 16px; overflow: visible; padding: 0; -webkit-mask-image: none; mask-image: none; }
-  .gallery-item, .gallery-item.is-desktop, .gallery-item.is-mobile { width: auto; opacity: 1; transform: none; }
-  .gallery-item.is-desktop { grid-column: 1 / -1; }
+  .gallery-phones { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+  .gallery-desktops { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .gallery-grid { gap: 48px; }
+  .gallery-item.is-mobile { max-width: none; }
+  .spark-avatar-stage { height: 380px; }
   .case-hero-num { top: 70px; font-size: 42vw; }
-  .gallery-caption { flex-wrap: wrap; gap: 6px 10px; font-size: 13px; }
-  .gallery-item.is-mobile .gallery-caption small { flex-basis: 100%; width: max-content; max-width: max-content; }
+  .gallery-caption { font-size: 9.5px; letter-spacing: .1em; }
   .case-meta > div { animation-delay: .4s; }
   .about-copy .about-lead { font-size: 16px; }
   .about-stats { gap: 8px; }
@@ -1892,7 +1891,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .journey::after { transform: none; }
   .journey-period { opacity: 1; transform: none; }
   .case-toc-fill, .hero-light, .orbit-runner { display: none; }
-  .gallery-item { opacity: 1; transform: none; }
+  .gallery-item { animation: none; }
 }
 
 /* ============================================================
@@ -2069,3 +2068,14 @@ html[data-loading] .site-shell, html[data-loading] .site-shell * { animation-pla
 
 /* Tablets and phones: room under the footer so the floating back-to-top button never covers its last line. */
 @media (max-width: 1024px) { .footer { padding-bottom: calc(84px + env(safe-area-inset-bottom)); } }
+
+/* ============================================================
+   Lite mode — html.is-lite, set by PerfGuard.tsx when a browser drops too many frames while
+   scrolling (or forced with ?lite=1). Drops the full-screen overlays, blur filters, the hero
+   canvases and the endless decorative loops; layout and content stay identical.
+   ============================================================ */
+html.is-lite :is(.grain, .vignette, .pointer-glow, .hero-rain, .hero-scene, .hero-smoke) { display: none !important; }
+html.is-lite .site-shell::before { content: none; }
+html.is-lite .hero-screen { filter: none; }
+html.is-lite *, html.is-lite *::before, html.is-lite *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.is-lite :is(.code-col-track, .bc-track, .devid-orbit span, .devid-turn-dial::before, .devid-radar-dial::before, .planet-orbit) { animation: none !important; }
