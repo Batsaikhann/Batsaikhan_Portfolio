@@ -12,7 +12,7 @@ const pick = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 /**
  * Red falling-glyph rain behind the hero. Columns live on three depth layers
  * (small/dim/slow far away, large/bright/fast up close) to fake depth of field.
- * Paused when the hero is off screen or the tab is hidden; static with reduced motion.
+ * Paused when the hero is off screen or the tab is hidden; static with reduced motion and on touch / small screens.
  */
 export function HeroRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,7 +21,10 @@ export function HeroRain() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Phones, tablets and in-app browsers get one still frame: redrawing a full-screen canvas 30×/s
+    // was the heaviest thing on the page for them (matches the "ambient loops off" CSS block).
+    const still =
+      matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(max-width: 760px), (hover: none)").matches;
 
     let width = 0;
     let height = 0;
@@ -92,7 +95,7 @@ export function HeroRain() {
       draw();
     });
     resizeObserver.observe(canvas);
-    if (reduced) return () => resizeObserver.disconnect();
+    if (still) return () => resizeObserver.disconnect();
 
     let frame = 0;
     let last = 0;

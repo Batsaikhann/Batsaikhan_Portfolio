@@ -46,10 +46,9 @@ button { font: inherit; }
    Atmosphere: grain, vignette, progress, cursor
    ============================================================ */
 .grain {
-  /* Just enough overscan for the jitter below (max ±11%) — a -50% inset made a 4× viewport GPU texture. */
-  position: fixed; z-index: 80; inset: -12%; pointer-events: none; opacity: .032;
+  /* Static: a jittering full-screen layer re-composited the whole viewport five times a second. */
+  position: fixed; z-index: 80; inset: 0; pointer-events: none; opacity: .032;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 1s steps(5) infinite;
 }
 .vignette { position: fixed; z-index: 79; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, .55) 100%); }
 /* Faint global grid with a localized red wash — sits behind every section. */
@@ -459,7 +458,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   content: ""; position: absolute; inset: -4px; border-radius: 50%;
   background: conic-gradient(from 0deg, transparent 0 55%, rgba(255, 200, 205, 1) 72%, transparent 86%);
   -webkit-mask-image: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 4px)); mask-image: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 4px));
-  filter: blur(1.5px); animation: planet-spin 9s linear infinite;
+  animation: planet-spin 9s linear infinite;
 }
 .planet-orbit {
   position: absolute; left: -46%; right: -46%; top: 62%; height: 22%; border-radius: 50%; rotate: -8deg;
@@ -1309,7 +1308,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .orbit-core small { color: var(--muted); font: 9px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
 .orbit-node { position: absolute; translate: -50% -50%; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #2e2828; border-radius: 2px; background: #110f0f; color: #a8a2a2; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: border-color .3s, color .3s, background-color .3s, box-shadow .3s, transform .6s var(--ease); }
 .orbit-node.is-active { transform: translate(calc(var(--dx) * 1cqw), calc(var(--dy) * 1cqw)); }
-.orbit-node.is-active::after { content: ""; position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-hot); box-shadow: 0 0 0 0 rgba(255, 59, 79, .6); animation: node-pulse 1.8s ease-out infinite; }
+.orbit-node.is-active::after { content: ""; position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-hot); }
+.orbit-node.is-active::before { content: ""; position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 59, 79, .6); pointer-events: none; animation: node-pulse 1.8s ease-out infinite; }
 .orbit-node .orbit-num { color: #6d6767; font: 9px var(--mono); transition: color .3s; }
 .orbit-node:hover, .orbit-node.is-active { border-color: var(--brand-hot); color: #fff; background: #1a1213; box-shadow: 0 0 26px rgba(255, 48, 74, .25); }
 .orbit-node:hover .orbit-num, .orbit-node.is-active .orbit-num { color: var(--brand-hot); }
@@ -1332,8 +1332,12 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .contact-orbits { position: absolute; z-index: -1; left: 50%; top: 50%; width: min(1180px, 130vw); translate: -50% -50%; overflow: visible; pointer-events: none; }
 .contact-orbits ellipse { fill: none; stroke: rgba(255, 255, 255, .035); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .contact-orbits ellipse:nth-child(2) { stroke: rgba(255, 59, 79, .12); }
-/* A short red arc travelling slowly around one orbit. */
-.contact-orbits .orbit-runner { stroke: var(--brand-hot); stroke-width: 2; stroke-linecap: round; stroke-dasharray: .012 .988; filter: drop-shadow(0 0 4px var(--brand-hot)); animation: orbit-run 28s linear infinite; }
+/* A short red arc travelling slowly around the middle orbit (rx 380 / ry 230 of the 1000-wide viewBox, rotated -14°). */
+.orbit-runner { position: absolute; z-index: -1; left: 50%; top: 50%; width: calc(min(1180px, 130vw) * .76); aspect-ratio: 1; pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-14deg) scale(1, .605); }
+.orbit-runner i { position: absolute; inset: 0; animation: spin 28s linear infinite; }
+.orbit-runner i::before { content: ""; position: absolute; left: 50%; top: -1px; width: 30px; height: 2px; margin-left: -15px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand-hot) 35%, var(--brand-hot) 65%, transparent); box-shadow: 0 0 6px var(--brand-hot); }
 .contact-rings { position: absolute; z-index: -1; left: 50%; top: 50%; width: 760px; height: 760px; translate: -50% -50%; pointer-events: none; }
 .contact-rings i { position: absolute; inset: 0; border: 1px solid rgba(255, 255, 255, .055); border-radius: 50%; }
 .contact-rings i:nth-child(2) { inset: 16%; border-color: rgba(255, 59, 79, .12); }
@@ -1602,7 +1606,6 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 @keyframes breathe { 50% { opacity: .7; } }
 @keyframes bob { 50% { transform: translateY(3px); } }
 @keyframes grid-drift { to { transform: translate(72px, 72px); } }
-@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-8%, 6%); } 40% { transform: translate(5%, -9%); } 60% { transform: translate(-4%, 11%); } 80% { transform: translate(9%, -3%); } }
 @keyframes ticker { to { transform: translateX(-50%); } }
 @keyframes blink { 50% { opacity: .35; } }
 @keyframes chart { from { transform: scaleY(.5); } to { transform: scaleY(1); } }
@@ -1637,9 +1640,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 @keyframes num-in { from { opacity: 0; transform: translateY(40px); } }
 @keyframes rule-in { from { transform: scaleX(0); } }
 @keyframes spoke-draw { to { stroke-dashoffset: 0; } }
-@keyframes node-pulse { 70%, 100% { box-shadow: 0 0 0 7px rgba(255, 59, 79, 0); } }
+@keyframes node-pulse { 70%, 100% { transform: scale(3.3); opacity: 0; } }
 @keyframes tools-out { to { opacity: 0; transform: translateY(-10px); } }
-@keyframes orbit-run { to { stroke-dashoffset: -1; } }
 @keyframes arrow-nudge { 50% { transform: translateX(6px); } }
 @keyframes planet-in { from { opacity: 0; scale: .9; } }
 @keyframes planet-spin { to { rotate: 360deg; } }
@@ -1853,8 +1855,17 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .case-next { padding: 80px 22px 100px; }
 }
 
-/* Phones: the 3% film grain is invisible at this size but costs a full-screen animated layer. */
+/* Phones: the 3% film grain is invisible at this size but costs a full-screen layer. */
 @media (max-width: 760px) { .grain { display: none; } }
+
+/* Phones, tablets and in-app browsers (Messenger, Instagram): the slow ambient loops stay still. Each one is a
+   GPU layer animating every frame, and together they made weaker devices stutter. Entrances and scroll effects stay. */
+@media (max-width: 760px), (hover: none) {
+  .hero-grid::before, .hero-glow, .planet-halo, .planet-body, .planet-rim, .planet-rim::after, .hero-streaks i, .hero-smoke i,
+  .code-col, .code-col-track, .bc-track, .devid-orbit span, .devid-turn-dial::before, .devid-radar-dial::before,
+  .contact-rings .ring-orbit { animation: none; will-change: auto; }
+  .orbit-runner { display: none; }
+}
 
 /* Sections far off screen (Interactions toggles .is-offscreen) stop all their loops — nothing animates unseen. */
 .is-offscreen, .is-offscreen *, .is-offscreen *::before, .is-offscreen *::after { animation-play-state: paused !important; }
@@ -1871,7 +1882,7 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   .hero h1 em { background-size: 100% 100%; }
   .journey::after { transform: none; }
   .journey-period { opacity: 1; transform: none; }
-  .case-toc-fill, .hero-light, .contact-orbits .orbit-runner { display: none; }
+  .case-toc-fill, .hero-light, .orbit-runner { display: none; }
   .gallery-item { opacity: 1; transform: none; }
 }
 

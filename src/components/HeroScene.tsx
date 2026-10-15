@@ -133,6 +133,7 @@ export function HeroScene() {
       const onPointer = (event: PointerEvent) => {
         pointerX = event.clientX / innerWidth - 0.5;
         pointerY = event.clientY / innerHeight - 0.5;
+        schedule();
       };
       window.addEventListener("pointermove", onPointer, { passive: true });
 
@@ -145,20 +146,18 @@ export function HeroScene() {
       const onVisibility = () => schedule();
       document.addEventListener("visibilitychange", onVisibility);
 
+      // Renders only while the camera eases toward the pointer, then stops. A WebGL canvas that redraws every
+      // frame makes the browser re-composite the whole page every frame, which is what made the hero stutter.
       let frame = 0;
-      const timer = new THREE.Timer();
-      const render = (now: number) => {
+      const render = () => {
         frame = 0;
-        timer.update(now);
-        const t = timer.getElapsed();
-        camera.position.x += (pointerX * 0.7 + Math.sin(t * 0.12) * 0.25 - camera.position.x) * 0.04;
-        camera.position.y += (0.4 - pointerY * 0.35 - camera.position.y) * 0.04;
+        const dx = (pointerX * 0.7 - camera.position.x) * 0.06;
+        const dy = (0.4 - pointerY * 0.35 - camera.position.y) * 0.06;
+        camera.position.x += dx;
+        camera.position.y += dy;
         camera.lookAt(0.6, -1, -2);
-        rocks.rotation.y = Math.sin(t * 0.05) * 0.06;
-        panes.position.y = Math.sin(t * 0.6) * 0.06;
-        glow.intensity = 28 + Math.sin(t * 1.4) * 5;
         renderer.render(scene, camera);
-        schedule();
+        if (Math.abs(dx) + Math.abs(dy) > 0.0004) schedule();
       };
       function schedule() {
         const active = inView && document.visibilityState === "visible";

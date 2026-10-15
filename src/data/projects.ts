@@ -3,9 +3,14 @@
 import type { StaticImageData } from "next/image";
 import type { L } from "@/components/T";
 
+import sporthubHome from "../../public/images/projects/sporthub/web-home.jpg";
+import sporthubSport from "../../public/images/projects/sporthub/web-sport.jpg";
+import sporthubClubs from "../../public/images/projects/sporthub/web-clubs.jpg";
+import sporthubMembership from "../../public/images/projects/sporthub/web-membership.jpg";
 import sporthubLogin from "../../public/images/projects/sporthub/web-login.jpg";
-import sporthubRegister from "../../public/images/projects/sporthub/web-register.jpg";
 import sporthubMobile from "../../public/images/projects/sporthub/mobile.jpg";
+import sporthubMobileClubs from "../../public/images/projects/sporthub/mobile-clubs.jpg";
+import sporthubMobileMembership from "../../public/images/projects/sporthub/mobile-membership.jpg";
 import barilgaStorefront from "../../public/images/projects/barilgahub/storefront.jpg";
 import barilgaProduct from "../../public/images/projects/barilgahub/product.jpg";
 import barilgaTrack from "../../public/images/projects/barilgahub/track.jpg";
@@ -294,9 +299,14 @@ export const projects: Project[] = [
       { title: { en: "Contract-first mocks", mn: "Contract-first mock" }, text: { en: "MSW and a mock server answer planned APIs so every client is built against the real contract.", mn: "MSW болон mock server төлөвлөсөн API-г хариулж, клиент бүрийг бодит contract-аар бүтээдэг." } },
     ],
     shots: [
+      { src: sporthubHome, label: { en: "Home", mn: "Нүүр" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app", device: "desktop" },
+      { src: sporthubSport, label: { en: "Sport page", mn: "Спортын хуудас" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/sports/fitness", device: "desktop" },
+      { src: sporthubClubs, label: { en: "Club search & map", mn: "Клуб хайлт ба газрын зураг" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/clubs", device: "desktop" },
+      { src: sporthubMembership, label: { en: "My membership", mn: "Миний багц" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/membership", device: "desktop" },
       { src: sporthubLogin, label: { en: "Sign in", mn: "Нэвтрэх" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/login", device: "desktop" },
-      { src: sporthubRegister, label: { en: "Create account", mn: "Бүртгүүлэх" }, group: { en: "Web", mn: "Веб" }, url: "sporthub-eight.vercel.app/register", device: "desktop" },
-      { src: sporthubMobile, label: { en: "Mobile web", mn: "Мобайл веб" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app", device: "mobile" },
+      { src: sporthubMobile, label: { en: "Mobile home", mn: "Мобайл нүүр" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app", device: "mobile" },
+      { src: sporthubMobileClubs, label: { en: "Mobile clubs", mn: "Мобайл клубууд" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app/clubs", device: "mobile" },
+      { src: sporthubMobileMembership, label: { en: "Mobile membership", mn: "Мобайл багц" }, group: { en: "Mobile", mn: "Мобайл" }, url: "sporthub-eight.vercel.app/membership", device: "mobile" },
     ],
   },
   {

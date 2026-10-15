@@ -16,6 +16,7 @@ import { StackOrbit } from "@/components/StackOrbit";
 import { T, Tx } from "@/components/T";
 import { journey, profile, stats, ticker } from "@/data/profile";
 import { projects } from "@/data/projects";
+import { toShowcaseProject } from "@/lib/showcase";
 import portraitPhoto from "../../public/images/hero/portrait-cutout.png";
 import silhouettePhoto from "../../public/images/hero/silhouette.webp";
 
@@ -303,7 +304,7 @@ export default function Home() {
           </div>
         </header>
 
-        <ProjectShowcase projects={projects} />
+        <ProjectShowcase projects={projects.map(toShowcaseProject)} />
       </section>
 
       <section className="devid section" aria-label="Developer ID">
@@ -426,8 +427,12 @@ export default function Home() {
           <ellipse cx="500" cy="300" rx="470" ry="150" />
           <ellipse cx="500" cy="300" rx="380" ry="230" transform="rotate(-14 500 300)" />
           <ellipse cx="500" cy="300" rx="300" ry="96" transform="rotate(9 500 300)" />
-          <ellipse className="orbit-runner" cx="500" cy="300" rx="380" ry="230" transform="rotate(-14 500 300)" pathLength={1} />
         </svg>
+        {/* The red arc on the middle orbit: a rotating box squashed onto the ellipse, so it moves on the GPU
+            instead of repainting the whole SVG every frame. */}
+        <span className="orbit-runner" aria-hidden="true">
+          <i />
+        </span>
         <div className="contact-rings" aria-hidden="true">
           <i />
           <i />

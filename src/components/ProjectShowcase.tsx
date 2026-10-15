@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import type { Project } from "@/data/projects";
+import type { ShowcaseProject } from "@/lib/showcase";
 import { BrowserFrame } from "./BrowserFrame";
 import { Icon } from "./Icon";
 import { ProjectVisual } from "./ProjectVisual";
@@ -11,7 +11,7 @@ import { T, Tx } from "./T";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Browser mockup with the phone overlapping its lower-left corner — real screenshots only. */
-function ShowcaseVisual({ project }: { project: Project }) {
+function ShowcaseVisual({ project }: { project: ShowcaseProject }) {
   const desktop = project.shots.find((shot) => shot.device === "desktop");
   const phone = project.shots.find((shot) => shot.device === "mobile");
 
@@ -44,7 +44,7 @@ function ShowcaseVisual({ project }: { project: Project }) {
  * section is on screen, or a horizontal swipe — page scrolling is never intercepted.
  * Only the active project's large screenshots are rendered.
  */
-export function ProjectShowcase({ projects }: { projects: Project[] }) {
+export function ProjectShowcase({ projects }: { projects: ShowcaseProject[] }) {
   const count = projects.length;
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState(1);
