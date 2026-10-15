@@ -12,7 +12,7 @@ const pick = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 /**
  * Red falling-glyph rain behind the hero. Columns live on three depth layers
  * (small/dim/slow far away, large/bright/fast up close) to fake depth of field.
- * Paused when the hero is off screen or the tab is hidden; static with reduced motion and on touch / small screens.
+ * Paused when the hero is off screen or the tab is hidden; static with reduced motion; lighter on touch / small screens.
  */
 export function HeroRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,15 +21,17 @@ export function HeroRain() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    // Phones, tablets and in-app browsers get one still frame: redrawing a full-screen canvas 30×/s
-    // was the heaviest thing on the page for them (matches the "ambient loops off" CSS block).
-    const still =
-      matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(max-width: 760px), (hover: none)").matches;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Phones, tablets and in-app browsers: same rain, cheaper — 1× pixels and 20 redraws a second
+    // (each step moves 1.5× as far, so it falls at the same speed).
+    const lite = matchMedia("(max-width: 760px), (hover: none)").matches;
+    const interval = lite ? 50 : 33;
+    const pace = lite ? 1.5 : 1;
 
     let width = 0;
     let height = 0;
     let drops: Drop[] = [];
-    const dpr = Math.min(devicePixelRatio, 1.5);
+    const dpr = lite ? 1 : Math.min(devicePixelRatio, 1.5);
 
     const seed = () => {
       const rect = canvas.getBoundingClientRect();
@@ -79,7 +81,7 @@ export function HeroRain() {
 
     const step = () => {
       for (const d of drops) {
-        d.y += d.speed;
+        d.y += d.speed * pace;
         if (Math.random() < 0.04) d.chars[(Math.random() * d.chars.length) | 0] = pick();
         if (d.y - d.length * d.size * 1.1 > height) {
           d.y = -Math.random() * height * 0.3;
@@ -95,7 +97,7 @@ export function HeroRain() {
       draw();
     });
     resizeObserver.observe(canvas);
-    if (still) return () => resizeObserver.disconnect();
+    if (reduced) return () => resizeObserver.disconnect();
 
     let frame = 0;
     let last = 0;
@@ -107,7 +109,7 @@ export function HeroRain() {
         return;
       }
       frame = requestAnimationFrame(loop);
-      if (now - last < 33) return; // ~30fps is plenty
+      if (now - last < interval) return; // ~30fps is plenty (20 on touch)
       last = now;
       step();
       draw();
