@@ -334,7 +334,7 @@ export default function Home() {
           </ul>
           <p className="devid-site">
             <Icon name="arrow" size={22} />
-            <a href="https://batsaikhandev.vercel.app">batsaikhandev.vercel.app</a>
+            <a href="https://batsaikhan.dev">batsaikhan.dev</a>
             <i aria-hidden="true" />
             <small>
               <T en="Building products that move." mn="Хөдөлгөөнтэй бүтээгдэхүүн бүтээнэ." />

@@ -25,7 +25,7 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://batsaikhandev.vercel.app"),
+  metadataBase: new URL("https://batsaikhan.dev"),
   title: {
     default: "Batsaikhan — Full-stack Engineer",
     template: "%s — Batsaikhan",
