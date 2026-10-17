@@ -286,7 +286,7 @@ export const projects: Project[] = [
     title: "SportHub",
     year: "2026",
     category: { en: "Sports platform", mn: "Спортын платформ" },
-    status: { kind: "preview", label: { en: "Pre-production", mn: "Pre-production" } },
+    status: { kind: "live", label: { en: "Live", mn: "Ажиллаж байна" } },
     description: {
       en: "Multi-sport membership, booking and wallet platform for Mongolia — GymHub, moved in full from Supabase onto SportHub's own backend on Railway, with one account across gyms, yoga and future sports.",
       mn: "Монголын олон төрлийн спортын гишүүнчлэл, захиалга, хэтэвчийн платформ — GymHub-ийг Supabase-ээс Railway дээрх SportHub-ийн өөрийн backend руу бүрэн шилжүүлж, фитнесс, йога болон цаашдын спортуудад нэг бүртгэлтэй болгосон.",
@@ -297,7 +297,7 @@ export const projects: Project[] = [
       mn: "3 хүний баг — архитектурыг тодорхойлж, SportHub repository-ийн 87 commit-оос 85-ыг нь би хийсэн.",
     },
     stack: ["NestJS", "React", "Flutter", "Next.js", "TypeScript", "PostgreSQL", "Railway", "TanStack Query", "Riverpod"],
-    links: { live: "https://sporthub-eight.vercel.app", liveLabel: { en: "Open preview", mn: "Preview нээх" } },
+    links: { live: "https://sporthub.mn", liveLabel: { en: "Visit sporthub.mn", mn: "sporthub.mn нээх" } },
     visual: "terminal",
     metrics: [
       { value: 4, label: { en: "apps in one workspace", mn: "апп нэг workspace-д" } },
