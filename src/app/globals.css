@@ -50,12 +50,15 @@ button { font: inherit; }
   position: fixed; z-index: 80; inset: 0; pointer-events: none; opacity: .032;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.vignette { position: fixed; z-index: 79; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, .55) 100%); }
+/* Large CSS gradients make Dia stall the main thread several times a second (Chrome is fine), while the same
+   gradient drawn as an SVG image costs nothing. So the big full-screen layers use pixel-identical SVG images:
+   radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, .55) 100%) here. */
+.vignette { position: fixed; z-index: 79; inset: 0; pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3CradialGradient id='v' cx='0' cy='0' r='1' gradientTransform='translate(.5 .45) scale(.70711 .77782)'%3E%3Cstop offset='.55' stop-opacity='0'/%3E%3Cstop offset='1' stop-opacity='.55'/%3E%3C/radialGradient%3E%3Crect width='1' height='1' fill='url(%23v)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; }
 /* Faint global grid with a localized red wash — sits behind every section. */
 .site-shell::before {
   content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none;
-  background-image: linear-gradient(rgba(255, 255, 255, .018) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .018) 1px, transparent 1px);
-  background-size: 72px 72px;
+  /* 1px lines every 72px, as an SVG tile (see .vignette). */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' fill='%23fff' fill-opacity='.018'%3E%3Crect width='72' height='1'/%3E%3Crect width='1' height='72'/%3E%3C/svg%3E") 0 0 / 72px 72px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 85%);
 }
 /* Contact modal — two columns: pitch + direct contacts on the left, the form card on the right. Rendered into <body>. */
@@ -349,9 +352,10 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 }
 /* The lines drift on their own layer via transform (no repaint); one tile of travel loops seamlessly. */
 .hero-grid::before { content: ""; position: absolute; inset: -72px 0 0 -72px; will-change: transform;
-  background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
-  background-size: 72px 72px; animation: grid-drift 40s linear infinite; }
-.hero-grid::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 72% 45%, rgba(255, 48, 74, .12), transparent 45%); }
+  /* 1px lines every 72px as an SVG tile, not CSS gradients — see .vignette. */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' fill='%23fff' fill-opacity='.035'%3E%3Crect width='72' height='1'/%3E%3Crect width='1' height='72'/%3E%3C/svg%3E") 0 0 / 72px 72px; animation: grid-drift 40s linear infinite; }
+/* radial-gradient(circle at 72% 45%, rgba(255, 48, 74, .12), transparent 45%), drawn as a solid colour under a gradient mask. */
+.hero-grid::after { content: ""; position: absolute; inset: 0; background: rgba(255, 48, 74, .12); -webkit-mask-image: radial-gradient(circle at 72% 45%, #000, transparent 45%); mask-image: radial-gradient(circle at 72% 45%, #000, transparent 45%); }
 .hero-rain {
   position: absolute; z-index: -2; top: 0; bottom: 0; left: 50%; width: 100vw; height: 100%; translate: -50% 0; pointer-events: none;
   animation: fade-in 2s ease .3s backwards;
@@ -361,6 +365,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   mask-image: linear-gradient(to right, rgba(0, 0, 0, .35), #000 55%), linear-gradient(to bottom, #000 70%, transparent);
   mask-composite: intersect;
 }
+/* Side-by-side strips with hairline gaps, positioned by HeroRain (see the note there). */
+.hero-rain canvas { position: absolute; top: 0; height: 100%; }
 .hero-copy { position: relative; z-index: 3; will-change: transform, opacity; }
 .hero h1 { margin: 28px 0 28px; font: 700 clamp(60px, 8vw, 126px)/.88 var(--display); letter-spacing: -.04em; }
 .hero h1 em { -webkit-text-stroke: 1.5px rgba(242, 238, 238, .55); }
@@ -565,9 +571,10 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .bridge .next-copy > :nth-child(2) { --d: .62s; }
 .bridge .next-copy > :nth-child(3) { --d: .74s; }
 
-.next-grid { inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px); background-size: 120px 120px;
+.next-grid { inset: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='%23fff' fill-opacity='.03'%3E%3Crect width='120' height='1'/%3E%3Crect width='1' height='120'/%3E%3C/svg%3E") 0 0 / 120px 120px; /* 1px lines every 120px — see .vignette */
   -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 85%); mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 85%); }
-.next-vignette { inset: 0; z-index: 6; pointer-events: none; background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 50%, rgba(0, 0, 0, .7)); }
+/* radial-gradient(ellipse 75% 70% at 50% 45%, transparent 50%, rgba(0, 0, 0, .7)) as a solid colour under a gradient mask — see .vignette. */
+.next-vignette { inset: 0; z-index: 6; pointer-events: none; background: rgba(0, 0, 0, .7); -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 50%, #000); mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 50%, #000); }
 .next-marks { inset: 0; }
 .next-marks i { position: absolute; width: 11px; height: 11px; opacity: .45; background: linear-gradient(var(--brand-hot), var(--brand-hot)) center / 1px 100% no-repeat, linear-gradient(var(--brand-hot), var(--brand-hot)) center / 100% 1px no-repeat; }
 .next-marks i:nth-child(1) { left: 13vw; top: 24%; } .next-marks i:nth-child(2) { left: 17vw; top: 68%; }
@@ -591,7 +598,9 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
   -webkit-mask-image: linear-gradient(to right, transparent 1%, #000 14%, #000 88%, transparent 99%); mask-image: linear-gradient(to right, transparent 1%, #000 14%, #000 88%, transparent 99%); }
 /* Low horizon: only the top of a wide ellipse shows in the bottom third. */
 .next-horizon { z-index: 3; left: 50%; top: 72%; width: 170vw; height: 140%; border-radius: 50%; translate: -50% 0;
-  border: 2px solid rgba(255, 96, 112, .95); background: radial-gradient(ellipse 60% 30% at 50% 0, rgba(130, 14, 28, .6), rgba(30, 4, 8, .95) 45%, #060404 70%);
+  /* radial-gradient(ellipse 60% 30% at 50% 0, rgba(130, 14, 28, .6), rgba(30, 4, 8, .95) 45%, #060404 70%) as an SVG image (stops
+     sampled to match CSS premultiplied blending) — see .vignette. */
+  border: 2px solid rgba(255, 96, 112, .95); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3CradialGradient id='g' cx='0' cy='0' r='1' gradientTransform='translate(.5 0) scale(.6 .3)'%3E%3Cstop offset='0.0' stop-color='rgb(130,14,28)' stop-opacity='0.6'/%3E%3Cstop offset='0.0375' stop-color='rgb(117,13,25)' stop-opacity='0.6292'/%3E%3Cstop offset='0.075' stop-color='rgb(106,12,23)' stop-opacity='0.6583'/%3E%3Cstop offset='0.1125' stop-color='rgb(95,11,21)' stop-opacity='0.6875'/%3E%3Cstop offset='0.15' stop-color='rgb(86,10,19)' stop-opacity='0.7167'/%3E%3Cstop offset='0.1875' stop-color='rgb(77,9,17)' stop-opacity='0.7458'/%3E%3Cstop offset='0.225' stop-color='rgb(69,8,16)' stop-opacity='0.775'/%3E%3Cstop offset='0.2625' stop-color='rgb(61,7,14)' stop-opacity='0.8042'/%3E%3Cstop offset='0.3' stop-color='rgb(54,6,13)' stop-opacity='0.8333'/%3E%3Cstop offset='0.3375' stop-color='rgb(47,6,11)' stop-opacity='0.8625'/%3E%3Cstop offset='0.375' stop-color='rgb(41,5,10)' stop-opacity='0.8917'/%3E%3Cstop offset='0.4125' stop-color='rgb(35,5,9)' stop-opacity='0.9208'/%3E%3Cstop offset='0.45' stop-color='rgb(30,4,8)' stop-opacity='0.95'/%3E%3Cstop offset='0.4708' stop-color='rgb(28,4,8)' stop-opacity='0.9542'/%3E%3Cstop offset='0.4917' stop-color='rgb(26,4,7)' stop-opacity='0.9583'/%3E%3Cstop offset='0.5125' stop-color='rgb(24,4,7)' stop-opacity='0.9625'/%3E%3Cstop offset='0.5333' stop-color='rgb(22,4,7)' stop-opacity='0.9667'/%3E%3Cstop offset='0.5542' stop-color='rgb(20,4,6)' stop-opacity='0.9708'/%3E%3Cstop offset='0.575' stop-color='rgb(18,4,6)' stop-opacity='0.975'/%3E%3Cstop offset='0.5958' stop-color='rgb(16,4,6)' stop-opacity='0.9792'/%3E%3Cstop offset='0.6167' stop-color='rgb(14,4,5)' stop-opacity='0.9833'/%3E%3Cstop offset='0.6375' stop-color='rgb(12,4,5)' stop-opacity='0.9875'/%3E%3Cstop offset='0.6583' stop-color='rgb(10,4,5)' stop-opacity='0.9917'/%3E%3Cstop offset='0.6792' stop-color='rgb(8,4,4)' stop-opacity='0.9958'/%3E%3Cstop offset='0.7' stop-color='rgb(6,4,4)' stop-opacity='1'/%3E%3C/radialGradient%3E%3Crect width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
   box-shadow: 0 0 16px rgba(255, 48, 74, .8), 0 -14px 60px rgba(255, 48, 74, .22), inset 0 4px 30px rgba(255, 48, 74, .35); }
 .next-horizon::before { content: ""; position: absolute; left: 25%; right: 25%; top: -6vh; height: 18vh; background: url(/images/hero/smoke.webp) center / 100% 100% no-repeat; opacity: .28;
   -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, transparent 75%); }
@@ -636,7 +645,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 /* Hero → bridge handover: the hero's bottom edge melts into the page, the hero visual sinks back and
    fades as it leaves, and the bridge overlaps it slightly so the two crossfade instead of meeting at a seam. */
 .hero::after { content: ""; position: absolute; z-index: 2; left: 50%; bottom: 0; width: 100vw; height: clamp(160px, 26vh, 280px); translate: -50% 0; pointer-events: none;
-  background: linear-gradient(to bottom, transparent, var(--bg) 92%); }
+  /* linear-gradient(to bottom, transparent, var(--bg) 92%) as a solid colour under a gradient mask — see .vignette. */
+  background: var(--bg); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 92%); mask-image: linear-gradient(to bottom, transparent, #000 92%); }
 @media (prefers-reduced-motion: no-preference) and (min-width: 761px) and (min-height: 560px) {
   @supports (animation-timeline: view()) {
     .hero { view-timeline: --hero block; }
@@ -693,8 +703,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
    ============================================================ */
 .work { --sc-line: rgba(255, 59, 79, .32); }
 .work::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 55% 45% at 72% 52%, rgba(255, 40, 64, .1), transparent 70%),
-    linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 96px 96px, linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 96px 96px;
+  /* radial-gradient(ellipse 55% 45% at 72% 52%, rgba(255, 40, 64, .1), transparent 70%) + 1px lines every 96px, as SVG — see .vignette. */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3CradialGradient id='g' cx='0' cy='0' r='1' gradientTransform='translate(0.72 0.52) scale(0.55 0.45)'%3E%3Cstop offset='0' stop-color='rgb(255,40,64)' stop-opacity='0.1'/%3E%3Cstop offset='0.7' stop-color='rgb(255,40,64)' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='%23fff' fill-opacity='.025'%3E%3Crect width='96' height='1'/%3E%3Crect width='1' height='96'/%3E%3C/svg%3E") 0 0 / 96px 96px;
   -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 40%, transparent 90%); mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 40%, transparent 90%); }
 .work-heading { display: grid; grid-template-columns: 1.4fr .6fr; align-items: start; gap: 40px; margin-bottom: 56px; }
 .work-eyebrow { color: #d9d3d3; letter-spacing: .22em; }
@@ -772,8 +782,8 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 
 /* Wide screens: the cinematic version — tilted tablet + phone over red-lit rocks, light arcs at the edge. */
 @media (min-width: 1101px) {
-  .work::before { background: radial-gradient(ellipse 50% 55% at 74% 56%, rgba(255, 40, 64, .2), transparent 70%),
-    linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 96px 96px, linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 96px 96px; }
+  /* radial-gradient(ellipse 50% 55% at 74% 56%, rgba(255, 40, 64, .2), transparent 70%) + the same 96px lines. */
+  .work::before { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3CradialGradient id='g' cx='0' cy='0' r='1' gradientTransform='translate(0.74 0.56) scale(0.5 0.55)'%3E%3Cstop offset='0' stop-color='rgb(255,40,64)' stop-opacity='0.2'/%3E%3Cstop offset='0.7' stop-color='rgb(255,40,64)' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='%23fff' fill-opacity='.025'%3E%3Crect width='96' height='1'/%3E%3Crect width='1' height='96'/%3E%3C/svg%3E") 0 0 / 96px 96px; }
   .showcase { position: relative; }
   .showcase::before, .showcase::after { content: ""; position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; border: 1.5px solid rgba(255, 70, 90, .55); box-shadow: 0 0 14px rgba(255, 48, 74, .35);
     -webkit-mask-image: linear-gradient(90deg, transparent 55%, #000 80%); mask-image: linear-gradient(90deg, transparent 55%, #000 80%); }
@@ -819,7 +829,9 @@ html[data-lang="mn"] .case-role b { font-size: 18px; letter-spacing: 0; }
 .work-intro p { color: #b3acac; font-size: 15.5px; }
 
 .work::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
-  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 4px), radial-gradient(ellipse 70% 60% at 50% 55%, transparent 55%, rgba(0, 0, 0, .75));
+  /* repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 4px) over
+     radial-gradient(ellipse 70% 60% at 50% 55%, transparent 55%, rgba(0, 0, 0, .75)), as SVG — see .vignette. */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect y='3' width='4' height='1' fill='%23fff' fill-opacity='.025'/%3E%3C/svg%3E") 0 100% / 4px 4px, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3CradialGradient id='g' cx='0' cy='0' r='1' gradientTransform='translate(0.5 0.55) scale(0.7 0.6)'%3E%3Cstop offset='0.55' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='0.75'/%3E%3C/radialGradient%3E%3Crect width='1' height='1' fill='url(%23g)'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
   -webkit-mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent); mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent); }
 
 /* Navigation: highlighted row + bar + chevron for the active item (not colour alone). */
