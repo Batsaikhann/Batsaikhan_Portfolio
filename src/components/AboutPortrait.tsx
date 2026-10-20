@@ -197,7 +197,7 @@ export function AboutPortrait() {
 
       <div className="image-caption">
         <span data-scramble>
-          <T en="01 / The person" mn="01 / Хүн" />
+          <T en="01 / The person" mn="01 / Хувь хүн" />
         </span>
         <b>
           <T

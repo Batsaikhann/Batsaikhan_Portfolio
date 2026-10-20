@@ -11,7 +11,7 @@ import { T, Tx, type L } from "./T";
 const initial: ContactState = { status: "idle" };
 
 const FIELD_ERRORS: Record<ContactErrorCode, L> = {
-  required: { en: "Required", mn: "Заавал бөглөнө" },
+  required: { en: "Required", mn: "Заавал бөглөнө үү" },
   invalid: { en: "Enter a valid email", mn: "Зөв имэйл оруулна уу" },
   "too-short": { en: "At least 2 characters", mn: "Дор хаяж 2 тэмдэгт" },
   "too-long": { en: "That's too long", mn: "Хэт урт байна" },
@@ -20,7 +20,7 @@ const FIELD_ERRORS: Record<ContactErrorCode, L> = {
 const REASONS: Record<NonNullable<ContactState["reason"]>, L> = {
   validation: { en: "Please check the highlighted fields.", mn: "Тэмдэглэсэн талбаруудыг шалгана уу." },
   "rate-limit": { en: "Too many messages — please try again in a few minutes.", mn: "Хэт олон удаа илгээлээ — хэдэн минутын дараа дахин оролдоно уу." },
-  "not-configured": { en: "The form isn't connected yet. Please email me directly for now.", mn: "Форм одоогоор холбогдоогүй байна. Имэйлээр шууд бичнэ үү." },
+  "not-configured": { en: "The form isn't connected yet. Please email me directly for now.", mn: "Форм одоогоор холбогдоогүй байна. Түр хугацаанд имэйлээр шууд бичнэ үү." },
   "send-failed": { en: "Something went wrong sending your message. Please try again.", mn: "Илгээхэд алдаа гарлаа. Дахин оролдоно уу." },
 };
 
@@ -28,9 +28,9 @@ const PLACEHOLDERS = {
   name: { en: "Your name", mn: "Нэрээ оруулна уу" },
   email: { en: "name@example.com", mn: "name@example.com" },
   message: {
-    project: { en: "What are you building, who is it for, and what already exists?", mn: "Юу бүтээх гэж байна, хэнд зориулсан, одоо юу бэлэн байгаа вэ?" },
-    work: { en: "The role or team, and what you'd like me to own.", mn: "Ямар баг, ямар үүрэг, юуг хариуцуулах вэ?" },
-    hi: { en: "Say hello — I read everything.", mn: "Мэндээ илгээгээрэй — бүгдийг уншдаг." },
+    project: { en: "What are you building, who is it for, and what already exists?", mn: "Юу бүтээх гэж байгаа, хэнд зориулсан, одоо юу бэлэн байгааг бичээрэй." },
+    work: { en: "The role or team, and what you'd like me to own.", mn: "Ямар баг, ямар үүрэг, надаар юуг хариуцуулах вэ?" },
+    hi: { en: "Say hello — I read everything.", mn: "Мэндчилгээгээ үлдээгээрэй — бүгдийг нь уншдаг." },
   },
 } satisfies Record<string, unknown>;
 
@@ -156,7 +156,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
           <p className="cm-lead">
             <T
               en="Tell me what you're building. I'll reply with honest thoughts on what it needs — and what it doesn't. Usually within 24 hours."
-              mn="Юу бүтээх гэж байгаагаа хуваалцаарай. Ямар шийдэл хэрэгтэй, юу шаардлагагүйг шулуухан хэлж өгнө. Ихэвчлэн 24 цагийн дотор хариулдаг."
+              mn="Юу бүтээх гэж байгаагаа хуваалцаарай. Юу хэрэгтэй, юу хэрэггүйг шулуухан хэлж өгнө. Ихэвчлэн 24 цагийн дотор хариулдаг."
             />
           </p>
           <ul className="cm-facts">
@@ -210,7 +210,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
                 <T en="Thanks — talk soon." mn="Баярлалаа — удахгүй холбогдоно." />
               </h3>
               <p className="cm-lead">
-                <T en="I read every message and usually reply within 24 hours." mn="Ирсэн бүх захидлыг уншдаг бөгөөд ихэвчлэн 24 цагийн дотор хариулдаг." />
+                <T en="I read every message and usually reply within 24 hours." mn="Ирсэн захидал бүрийг уншиж, ихэвчлэн 24 цагийн дотор хариулдаг." />
               </p>
               <button type="button" className="button button-primary" onClick={close}>
                 <T en="Close" mn="Хаах" />
@@ -219,12 +219,12 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
           ) : (
             <form action={action} noValidate>
               <h3 className="cm-card-title">
-                <T en="Tell me about your project" mn="Төслийн мэдээллээ үлдээнэ үү" />
+                <T en="Tell me about your project" mn="Төслийнхөө тухай хуваалцаарай" />
               </h3>
 
               <Choice
                 name="intent"
-                legend={<T en="I'd like to" mn="Би" />}
+                legend={<T en="I'd like to" mn="Холбогдох шалтгаан" />}
                 options={CONTACT_INTENTS}
                 defaultValue={values?.intent ?? "project"}
                 onChange={(v) => setIntent(v as ContactIntent)}
@@ -249,7 +249,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
                 </label>
                 <label className={`cm-field${errors.email ? " has-error" : ""}`}>
                   <span className="cm-label">
-                    <T en="Email" mn="И-мэйл хаяг" />
+                    <T en="Email" mn="Имэйл хаяг" />
                   </span>
                   <input
                     name="email"
@@ -270,7 +270,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
               {wantsDetails && (
                 <Choice
                   name="projectType"
-                  legend={<T en="What are you building?" mn="Ямар бүтээгдэхүүн хөгжүүлэх вэ?" />}
+                  legend={<T en="What are you building?" mn="Төслийн төрөл" />}
                   options={PROJECT_TYPES}
                   defaultValue={values?.projectType}
                 />
@@ -297,7 +297,7 @@ function ContactDialog({ onClose }: { onClose: () => void }) {
               {wantsDetails && (
                 <div className="cm-row is-choices">
                   <Choice name="budget" legend={<T en="Planned budget" mn="Төлөвлөсөн төсөв" />} options={BUDGETS} defaultValue={values?.budget} />
-                  <Choice name="timeline" legend={<T en="Timeline" mn="Төлөвлөсөн хугацаа" />} options={TIMELINES} defaultValue={values?.timeline} />
+                  <Choice name="timeline" legend={<T en="Timeline" mn="Хугацаа" />} options={TIMELINES} defaultValue={values?.timeline} />
                 </div>
               )}
 

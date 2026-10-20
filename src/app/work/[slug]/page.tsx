@@ -292,7 +292,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
                 ) : (
                   <T
                     en="Captured from the live product. Click a screen to enlarge it."
-                    mn="Ажиллаж буй бүтээгдэхүүнээс авсан зургууд. Зураг дээр дарж томруулж харна уу."
+                    mn="Ажиллаж буй бүтээгдэхүүнээс авсан дэлгэцийн зургууд. Томруулж харах бол зураг дээр дарна уу."
                   />
                 )}
               </p>
@@ -330,7 +330,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           <Icon name="arrowUpRight" size={48} />
         </TransitionLink>
         <a className="link-arrow" href={`mailto:${profile.email}`}>
-          <T en="Want something like this? Let's talk" mn="Үүн шиг зүйл хэрэгтэй юу? Ярилцъя" /> <Icon name="arrow" size={16} />
+          <T en="Want something like this? Let's talk" mn="Иймэрхүү зүйл хэрэгтэй юу? Ярилцъя" /> <Icon name="arrow" size={16} />
         </a>
       </section>
     </main>

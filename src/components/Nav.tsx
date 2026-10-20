@@ -12,8 +12,8 @@ import { T } from "./T";
 
 const links = [
   { label: "Work", mn: "Ажлууд", hash: "#work" },
-  { label: "About", mn: "Тухай", hash: "#about" },
-  { label: "Stack", mn: "Стек", hash: "#stack" },
+  { label: "About", mn: "Миний тухай", hash: "#about" },
+  { label: "Stack", mn: "Технологи", hash: "#stack" },
   { label: "Contact", mn: "Холбоо барих", hash: "#contact" },
 ];
 

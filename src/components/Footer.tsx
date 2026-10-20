@@ -11,7 +11,7 @@ export function Footer() {
       </span>
       <p>
         © {new Date().getFullYear()} {profile.name} ·{" "}
-        <T en={`Designed & built in ${profile.city.en}`} mn={`${profile.city.mn}-д зохиож бүтээв`} />
+        <T en={`Designed & built in ${profile.city.en}`} mn="Улаанбаатарт зохиож бүтээв" />
       </p>
       <div className="socials">
         <a href={profile.github.href} target="_blank" rel="noreferrer" aria-label="GitHub" data-magnetic>
