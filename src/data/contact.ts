@@ -26,7 +26,7 @@ export const BUDGETS = {
   "2to5": { en: "₮2–5M", mn: "₮2–5 сая" },
   "5to15": { en: "₮5–15M", mn: "₮5–15 сая" },
   over15: { en: "₮15M+", mn: "₮15 саяас дээш" },
-  tbd: { en: "Not sure yet", mn: "Шийдээгүй" },
+  tbd: { en: "Not sure yet", mn: "Хараахан тодорхойгүй" },
 } satisfies Record<string, L>;
 
 export const TIMELINES = {

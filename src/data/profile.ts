@@ -25,8 +25,8 @@ export const capabilities: Array<{ label: L; items: string[] }> = [
 ];
 
 export const stats = [
-  { value: 25, suffix: "+", label: { en: "technologies in my stack", mn: "эзэмшсэн технологи" } },
-  { value: 7, suffix: "+", label: { en: "products shipped", mn: "хүргэсэн бүтээгдэхүүн" } },
+  { value: 25, suffix: "+", label: { en: "technologies in my stack", mn: "ашигладаг технологи" } },
+  { value: 7, suffix: "+", label: { en: "products shipped", mn: "гаргасан бүтээгдэхүүн" } },
   { value: 4, suffix: "", label: { en: "platforms mastered", mn: "эзэмшсэн платформ" } },
 ];
 
@@ -36,7 +36,7 @@ export const journey: Array<{ period: L; title: string; role: L; note?: L; curre
   {
     period: { en: "Now", mn: "Одоо" },
     title: "Aether Tech Core LLC",
-    role: { en: "Full-Stack Developer & Team Lead", mn: "Full-Stack хөгжүүлэгч ба багийн ахлагч" },
+    role: { en: "Full-Stack Developer & Team Lead", mn: "Full-stack хөгжүүлэгч, багийн ахлагч" },
     current: true,
     kind: "work",
   },
@@ -62,7 +62,7 @@ export const journey: Array<{ period: L; title: string; role: L; note?: L; curre
     },
     note: {
       en: "Mongolian University of Science and Technology",
-      mn: "Шинжлэх Ухаан, Технологийн Их Сургууль",
+      mn: "Шинжлэх ухаан, технологийн их сургууль",
     },
     kind: "education",
   },

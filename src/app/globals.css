@@ -327,6 +327,8 @@ html:not([data-lang="mn"]) .lang-opt-en, html[data-lang="mn"] .lang-opt-mn { col
 /* Mongolian copy runs longer than English — scale the biggest headings down so line breaks match. */
 html[data-lang="mn"] .hero h1 { font-size: clamp(46px, 6.2vw, 98px); line-height: .96; letter-spacing: -.03em; }
 html[data-lang="mn"] :is(.work-heading, .about-copy, .stack-heading) h2 { font-size: clamp(32px, 4vw, 60px); line-height: 1.08; letter-spacing: -.02em; }
+/* The outlined line keeps its own -.05em tracking, which makes Cyrillic strokes (Ж, Ш, Ө…) collide. */
+html[data-lang="mn"] .work-heading h2 em { letter-spacing: -.02em; }
 html[data-lang="mn"] .contact-content h2 { font-size: clamp(40px, 5.6vw, 86px); letter-spacing: -.025em; }
 html[data-lang="mn"] .orbit-panel h3 { font-size: clamp(30px, 3.4vw, 50px); letter-spacing: -.02em; }
 html[data-lang="mn"] .image-caption b { font-size: 20px; }

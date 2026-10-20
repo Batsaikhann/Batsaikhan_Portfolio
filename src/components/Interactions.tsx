@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { effectOff } from "@/lib/perf-lab";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
@@ -136,7 +137,7 @@ export function Interactions() {
       listen(document, "pointerleave", () => root.classList.add("cursor-away"));
       listen(document, "pointerenter", () => root.classList.remove("cursor-away"));
 
-      document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
+      if (!effectOff("magnetic")) document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
         listen(el, "pointermove", (event) => {
           const rect = el.getBoundingClientRect();
           const x = event.clientX - rect.left - rect.width / 2;
@@ -152,7 +153,7 @@ export function Interactions() {
         });
       });
 
-      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+      if (!effectOff("tilt")) document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
         const max = Number(el.dataset.tilt) || 3;
         listen(el, "pointermove", (event) => {
           const rect = el.getBoundingClientRect();
@@ -172,7 +173,7 @@ export function Interactions() {
     }
 
     const heroLayers: Layer[] =
-      finePointer && wide
+      finePointer && wide && !effectOff("parallax")
         ? [...document.querySelectorAll<HTMLElement>("[data-depth]")].map((el) => ({
             el,
             depth: Number(el.dataset.depth),
@@ -186,7 +187,7 @@ export function Interactions() {
       el,
       steps: [...el.querySelectorAll<HTMLElement>("[data-step]")],
     }));
-    const follow = finePointer && wide ? document.querySelector<HTMLElement>("[data-follow]") : null;
+    const follow = finePointer && wide && !effectOff("follow") ? document.querySelector<HTMLElement>("[data-follow]") : null;
     let followX = 0;
     let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
@@ -201,11 +202,22 @@ export function Interactions() {
       listen(tickerBand, "pointerleave", () => (tickerHover = false));
     }
 
-    let mouseX = innerWidth / 2;
-    let mouseY = innerHeight / 2;
+    // Reading scrollY / innerWidth / innerHeight or a rect flushes pending style and layout. The cursor handler
+    // writes styles on every move, so the loop only reads geometry when it can have changed (scroll / resize)
+    // and otherwise works from these cached values — no forced recalc on frames where only the pointer moved.
+    const cursorOn = !effectOff("cursor");
+    const glowOn = finePointer && !effectOff("glow");
+    let viewW = innerWidth;
+    let viewH = innerHeight;
+    let scrollTop = scrollY;
+    let scrollDirty = true;
+    let followHost: DOMRect | null = null;
+
+    let mouseX = viewW / 2;
+    let mouseY = viewH / 2;
     let glowX = mouseX;
     let glowY = mouseY;
-    let lastY = scrollY;
+    let lastY = scrollTop;
     let tickerX = 0;
     let tickerSpeed = 0.6;
     let direction = 1;
@@ -229,7 +241,10 @@ export function Interactions() {
     let maxScroll = 0;
     let tickerHalf = 0;
     const measure = () => {
-      maxScroll = root.scrollHeight - innerHeight;
+      viewW = innerWidth;
+      viewH = innerHeight;
+      scrollDirty = true;
+      maxScroll = root.scrollHeight - viewH;
       tickerHalf = ticker ? ticker.scrollWidth / 2 : 0;
     };
     measure();
@@ -243,21 +258,25 @@ export function Interactions() {
       mouseY = event.clientY;
       // Cursor tracks the pointer 1:1 on the event itself — no easing, no frame of lag.
       const at = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-      if (dotRef.current) dotRef.current.style.transform = at;
-      if (ringRef.current) ringRef.current.style.transform = at;
+      if (cursorOn && dotRef.current) dotRef.current.style.transform = at;
+      if (cursorOn && ringRef.current) ringRef.current.style.transform = at;
       kick();
     });
 
     const loop = () => {
-      const y = scrollY;
+      // Read all geometry first, then write styles, so the frame lays out only once.
+      if (scrollDirty) {
+        scrollTop = scrollY;
+        followHost = follow && scrollTop < viewH * 1.2 ? follow.parentElement!.getBoundingClientRect() : null;
+        scrollDirty = false;
+      }
+      const y = scrollTop;
       const velocity = y - lastY;
       if (velocity !== 0) direction = velocity > 0 ? 1 : -1;
 
-      // Read all geometry first, then write styles, so the frame lays out only once.
-      const followHost = follow && y < innerHeight * 1.2 ? follow.parentElement!.getBoundingClientRect() : null;
       const scrolled = y !== lastParallaxY;
       const parallaxRects = scrolled ? parallax.map((el) => el.parentElement!.getBoundingClientRect()) : [];
-      const line = innerHeight * 0.62;
+      const line = viewH * 0.62;
       const progressRects =
         y !== lastProgressY
           ? progressHosts.map(({ el, steps }) => ({
@@ -269,7 +288,7 @@ export function Interactions() {
       // Anything still easing toward its target keeps the loop alive for another frame.
       let settling = false;
 
-      if (finePointer) {
+      if (glowOn) {
         const dx = mouseX - glowX;
         const dy = mouseY - glowY;
         if (Math.abs(dx) + Math.abs(dy) > 0.5) {
@@ -285,14 +304,14 @@ export function Interactions() {
         if (progressRef.current) progressRef.current.style.transform = `scaleX(${maxScroll > 0 ? Math.min(1, y / maxScroll) : 0})`;
       }
 
-      if (heroCopy && scrolled && y < innerHeight * 1.2) {
+      if (heroCopy && scrolled && y < viewH * 1.2) {
         heroCopy.style.translate = `0 ${y * 0.18}px`;
-        heroCopy.style.opacity = String(Math.max(0, 1 - y / (innerHeight * 0.8)));
+        heroCopy.style.opacity = String(Math.max(0, 1 - y / (viewH * 0.8)));
       }
 
-      const nx = mouseX / innerWidth - 0.5;
-      const ny = mouseY / innerHeight - 0.5;
-      if (y < innerHeight * 1.2) {
+      const nx = mouseX / viewW - 0.5;
+      const ny = mouseY / viewH - 0.5;
+      if (y < viewH * 1.2) {
         for (const layer of heroLayers) {
           const dx = nx * layer.depth - layer.x;
           const dy = ny * layer.depth - layer.y;
@@ -318,8 +337,8 @@ export function Interactions() {
       if (scrolled) lastParallaxY = y;
       for (const [i, el] of parallaxRects.length ? parallax.entries() : []) {
         const host = parallaxRects[i];
-        const offset = host.top + host.height / 2 - innerHeight / 2;
-        if (Math.abs(offset) < innerHeight * 1.5) {
+        const offset = host.top + host.height / 2 - viewH / 2;
+        if (Math.abs(offset) < viewH * 1.5) {
           const vy = Number(el.dataset.parallax ?? 0);
           const vx = Number(el.dataset.parallaxX ?? 0);
           el.style.translate = `${(offset * vx).toFixed(1)}px ${(-offset * vy).toFixed(1)}px`;
@@ -331,7 +350,7 @@ export function Interactions() {
         lastProgressY = y;
         progressHosts.forEach(({ el, steps }, i) => {
           const { rect, stepTops } = progressRects[i];
-          if (rect.bottom < -innerHeight || rect.top > innerHeight * 2) return;
+          if (rect.bottom < -viewH || rect.top > viewH * 2) return;
           const p = Math.min(1, Math.max(0, (line - rect.top) / rect.height));
           el.style.setProperty("--progress", p.toFixed(4));
           steps.forEach((step, j) => step.classList.toggle("is-reached", stepTops[j] < line));
@@ -356,8 +375,14 @@ export function Interactions() {
     function kick() {
       if (!frame) frame = requestAnimationFrame(loop);
     }
-    listen(window, "scroll", kick);
-    listen(window, "resize", kick);
+    listen(window, "scroll", () => {
+      scrollDirty = true;
+      kick();
+    });
+    listen(window, "resize", () => {
+      measure();
+      kick();
+    });
     kick();
     cleanups.push(() => cancelAnimationFrame(frame));
 

@@ -38,7 +38,7 @@ export function AboutBridge({ silhouette }: { silhouette: StaticImageData }) {
         <li>People</li>
       </ul>
       <small className="next-label">
-        <T en="Next" mn="Дараагийнх" /> /
+        <T en="Next" mn="Дараах" /> /
       </small>
       <p className="next-title" aria-hidden="true">
         <T en="About" mn="Тухай" />
@@ -55,7 +55,7 @@ export function AboutBridge({ silhouette }: { silhouette: StaticImageData }) {
           <T en="I build products, systems and teams that scale." mn="Би өсөн тэлэх бүтээгдэхүүн, систем, баг бүтээдэг." />
         </p>
         <a className="next-link" href="#about">
-          <T en="Scroll to continue" mn="Үргэлжлүүлэх" />
+          <T en="Scroll to continue" mn="Гүйлгэж үргэлжлүүлэх" />
           <Icon name="arrowDown" size={14} />
         </a>
       </div>

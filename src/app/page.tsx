@@ -64,7 +64,7 @@ export default function Home() {
           <p className="hero-description intro-2">
             <T
               en="Full-stack engineer turning ambitious ideas into products — from backend architecture to web, mobile and deployment."
-              mn="Амбицтай санааг бүтээгдэхүүн болгодог full-stack инженер — backend архитектураас эхлээд веб, мобайл, deployment хүртэл."
+              mn="Том санааг бодит бүтээгдэхүүн болгодог full-stack инженер — backend архитектураас эхлээд веб, мобайл, байршуулалт хүртэл."
             />
           </p>
           <div className="hero-actions intro-3">
@@ -181,13 +181,13 @@ export default function Home() {
           <p className="about-lead">
             <T
               en="I'm Batsaikhan — a full-stack developer who can take a product from the first database schema all the way to production."
-              mn="Би Батсайхан — өгөгдлийн сангийн анхны схемээс эхлээд production хүртэл бүтээгдэхүүнийг авч явж чаддаг full-stack хөгжүүлэгч."
+              mn="Би Батсайхан — бүтээгдэхүүнийг өгөгдлийн сангийн анхны схемээс production хүртэл бүрэн авч явж чаддаг full-stack хөгжүүлэгч."
             />
           </p>
           <p>
             <T
               en="I care about clean architecture, thoughtful interfaces and systems that stay reliable as they grow. Whether working independently or through a team PR workflow, I focus on shipping real value."
-              mn="Цэвэр архитектур, бодож боловсруулсан интерфейс, өсөх тусам найдвартай хэвээр үлдэх системийг би чухалчилдаг. Бие даан ч, багийн PR урсгалаар ч жинхэнэ үнэ цэнийг хүргэхэд анхаардаг."
+              mn="Цэвэр архитектур, нарийн бодож боловсруулсан интерфейс, өсөхийн хэрээр найдвартай хэвээр үлдэх системийг би чухалчилдаг. Бие даан ч, багийн PR урсгалаар ч ажилласан бодит үнэ цэнэ хүргэхийг зорьдог."
             />
           </p>
           <div className="about-stats">
@@ -299,7 +299,7 @@ export default function Home() {
               />
             </p>
             <a className="link-arrow" href={profile.github.href} target="_blank" rel="noreferrer">
-              <T en="More on GitHub" mn="GitHub дээр дэлгэрэнгүй" /> <Icon name="arrow" size={16} />
+              <T en="More on GitHub" mn="GitHub дээр бусад ажлууд" /> <Icon name="arrow" size={16} />
             </a>
           </div>
         </header>
@@ -358,8 +358,8 @@ export default function Home() {
               [
                 ["pin", { en: "Based in", mn: "Байршил" }, profile.location],
                 ["cap", { en: "Studying", mn: "Сургууль" }, { en: "MUST · Software Engineering", mn: "ШУТИС · Програм хангамж" }],
-                ["calendar", { en: "Batch", mn: "Он" }, { en: "2022 – 2026", mn: "2022 – 2026" }],
-                ["building", { en: "Working at", mn: "Ажил" }, { en: "Aether Tech Core LLC", mn: "Aether Tech Core LLC" }],
+                ["calendar", { en: "Batch", mn: "Хугацаа" }, { en: "2022 – 2026", mn: "2022 – 2026" }],
+                ["building", { en: "Working at", mn: "Ажлын газар" }, { en: "Aether Tech Core LLC", mn: "Aether Tech Core LLC" }],
                 ["layers", { en: "Focus", mn: "Чиглэл" }, { en: "Full-stack · Web · Mobile · AI", mn: "Full-stack · Веб · Мобайл · AI" }],
               ] as const
             ).map(([icon, label, value]) => (
@@ -454,19 +454,19 @@ export default function Home() {
           <h2>
             <span className="reveal-line">
               <span>
-                <T en="Let's build" mn="Хамтдаа" />
+                <T en="Let's build" mn="Бодит зүйлийг" />
               </span>
             </span>
             <span className="reveal-line">
               <em>
-                <T en="something real." mn="бодитыг бүтээе." />
+                <T en="something real." mn="хамтдаа бүтээе." />
               </em>
             </span>
           </h2>
           <p className="contact-sub">
             <T
               en="Have an idea, a project or just want to say hi? I'm always open to new opportunities."
-              mn="Санаа, төсөл байна уу, эсвэл зүгээр л мэндлэх үү? Би шинэ боломжид үргэлж нээлттэй."
+              mn="Санаа, төсөл байна уу, эсвэл зүгээр л мэндлэхийг хүсэж байна уу? Шинэ боломжид би үргэлж нээлттэй."
             />
           </p>
           <ContactButton className="button button-primary contact-button button-glow" data-magnetic data-cursor="Go">

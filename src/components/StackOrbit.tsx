@@ -104,7 +104,7 @@ export function StackOrbit() {
             </ul>
           </div>
           <p className="orbit-hint">
-            <T en="Hover or tap a node to explore the stack." mn="Технологиудыг үзэхийн тулд цэг дээр очих эсвэл дарна уу." />
+            <T en="Hover or tap a node to explore the stack." mn="Технологиудыг харахын тулд цэг дээр хулганаа аваачих эсвэл дарна уу." />
           </p>
         </div>
       </div>

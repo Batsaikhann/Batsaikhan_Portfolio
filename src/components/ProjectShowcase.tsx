@@ -186,7 +186,7 @@ export function ProjectShowcase({ projects }: { projects: ShowcaseProject[] }) {
             ))}
           </div>
           <TransitionLink className="sc-cta" href={`/work/${project.slug}`} label={project.title} data-cursor="View">
-            <T en="View case study" mn="Кейс судалгаа үзэх" /> <Icon name="arrow" size={16} />
+            <T en="View case study" mn="Дэлгэрэнгүй үзэх" /> <Icon name="arrow" size={16} />
           </TransitionLink>
         </div>
 

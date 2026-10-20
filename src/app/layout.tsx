@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { Interactions } from "@/components/Interactions";
 import { Nav } from "@/components/Nav";
 import { PerfGuard } from "@/components/PerfGuard";
+import { PerfLabLoader } from "@/components/PerfLabLoader";
 import { Preloader } from "@/components/Preloader";
 import { RouteTransition } from "@/components/RouteTransition";
 import { langInitScript } from "@/components/T";
@@ -72,6 +73,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <div className="site-shell">
             <Interactions />
             <PerfGuard />
+            {/* Temporary diagnostics; compiled out of normal production builds. */}
+            <PerfLabLoader />
             <Nav />
             {children}
             <Footer />
