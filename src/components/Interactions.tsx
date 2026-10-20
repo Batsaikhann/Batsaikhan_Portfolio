@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { effectOff } from "@/lib/perf-lab";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*+<>";
 
@@ -137,7 +136,7 @@ export function Interactions() {
       listen(document, "pointerleave", () => root.classList.add("cursor-away"));
       listen(document, "pointerenter", () => root.classList.remove("cursor-away"));
 
-      if (!effectOff("magnetic")) document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
+      document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
         listen(el, "pointermove", (event) => {
           const rect = el.getBoundingClientRect();
           const x = event.clientX - rect.left - rect.width / 2;
@@ -153,7 +152,7 @@ export function Interactions() {
         });
       });
 
-      if (!effectOff("tilt")) document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
         const max = Number(el.dataset.tilt) || 3;
         listen(el, "pointermove", (event) => {
           const rect = el.getBoundingClientRect();
@@ -173,7 +172,7 @@ export function Interactions() {
     }
 
     const heroLayers: Layer[] =
-      finePointer && wide && !effectOff("parallax")
+      finePointer && wide
         ? [...document.querySelectorAll<HTMLElement>("[data-depth]")].map((el) => ({
             el,
             depth: Number(el.dataset.depth),
@@ -187,7 +186,7 @@ export function Interactions() {
       el,
       steps: [...el.querySelectorAll<HTMLElement>("[data-step]")],
     }));
-    const follow = finePointer && wide && !effectOff("follow") ? document.querySelector<HTMLElement>("[data-follow]") : null;
+    const follow = finePointer && wide ? document.querySelector<HTMLElement>("[data-follow]") : null;
     let followX = 0;
     let followY = 0;
     const nav = document.querySelector<HTMLElement>(".nav");
@@ -205,8 +204,6 @@ export function Interactions() {
     // Reading scrollY / innerWidth / innerHeight or a rect flushes pending style and layout. The cursor handler
     // writes styles on every move, so the loop only reads geometry when it can have changed (scroll / resize)
     // and otherwise works from these cached values — no forced recalc on frames where only the pointer moved.
-    const cursorOn = !effectOff("cursor");
-    const glowOn = finePointer && !effectOff("glow");
     let viewW = innerWidth;
     let viewH = innerHeight;
     let scrollTop = scrollY;
@@ -258,8 +255,8 @@ export function Interactions() {
       mouseY = event.clientY;
       // Cursor tracks the pointer 1:1 on the event itself — no easing, no frame of lag.
       const at = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-      if (cursorOn && dotRef.current) dotRef.current.style.transform = at;
-      if (cursorOn && ringRef.current) ringRef.current.style.transform = at;
+      if (dotRef.current) dotRef.current.style.transform = at;
+      if (ringRef.current) ringRef.current.style.transform = at;
       kick();
     });
 
@@ -288,7 +285,7 @@ export function Interactions() {
       // Anything still easing toward its target keeps the loop alive for another frame.
       let settling = false;
 
-      if (glowOn) {
+      if (finePointer) {
         const dx = mouseX - glowX;
         const dy = mouseY - glowY;
         if (Math.abs(dx) + Math.abs(dy) > 0.5) {

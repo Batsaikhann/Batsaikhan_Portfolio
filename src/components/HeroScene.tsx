@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { effectOff } from "@/lib/perf-lab";
 
 // Deterministic value noise so the rocks look the same on every load.
 function hash(x: number, y: number, z: number) {
@@ -21,7 +20,6 @@ export function HeroScene() {
     const host = hostRef.current;
     if (!host) return;
     if (
-      effectOff("webgl") ||
       matchMedia("(prefers-reduced-motion: reduce)").matches ||
       matchMedia("(max-width: 900px), (pointer: coarse)").matches
     ) {
